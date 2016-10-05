@@ -5,7 +5,7 @@ import java.util.List;
 
 /**
  * Created by Jan on 15.07.2016.
- * Managing cookies received from Wirtualna Uczelnia
+ * Managing cookies received from AGH Wirtualna Uczelnia
  */
 
 public class Cookies {
