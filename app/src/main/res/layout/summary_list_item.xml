@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/colorWhiteBackground">
+
+    <RelativeLayout
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        android:visibility="visible">
+
+        <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/checkBox"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:checked="true"
+            android:clickable="false"
+            android:layout_marginTop="5dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="2014/2015 - rok: 1, semestr: 1 (Z)"
+            android:textStyle="bold"
+            android:textColor="@color/colorBlackText"
+            android:id="@+id/textViewHeader"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Data decyzji: 01.10.2014"
+            android:textColor="@color/colorBlackText"
+            android:id="@+id/textView2ndLine"
+            android:layout_below="@+id/textViewHeader"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="wpis normalny"
+            android:id="@+id/textView3rdLine"
+            android:layout_below="@+id/textView2ndLine"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="5dp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@+id/textView3rdLine"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    </RelativeLayout>
+
+</LinearLayout>

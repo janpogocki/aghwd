@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:id="@+id/summaryItems" android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_summary"
+            android:icon="@drawable/ic_menu_summary"
+            android:title="Podsumowanie" />
+
+        <item
+            android:id="@+id/nav_groups"
+            android:icon="@drawable/ic_menu_groups"
+            android:title="Moduły i grupy" />
+    </group>
+
+
+
+
+    <item android:title="Oceny" android:id="@+id/semester">
+        <menu>
+            <group android:id="@+id/semesterItems" android:checkableBehavior="single">
+
+            </group>
+        </menu>
+    </item>
+
+
+
+    <item android:id="@+id/settings" android:title="Opcje">
+        <menu>
+            <group android:id="@+id/settingsItems" android:checkableBehavior="single">
+                <!--<item
+                    android:id="@+id/nav_settings"
+                    android:icon="@drawable/ic_menu_settings"
+                    android:title="Ustawienia" />-->
+
+                <item
+                    android:id="@+id/nav_about"
+                    android:icon="@drawable/ic_menu_about"
+                    android:title="O aplikacji" />
+
+                <item
+                    android:id="@+id/nav_relogging"
+                    android:icon="@drawable/ic_menu_relogging"
+                    android:visible="false"
+                    android:title="Zmień kierunek" />
+
+                <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@drawable/ic_menu_logout"
+                    android:title="Wyloguj się" />
+            </group>
+        </menu>
+    </item>
+
+
+</menu>

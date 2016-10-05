@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">AGH WD</string>
+    <string name="appVersion">1.1.5 beta</string>
+
+    <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
+    <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
+
+    <string name="action_settings">Ustawienia</string>
+    <string name="app_full_name">AGH Wirtualny Dziekanat</string>
+    <string name="app_full_name_without_agh">Wirtualny Dziekanat</string>
+    <string name="log_in">Zaloguj się</string>
+    <string name="log_in_remember">Zapamiętaj mnie</string>
+    <string name="title_activity_settings">Settings</string>
+
+</resources>
