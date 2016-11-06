@@ -152,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Aplikacja AGH WD to wyjątkowa przeglądarka ocen z Wirtualnej Uczelni. Przedstawiane są one w czytelnej postaci na Twoim smartfonie lub tablecie.\n\nAplikacja AGH WD nie przesyła danych logowania ani ocen poza serwis dziekanat.agh.edu.pl."
+                    android:text="Aplikacja AGH WD to wyjątkowa przeglądarka ocen z Wirtualnej Uczelni. Przedstawiane są one w czytelnej postaci na Twoim smartfonie lub tablecie.\n\nAplikacja AGH WD nie przesyła danych logowania ani ocen poza serwis dziekanat.agh.edu.pl.\n\nZarówno skrót AGH jak i logo uczelni są własnością Akademii Górniczo-Hutniczej im. St. Staszica w Krakowie. Nazwa i znak są użyte w aplikacji wyłączenie w celach informacyjnych."
                     android:textSize="15dp"
                     android:id="@+id/textView10"
                     android:gravity="left" />

@@ -63,7 +63,7 @@ public class FetchMarks {
 
             // Gather data about marks, ECTSes etc.
             LabelAndList<String> marks = new LabelAndList<>(current.getElementsByTag("td").get(1).ownText());
-            for (int i=2; i<=9; i++){
+            for (int i=0; i<=9; i++){
                 if (current.getElementsByTag("td").get(i).toString().contains("ocena")){
                     marks.add(current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(0).ownText()
                     + " " + current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(1).ownText());
@@ -122,11 +122,11 @@ public class FetchMarks {
             db2.add(current.getLabel());
             for (LabelAndList<String> current2 : current.getList()) {
                 // If ECTS != 0 then get ECTS and get FinalMark
-                if (!current2.getList().get(7).equals("0")) {
-                    db2.add(current2.getList().get(7));
+                if (!current2.getList().get(9).equals("0")) {
+                    db2.add(current2.getList().get(9));
                     // If mark exists...
-                    if (current2.getList().get(0).length() > 1)
-                        db2.add(current2.getList().get(0).split(" ")[0]);
+                    if (current2.getList().get(2).length() > 1)
+                        db2.add(current2.getList().get(2).split(" ")[0]);
                     else
                         db2.add("");
                     break;
@@ -136,6 +136,16 @@ public class FetchMarks {
                 db2.add("0");
                 db2.add("");
             }
+            String examStatus = "no";
+            for (LabelAndList<String> current2 : current.getList()) {
+                // If isset "Egzamin" set yes and break loop
+                if (current2.getList().get(1).equals("Egzamin")) {
+                    examStatus = "yes";
+                    break;
+                }
+            }
+            db2.add(examStatus);
+
             db.add(db2);
         }
 
@@ -153,15 +163,15 @@ public class FetchMarks {
             for (LabelAndList<String> current2 : current.getList()) {
                 db3 = new ArrayList<>();
                 db3.add(current2.getLabel());
-                db3.add(current2.getList().get(6));
-                for (int i=1; i<=3; i++){
+                db3.add(current2.getList().get(8));
+                for (int i=3; i<=5; i++){
                     if (current2.getList().get(i).length() > 1){
                         db3.add(current2.getList().get(i).split(" ")[0] + "\n" + current2.getList().get(i).split(" ")[1]);
                     }
                     else
                         db3.add(" ");
                 }
-                db3.add(current2.getList().get(4));
+                db3.add(current2.getList().get(6));
 
                 db2.add(db3);
                 db.put(subjectTitle, db2);

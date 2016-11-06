@@ -102,6 +102,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         String headerTitle = (String) getGroup(groupPosition, 0);
         String headerECTS = (String) getGroup(groupPosition, 1);
         String headerFinalMark = (String) getGroup(groupPosition, 2);
+        String headerExamStatus = (String) getGroup(groupPosition, 3);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -112,7 +113,12 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
         TextView textViewSubTitle = (TextView) convertView.findViewById(R.id.textViewSubTitle);
         TextView textViewFinalMark = (TextView) convertView.findViewById(R.id.textViewFinalMark);
         textViewTitle.setText(headerTitle);
-        textViewSubTitle.setText(headerECTS + " ECTS");
+
+        if (headerExamStatus.equals("yes"))
+            textViewSubTitle.setText(headerECTS + " ECTS - EGZAMIN");
+        else
+            textViewSubTitle.setText(headerECTS + " ECTS");
+
         textViewFinalMark.setText(headerFinalMark);
 
         return convertView;
