@@ -149,6 +149,7 @@ public class MainActivity extends AppCompatActivity
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         } else if (id == R.id.nav_relogging) {
+            Storage.multiKierunekClear();
             Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);

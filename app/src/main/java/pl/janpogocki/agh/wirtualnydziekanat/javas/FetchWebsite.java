@@ -10,6 +10,9 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+
 /**
  * Created by Jan on 16.07.2016.
  * Opening websites, sending, receiving cookies, sending POST messages - mini web browser
@@ -33,17 +36,24 @@ public class FetchWebsite {
         {
             // Defined URL  where to send data
             URL url = new URL(URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+            SSLContext sc;
+            sc = SSLContext.getInstance("TLS");
+            sc.init(null, null, new java.security.SecureRandom());
+            conn.setSSLSocketFactory(sc.getSocketFactory());
+
             conn.setReadTimeout(10000);
             conn.setConnectTimeout(15000);
-            conn.setDoInput(true);
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
             conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
 
-            // Sending cookies if _sendCookies
-            if (_sendCookies && Cookies.getCookies() != "")
-                conn.addRequestProperty("Cookie", Cookies.getCookies());
+            // Sending cookies if _sendCookies is true and List with cookies is set
+            if (Cookies.setList) {
+                if (_sendCookies && Cookies.getCookies() != "")
+                    conn.addRequestProperty("Cookie", Cookies.getCookies());
+            }
 
             // Sending POST data if exists
             if (_POSTdata != ""){
@@ -52,12 +62,13 @@ public class FetchWebsite {
                 wr.flush();
             }
 
-            // Getting cookies if _receiveCookies
+//            conn.setDoInput(true);
+
+            // Getting cookies form server if _receiveCookies
             if (_receiveCookies && !Cookies.setList) {
                 Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
-                Cookies.setList = true;
             }
-            else
+            else if (_receiveCookies && Cookies.setList)
                 Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
             // Getting Location if redirect
@@ -77,11 +88,11 @@ public class FetchWebsite {
             }
             ret = sb.toString();
 
-        } catch(Exception ex){}
-        finally{
-            try{
-                reader.close();
-            }catch(Exception ex){}
+            reader.close();
+            conn.disconnect();
+
+        } catch(Exception ex){
+            ex.printStackTrace();
         }
 
         return ret;
@@ -92,27 +103,26 @@ public class FetchWebsite {
     }
 
     public Bitmap getBitmap(Boolean _sendCookies, Boolean _receiveCookies) throws Exception {
-            URL url = new URL(URL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoInput(true);
+        URL url = new URL(URL);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setDoInput(true);
 
-            // Sending cookies if _sendCookies
-            if (_sendCookies && Cookies.getCookies() != "")
-                conn.addRequestProperty("Cookie", Cookies.getCookies());
+        // Sending cookies if _sendCookies
+        if (_sendCookies && Cookies.getCookies() != "")
+            conn.addRequestProperty("Cookie", Cookies.getCookies());
 
-            // Getting cookies if _receiveCookies
-            if (_receiveCookies && !Cookies.setList) {
-                Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
-                Cookies.setList = true;
-            }
-            else
-                Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+        // Getting cookies if _receiveCookies
+        if (_receiveCookies && !Cookies.setList) {
+            Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else
+            Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
-            conn.connect();
-            InputStream input = conn.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            conn.disconnect();
+        conn.connect();
+        InputStream input = conn.getInputStream();
+        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+        conn.disconnect();
 
-            return myBitmap;
+        return myBitmap;
     }
 }

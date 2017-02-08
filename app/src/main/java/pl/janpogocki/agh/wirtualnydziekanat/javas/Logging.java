@@ -1,5 +1,7 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.util.Log;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -19,6 +21,7 @@ public class Logging {
     String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
     String eventValidationName = "__EVENTVALIDATION";
     String viewstateValue, viewstateGeneratorValue, eventValidationValue;
+    String tempAlbumNumber = "";
 
     // establish connetion, send POST data and get session cookies
     public Logging(String albumNumber, String password) throws Exception {
@@ -51,6 +54,7 @@ public class Logging {
 
         // If everything is OK, then we are parsing Wynik2.aspx to get info's
         if (fw.getLocationHTTP().equals("/Ogloszenia.aspx")){
+            tempAlbumNumber = albumNumber;
             getUserInfos();
         }
         else if (fw.getLocationHTTP().equals("/KierunkiStudiow.aspx")) {
@@ -92,7 +96,7 @@ public class Logging {
 
         fwParsed = Jsoup.parse(fww);
         Storage.nameAndSurname = fwParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").ownText().split(" – nr albumu: ")[0];
-        Storage.albumNumber = fwParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").ownText().split(" – nr albumu: ")[1];
+        Storage.albumNumber = tempAlbumNumber;
         Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").attr("src");
         Storage.peselNumber = fwParsed.getElementsByClass("tabDwuCzesciowaPLeft").get(4).ownText();
 

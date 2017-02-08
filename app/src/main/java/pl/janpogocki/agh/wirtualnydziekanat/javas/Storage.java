@@ -26,4 +26,11 @@ public class Storage {
     public static int getSemesterNumberById(int id){
         return Integer.parseInt(summarySemesters.get(id).get(2));
     }
+
+    public static void multiKierunekClear(){
+        multiKierunek = false;
+        multiKierunekValues = new ArrayList<>();
+        multiKierunekLabelNames = new ArrayList<>();
+        choosenMultiKierunekValue = "";
+    }
 }

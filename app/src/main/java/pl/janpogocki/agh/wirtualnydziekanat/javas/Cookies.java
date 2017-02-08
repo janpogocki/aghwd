@@ -9,12 +9,13 @@ import java.util.List;
  */
 
 public class Cookies {
-    private static List<String> cookiesStorage;
+    private static List<String> cookiesStorage = null;
     public static Boolean setList = false;
 
     public static void setCookies(List<String> _cookies){
         cookiesStorage = new ArrayList<>(_cookies);
         removeSemicolons();
+        setList = true;
     }
 
     public static void updateCookies(List<String> _cookies){
