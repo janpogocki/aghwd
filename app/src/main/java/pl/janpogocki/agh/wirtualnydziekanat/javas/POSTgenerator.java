@@ -11,7 +11,7 @@ public class POSTgenerator {
     private String generatedPOST = "";
 
     public void add(String _arg1, String _arg2) throws UnsupportedEncodingException{
-        if (generatedPOST == ""){
+        if (generatedPOST.equals("")){
             generatedPOST = URLEncoder.encode(_arg1, "UTF-8")
                     + "=" + URLEncoder.encode(_arg2, "UTF-8");
         }

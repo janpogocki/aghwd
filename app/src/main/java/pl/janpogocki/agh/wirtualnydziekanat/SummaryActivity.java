@@ -29,6 +29,7 @@ public class SummaryActivity extends Fragment {
         ImageView imageViewPhotoUser;
         TextView textViewNameAndSurname, textViewAlbumNumber, textViewPeselNumber;
         ListView listView;
+
         ListAdapter listAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
@@ -71,7 +72,6 @@ public class SummaryActivity extends Fragment {
                 return convertView;
             }
         };
-
 
         imageViewPhotoUser = (ImageView) root.findViewById(R.id.imageViewPhotoUser);
         textViewNameAndSurname = (TextView) root.findViewById(R.id.textViewNameAndSurname);

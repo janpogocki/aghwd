@@ -15,11 +15,11 @@ import java.util.List;
 public class Logging {
     public int status = -1;
     public static String URLdomain = "https://dziekanat.agh.edu.pl";
-    String viewstateName = "__VIEWSTATE";
-    String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
-    String eventValidationName = "__EVENTVALIDATION";
-    String viewstateValue, viewstateGeneratorValue, eventValidationValue;
-    String tempAlbumNumber = "";
+    private String viewstateName = "__VIEWSTATE";
+    private String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
+    private String eventValidationName = "__EVENTVALIDATION";
+    private String viewstateValue, viewstateGeneratorValue, eventValidationValue;
+    private String tempAlbumNumber = "";
 
     // establish connetion, send POST data and get session cookies
     public Logging(String albumNumber, String password) throws Exception {
@@ -56,13 +56,15 @@ public class Logging {
             getUserInfos();
         }
         else if (fw.getLocationHTTP().equals("/KierunkiStudiow.aspx")) {
+            Storage.multiKierunekClear();
+
             fw = new FetchWebsite(URLdomain + fw.getLocationHTTP());
             fww = fw.getWebsite(true, true, "");
 
             // Parsing HTML and save to list all study subjects and theirs id's
             fwParsed = Jsoup.parse(fww);
             for (int i=0; i>=0; i++){
-                if (fwParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_rbKierunki_" + i) != null){
+                if (fwParsed.select("#ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_rbKierunki_" + i).size() > 0){
                     String kierunekValue = fwParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_rbKierunki_" + i).attr("value");
                     String kierunekLabelName = fwParsed.getElementsByTag("label").get(i).ownText();
 
@@ -84,7 +86,7 @@ public class Logging {
     }
 
     // Function gathers all infos about student and latest marks and sets var status
-    public void getUserInfos() throws Exception {
+    private void getUserInfos() throws Exception {
         FetchWebsite fw;
         String fww;
         Document fwParsed;
@@ -93,11 +95,10 @@ public class Logging {
         fww = fw.getWebsite(true, true, "");
 
         fwParsed = Jsoup.parse(fww);
-        Storage.nameAndSurname = fwParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").ownText().split(" – nr albumu: ")[0];
+        Storage.nameAndSurname = fwParsed.select("#ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").get(0).ownText().split(" – nr albumu: ")[0];
         Storage.albumNumber = tempAlbumNumber;
         Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").attr("src");
-        //Storage.peselNumber = fwParsed.getElementsByClass("tabDwuCzesciowaPLeft").get(4).ownText();
-        Storage.peselNumber = fwParsed.select("td.tabDwuCzesciowaPLeft").get(4).ownText();
+        Storage.peselNumber = fwParsed.select(".tabDwuCzesciowaPLeft").get(4).ownText();
 
         // Jump to profile photo
         fw = new FetchWebsite(Storage.photoUserURL);
@@ -107,12 +108,11 @@ public class Logging {
         fw = new FetchWebsite(URLdomain + "/PrzebiegStudiow.aspx");
         fww = fw.getWebsite(true, true, "");
         fwParsed = Jsoup.parse(fww);
-        //Elements tableRows = fwParsed.getElementsByClass("gridDane");
-        Elements tableRows = fwParsed.select("tr.gridDane");
+        Elements tableRows = fwParsed.select(".gridDane");
 
         List<List<String>> list = new ArrayList<>();
         for (Element current : tableRows){
-            Elements current2 = current.getElementsByTag("td");
+            Elements current2 = current.select("td");
             List<String> list2 = new ArrayList<>();
 
             for (Element current3 : current2){

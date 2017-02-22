@@ -23,12 +23,12 @@ public class FetchMarks {
         Document htmlParsed = Jsoup.parse(HTML2interprete);
 
         // Check if page with marks is not "brak danych do wyswietlenia"
-        if (htmlParsed.getAllElements().hasClass("gridDane")) {
-            Elements htmlParsedGridDane = htmlParsed.getElementsByClass("gridDane");
+        if (htmlParsed.getAllElements().select(".gridDane").size() > 0) {
+            Elements htmlParsedGridDane = htmlParsed.getAllElements().select(".gridDane");
 
             // Go over every entry
             for (Element current : htmlParsedGridDane) {
-                String htmlParsedSubjectName = current.getElementsByTag("td").get(0).ownText();
+                String htmlParsedSubjectName = current.select("td").get(0).ownText();
 
                 // If subject list exists & subject name on it - true, else - false
                 int subjectExists = -1;
@@ -44,13 +44,13 @@ public class FetchMarks {
                 }
 
                 // Gather data about marks, ECTSes etc.
-                LabelAndList<String> marks = new LabelAndList<>(current.getElementsByTag("td").get(1).ownText());
+                LabelAndList<String> marks = new LabelAndList<>(current.select("td").get(1).ownText());
                 for (int i = 0; i <= 9; i++) {
-                    if (current.getElementsByTag("td").get(i).toString().contains("ocena")) {
-                        marks.add(current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(0).ownText()
-                                + " " + current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(1).ownText());
+                    if (current.select("td").get(i).select("span.ocena").size() > 0) {
+                        marks.add(current.select("td").get(i).select(".ocena").get(0).ownText()
+                                + " " + current.select("td").get(i).select(".ocena").get(1).ownText());
                     } else
-                        marks.add(current.getElementsByTag("td").get(i).ownText());
+                        marks.add(current.select("td").get(i).ownText());
                 }
 
                 // Add new subject, and save more data (marks, ECTSes) about this kind of lessons
@@ -68,7 +68,7 @@ public class FetchMarks {
                 status = -1;
             } else {
                 // Gathering infos about AVGs and ECTS
-                String[] htmlParsedAvgECTS = htmlParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_litSredniaSuma").html().split("<br>");
+                String[] htmlParsedAvgECTS = htmlParsed.select("#ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_litSredniaSuma").get(0).html().split("<br>");
                 List<String> amountAvgSemesterStr = Arrays.asList(htmlParsedAvgECTS[0].split(": "));
                 List<String> amountAvgYearStr = Arrays.asList(htmlParsedAvgECTS[1].split(": "));
                 List<String> amountECTSStr = Arrays.asList(htmlParsedAvgECTS[2].split(": "));

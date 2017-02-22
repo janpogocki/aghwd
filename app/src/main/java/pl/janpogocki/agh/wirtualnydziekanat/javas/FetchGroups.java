@@ -20,16 +20,15 @@ public class FetchGroups {
         FetchWebsite fw;
         String fww;
         Document fwParsed;
-        String URLdomain = "https://dziekanat.agh.edu.pl";
 
-        fw = new FetchWebsite(URLdomain + "/ModulyGrupy.aspx");
+        fw = new FetchWebsite(Logging.URLdomain + "/ModulyGrupy.aspx");
         fww = fw.getWebsite(true, true, "");
         fwParsed = Jsoup.parse(fww);
-        Elements tableRows = fwParsed.getElementsByClass("gridDane");
+        Elements tableRows = fwParsed.select(".gridDane");
 
         List<List<String>> list = new ArrayList<>();
         for (Element current : tableRows){
-            Elements current2 = current.getElementsByTag("td");
+            Elements current2 = current.select("td");
             List<String> list2 = new ArrayList<>();
 
             for (Element current3 : current2){

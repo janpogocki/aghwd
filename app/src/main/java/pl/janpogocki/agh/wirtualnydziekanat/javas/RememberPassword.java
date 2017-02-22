@@ -58,7 +58,6 @@ public class RememberPassword {
     public void remove(){
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-            //accountManager.removeAccountExplicitly(myAccount);
             accountManager.removeAccount(myAccount, null, null, null);
         } else {
             accountManager.removeAccount(myAccount, null, null);

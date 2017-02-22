@@ -162,11 +162,10 @@ public class MainActivity extends AppCompatActivity
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         } else if (id == R.id.nav_relogging) {
-            Storage.multiKierunekClear();
             Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
-        } else if (id >= 0 && id <= 30){
+        } else if (id >= 0 && id <= 40){
             // Marks
             MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
             Storage.currentSemester = id;

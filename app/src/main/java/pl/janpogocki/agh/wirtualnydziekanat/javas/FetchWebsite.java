@@ -28,7 +28,7 @@ public class FetchWebsite {
 
     public String getWebsite(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
         String ret = "";
-        BufferedReader reader=null;
+        BufferedReader reader = null;
 
         // Send data
         try
@@ -50,12 +50,12 @@ public class FetchWebsite {
 
             // Sending cookies if _sendCookies is true and List with cookies is set
             if (Cookies.setList) {
-                if (_sendCookies && Cookies.getCookies() != "")
+                if (_sendCookies && !(Cookies.getCookies().equals("")))
                     conn.addRequestProperty("Cookie", Cookies.getCookies());
             }
 
             // Sending POST data if exists
-            if (_POSTdata != ""){
+            if (!(_POSTdata.equals(""))){
                 OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
                 wr.write(_POSTdata);
                 wr.flush();
@@ -77,7 +77,7 @@ public class FetchWebsite {
             // Get the server response
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
-            String line = null;
+            String line;
 
             // Read Server Response
             while((line = reader.readLine()) != null)
@@ -113,7 +113,7 @@ public class FetchWebsite {
         conn.setDoInput(true);
 
         // Sending cookies if _sendCookies
-        if (_sendCookies && Cookies.getCookies() != "")
+        if (_sendCookies && !(Cookies.getCookies().equals("")))
             conn.addRequestProperty("Cookie", Cookies.getCookies());
 
         // Getting cookies if _receiveCookies

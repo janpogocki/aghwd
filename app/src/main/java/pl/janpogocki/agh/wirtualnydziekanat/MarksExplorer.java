@@ -25,7 +25,6 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapter;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchMarks;
