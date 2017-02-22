@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="appVersion">1.1.7 beta</string>
+    <string name="appVersion">1.1.9 beta</string>
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
@@ -11,5 +11,10 @@
     <string name="log_in">Zaloguj się</string>
     <string name="log_in_remember">Zapamiętaj mnie</string>
     <string name="title_activity_settings">Settings</string>
+
+    <string name="menu_marks">Oceny końcowe</string>
+    <string name="menu_partial_marks">Oceny cząstkowe</string>
+
+
 
 </resources>

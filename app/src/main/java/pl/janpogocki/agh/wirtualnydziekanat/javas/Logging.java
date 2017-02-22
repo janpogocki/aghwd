@@ -1,7 +1,5 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
-import android.util.Log;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -98,7 +96,8 @@ public class Logging {
         Storage.nameAndSurname = fwParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").ownText().split(" – nr albumu: ")[0];
         Storage.albumNumber = tempAlbumNumber;
         Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").attr("src");
-        Storage.peselNumber = fwParsed.getElementsByClass("tabDwuCzesciowaPLeft").get(4).ownText();
+        //Storage.peselNumber = fwParsed.getElementsByClass("tabDwuCzesciowaPLeft").get(4).ownText();
+        Storage.peselNumber = fwParsed.select("td.tabDwuCzesciowaPLeft").get(4).ownText();
 
         // Jump to profile photo
         fw = new FetchWebsite(Storage.photoUserURL);
@@ -108,7 +107,8 @@ public class Logging {
         fw = new FetchWebsite(URLdomain + "/PrzebiegStudiow.aspx");
         fww = fw.getWebsite(true, true, "");
         fwParsed = Jsoup.parse(fww);
-        Elements tableRows = fwParsed.getElementsByClass("gridDane");
+        //Elements tableRows = fwParsed.getElementsByClass("gridDane");
+        Elements tableRows = fwParsed.select("tr.gridDane");
 
         List<List<String>> list = new ArrayList<>();
         for (Element current : tableRows){
@@ -120,13 +120,14 @@ public class Logging {
             }
 
             // Add if status != "przeniesienie"
-            if (!list2.get(7).contains("przeniesienie"))
+            //if (!list2.get(7).contains("przeniesienie"))
                 list.add(list2);
         }
 
-        // Checks whether list != -1 (agh index empty)
-        if (list.size() != -1){
-            Storage.currentSemester = Storage.currentSemesterListPointer = list.size()-1;
+        // Checks whether list != -1 (-1 = agh index empty)
+        if (list.size() > 0){ //TODO tu chyba trzeba dać >0
+            //Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = list.size()-1;
+            Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = tableRows.size()-1;
             Storage.summarySemesters = list;
 
             // Jump to OcenyP.aspx, get info latest marks

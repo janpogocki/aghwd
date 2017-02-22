@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -62,7 +61,7 @@ public class FetchWebsite {
                 wr.flush();
             }
 
-//            conn.setDoInput(true);
+            // conn.setDoInput(true);
 
             // Getting cookies form server if _receiveCookies
             if (_receiveCookies && !Cookies.setList) {
@@ -104,7 +103,13 @@ public class FetchWebsite {
 
     public Bitmap getBitmap(Boolean _sendCookies, Boolean _receiveCookies) throws Exception {
         URL url = new URL(URL);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        SSLContext sc;
+        sc = SSLContext.getInstance("TLS");
+        sc.init(null, null, new java.security.SecureRandom());
+        conn.setSSLSocketFactory(sc.getSocketFactory());
+
         conn.setDoInput(true);
 
         // Sending cookies if _sendCookies

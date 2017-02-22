@@ -15,101 +15,83 @@ import java.util.List;
  */
 
 public class FetchMarks {
-    private class LabelAndList<T>{
-        String label;
-        List<T> list = new ArrayList<>();
-
-        public LabelAndList(String _label){
-            label = _label;
-        }
-
-        public void add(T _element){
-            list.add(_element);
-        }
-
-        public String getLabel(){
-            return label;
-        }
-
-        public List<T> getList(){
-            return list;
-        }
-    }
-
     private List<LabelAndList<LabelAndList<String>>> database = new ArrayList<>();
     public int amountECTS, status;
     public double amountAvgSemester, amountAvgYear;
 
     public FetchMarks(String HTML2interprete){
         Document htmlParsed = Jsoup.parse(HTML2interprete);
-        Elements htmlParsedGridDane = htmlParsed.getElementsByClass("gridDane");
 
-        // Go over every entry
-        for (Element current : htmlParsedGridDane){
-            String htmlParsedSubjectName = current.getElementsByTag("td").get(0).ownText();
+        // Check if page with marks is not "brak danych do wyswietlenia"
+        if (htmlParsed.getAllElements().hasClass("gridDane")) {
+            Elements htmlParsedGridDane = htmlParsed.getElementsByClass("gridDane");
 
-            // If subject list exists & subject name on it - true, else - false
-            int subjectExists = -1;
-            if (database.size() > 0){
-                int i = 0;
-                for (LabelAndList<LabelAndList<String>> current2 : database){
-                    if (htmlParsedSubjectName.equals(current2.getLabel())){
-                        subjectExists = i;
-                        break;
+            // Go over every entry
+            for (Element current : htmlParsedGridDane) {
+                String htmlParsedSubjectName = current.getElementsByTag("td").get(0).ownText();
+
+                // If subject list exists & subject name on it - true, else - false
+                int subjectExists = -1;
+                if (database.size() > 0) {
+                    int i = 0;
+                    for (LabelAndList<LabelAndList<String>> current2 : database) {
+                        if (htmlParsedSubjectName.equals(current2.getLabel())) {
+                            subjectExists = i;
+                            break;
+                        }
+                        i++;
                     }
-                    i++;
+                }
+
+                // Gather data about marks, ECTSes etc.
+                LabelAndList<String> marks = new LabelAndList<>(current.getElementsByTag("td").get(1).ownText());
+                for (int i = 0; i <= 9; i++) {
+                    if (current.getElementsByTag("td").get(i).toString().contains("ocena")) {
+                        marks.add(current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(0).ownText()
+                                + " " + current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(1).ownText());
+                    } else
+                        marks.add(current.getElementsByTag("td").get(i).ownText());
+                }
+
+                // Add new subject, and save more data (marks, ECTSes) about this kind of lessons
+                if (subjectExists != -1) {
+                    database.get(subjectExists).add(marks);
+                } else {
+                    LabelAndList<LabelAndList<String>> subjectAndLesson = new LabelAndList<>(htmlParsedSubjectName);
+                    subjectAndLesson.add(marks);
+                    database.add(subjectAndLesson);
                 }
             }
 
-            // Gather data about marks, ECTSes etc.
-            LabelAndList<String> marks = new LabelAndList<>(current.getElementsByTag("td").get(1).ownText());
-            for (int i=0; i<=9; i++){
-                if (current.getElementsByTag("td").get(i).toString().contains("ocena")){
-                    marks.add(current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(0).ownText()
-                    + " " + current.getElementsByTag("td").get(i).getElementsByClass("ocena").get(1).ownText());
-                }
+            // If there no data in list...
+            if (database.size() == 0) {
+                status = -1;
+            } else {
+                // Gathering infos about AVGs and ECTS
+                String[] htmlParsedAvgECTS = htmlParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_litSredniaSuma").html().split("<br>");
+                List<String> amountAvgSemesterStr = Arrays.asList(htmlParsedAvgECTS[0].split(": "));
+                List<String> amountAvgYearStr = Arrays.asList(htmlParsedAvgECTS[1].split(": "));
+                List<String> amountECTSStr = Arrays.asList(htmlParsedAvgECTS[2].split(": "));
+
+                if (amountAvgSemesterStr.size() == 2)
+                    amountAvgSemester = Double.parseDouble(htmlParsedAvgECTS[0].split(": ")[1]);
                 else
-                    marks.add(current.getElementsByTag("td").get(i).ownText());
-            }
+                    amountAvgSemester = 0;
 
-            // Add new subject, and save more data (marks, ECTSes) about this kind of lessons
-            if (subjectExists != -1){
-                database.get(subjectExists).add(marks);
-            }
-            else {
-                LabelAndList<LabelAndList<String>> subjectAndLesson = new LabelAndList<>(htmlParsedSubjectName);
-                subjectAndLesson.add(marks);
-                database.add(subjectAndLesson);
-            }
-        }
+                if (amountAvgYearStr.size() == 2)
+                    amountAvgYear = Double.parseDouble(htmlParsedAvgECTS[1].split(": ")[1]);
+                else
+                    amountAvgYear = 0;
 
-        // If there no data in list...
-        if (database.size() == 0){
+                if (amountECTSStr.size() == 2)
+                    amountECTS = Integer.parseInt(htmlParsedAvgECTS[2].split(": ")[1]);
+                else
+                    amountECTS = 0;
+
+                status = 0;
+            }
+        } else {
             status = -1;
-        }
-        else {
-            // Gathering infos about AVGs and ECTS
-            String[] htmlParsedAvgECTS = htmlParsed.getElementById("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_litSredniaSuma").html().split("<br>");
-            List<String> amountAvgSemesterStr = Arrays.asList(htmlParsedAvgECTS[0].split(": "));
-            List<String> amountAvgYearStr = Arrays.asList(htmlParsedAvgECTS[1].split(": "));
-            List<String> amountECTSStr = Arrays.asList(htmlParsedAvgECTS[2].split(": "));
-
-            if (amountAvgSemesterStr.size() == 2)
-                amountAvgSemester = Double.parseDouble(htmlParsedAvgECTS[0].split(": ")[1]);
-            else
-                amountAvgSemester = 0;
-
-            if (amountAvgYearStr.size() == 2)
-                amountAvgYear = Double.parseDouble(htmlParsedAvgECTS[1].split(": ")[1]);
-            else
-                amountAvgYear = 0;
-
-            if (amountECTSStr.size() == 2)
-                amountECTS = Integer.parseInt(htmlParsedAvgECTS[2].split(": ")[1]);
-            else
-                amountECTS = 0;
-
-            status = 0;
         }
     }
 

@@ -173,7 +173,7 @@ public class LogIn extends AppCompatActivity {
                     // build dialog window
                     final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
                     builder.setTitle("Ups...")
-                            .setMessage("Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie za kilka dni.\n\nMiło Cię widzieć na AGH! ;)")
+                            .setMessage("Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.")
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {}
@@ -282,7 +282,7 @@ public class LogIn extends AppCompatActivity {
                 // build dialog window
                 final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
                 builder.setTitle("Ups...")
-                        .setMessage("Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie za kilka dni.")
+                        .setMessage("Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.")
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {}

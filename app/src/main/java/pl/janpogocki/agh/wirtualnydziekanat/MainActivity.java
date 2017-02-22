@@ -25,6 +25,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     NavigationView navigationView = null;
+    Menu MenuWithActionBar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +97,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        //getMenuInflater().inflate(R.menu.main, menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        MenuWithActionBar = menu;
         return true;
     }
 
@@ -106,12 +108,22 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
 
-        /*int id = item.getItemId();
+        int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }*/
+        if (id == R.id.action_change_marks) {
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+
+            if (item.getTitle().equals(getString(R.string.menu_marks))) {
+                item.setTitle(R.string.menu_partial_marks);
+                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.PartialMarksExplorer"));
+            } else {
+                item.setTitle(R.string.menu_marks);
+                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+            }
+
+            tx.commit();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -123,6 +135,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         Storage.oneMoreBackPressedButtonMeansExit = false;
         navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(false);
+        MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
         if (id == R.id.nav_about) {
             setTitle("O aplikacji");
@@ -155,6 +168,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(i);
         } else if (id >= 0 && id <= 30){
             // Marks
+            MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
             Storage.currentSemester = id;
             setTitle("Semestr " + Storage.getSemesterNumberById(id));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
