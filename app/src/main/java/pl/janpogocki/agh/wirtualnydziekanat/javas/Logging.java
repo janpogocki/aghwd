@@ -116,7 +116,11 @@ public class Logging {
             List<String> list2 = new ArrayList<>();
 
             for (Element current3 : current2){
-                list2.add(current3.ownText());
+                String current3ownTextTrimmed = current3.ownText().trim();
+                if (current3ownTextTrimmed.equals(""))
+                    list2.add("-");
+                else
+                    list2.add(current3ownTextTrimmed);
             }
 
             // Add if status != "przeniesienie"
@@ -124,8 +128,8 @@ public class Logging {
                 list.add(list2);
         }
 
-        // Checks whether list != -1 (-1 = agh index empty)
-        if (list.size() > 0){ //TODO tu chyba trzeba dać >0
+        // Checks whether list is not empty
+        if (list.size() > 0){
             //Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = list.size()-1;
             Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = tableRows.size()-1;
             Storage.summarySemesters = list;

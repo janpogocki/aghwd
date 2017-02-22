@@ -24,8 +24,8 @@ public class Storage {
     public static List<String> multiKierunekValues = new ArrayList<>();
     public static List<String> multiKierunekLabelNames = new ArrayList<>();
 
-    public static int getSemesterNumberById(int id){
-        return Integer.parseInt(summarySemesters.get(id).get(2));
+    public static String getSemesterNumberById(int id){
+        return Storage.summarySemesters.get(id).get(2);
     }
 
     public static void multiKierunekClear(){

@@ -14,27 +14,33 @@ public class Cookies {
 
     public static void setCookies(List<String> _cookies){
         cookiesStorage = new ArrayList<>(_cookies);
-        removeSemicolons();
+        Cookies.removeSemicolons();
         setList = true;
     }
 
     public static void updateCookies(List<String> _cookies){
-        for (int i=0; i<_cookies.size(); i++){
-            for (int j=0; j<cookiesStorage.size(); j++){
-                if (cookiesStorage.get(j).split("=")[0].equals(_cookies.get(i).split("=")[0])){
-                    cookiesStorage.remove(j);
-                    cookiesStorage.add(j, _cookies.get(i));
+        if (setList && cookiesStorage.size() > 0) {
+            for (int i = 0; i < _cookies.size(); i++) {
+                for (int j = 0; j < cookiesStorage.size(); j++) {
+                    if (cookiesStorage.get(j).split("=")[0].equals(_cookies.get(i).split("=")[0])) {
+                        cookiesStorage.remove(j);
+                        cookiesStorage.add(j, _cookies.get(i));
+                    }
                 }
             }
+            Cookies.removeSemicolons();
         }
-        removeSemicolons();
+        else
+            Cookies.setCookies(_cookies);
     }
 
     public static String getCookies(){
         String ret = "";
 
-        for (int i=0; i<cookiesStorage.size(); i++){
-            ret += cookiesStorage.get(i) + "; ";
+        if (setList && cookiesStorage != null) {
+            for (int i = 0; i < cookiesStorage.size(); i++) {
+                ret += cookiesStorage.get(i) + "; ";
+            }
         }
 
         return ret;
