@@ -9,6 +9,11 @@
         <item name="android:windowBackground">@color/colorWhiteBackground</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+    </style>
+
+    <style name="cursorColor" parent="Widget.AppCompat.AutoCompleteTextView">
+        <item name="android:textCursorDrawable">@drawable/cursor</item>
     </style>
 
     <style name="AppTheme.NoActionBarr" parent="Theme.AppCompat.Light.NoActionBar">

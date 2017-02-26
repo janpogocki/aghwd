@@ -266,11 +266,7 @@ public class MarksExplorer extends Fragment {
                 }
             });
 
-            if (fm.status == -1) {
-                rlNoData.setVisibility(View.VISIBLE);
-                rlLoader.setVisibility(View.GONE);
-            }
-            else if (isError){
+            if (fm == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
                 Snackbar.make(root.findViewById(R.id.relativeLayoutMain), "Problem z połączeniem sieciowym", Snackbar.LENGTH_LONG)
@@ -287,6 +283,10 @@ public class MarksExplorer extends Fragment {
                         refreshMarks(root);
                     }
                 });
+            }
+            else if (fm.status == -1) {
+                rlNoData.setVisibility(View.VISIBLE);
+                rlLoader.setVisibility(View.GONE);
             }
             else {
                 final ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expandableListView);

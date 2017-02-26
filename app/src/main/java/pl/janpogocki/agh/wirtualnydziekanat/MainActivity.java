@@ -1,9 +1,11 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.SearchView;
 import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -14,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +29,39 @@ public class MainActivity extends AppCompatActivity
 
     NavigationView navigationView = null;
     Menu MenuWithActionBar = null;
+    SearchView searchView = null;
+    SkosActivity skosactivity = null;
+
+    public void hideKeyboard(View view) {
+        InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+    }
+
+    public void showSearchButton(Boolean val){
+        if (val)
+            MenuWithActionBar.findItem(R.id.action_search).setVisible(true);
+        else
+            MenuWithActionBar.findItem(R.id.action_search).setVisible(false);
+    }
+
+    private void setupSearchView(){
+        searchView.setIconifiedByDefault(true);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText != null && skosactivity != null)
+                    skosactivity.searchTyping(newText);
+
+                return false;
+            }
+        });
+        searchView.setQueryHint("Wpisuj nazwisko...");
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +118,14 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }
+        else if (Storage.openedBrowser) {
+            skosactivity.backButtonPressedWhenBrowserOpened();
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+            searchView.setIconified(true);
+        }
+        else {
             if (!Storage.oneMoreBackPressedButtonMeansExit){
                 Toast.makeText(MainActivity.this, "Stuknij ponownie, aby zakończyć", Toast.LENGTH_SHORT).show();
                 Storage.oneMoreBackPressedButtonMeansExit = true;
@@ -97,9 +140,15 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
+
         getMenuInflater().inflate(R.menu.main, menu);
         MenuWithActionBar = menu;
-        return true;
+
+        searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
+        setupSearchView();
+        return super.onCreateOptionsMenu(menu);
+
+        //return true;
     }
 
     @Override
@@ -124,6 +173,9 @@ public class MainActivity extends AppCompatActivity
 
             tx.commit();
         }
+        else if (id == R.id.action_search) {
+            setupSearchView();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -134,8 +186,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Storage.oneMoreBackPressedButtonMeansExit = false;
+        Storage.openedBrowser = false;
         navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(false);
         MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
+
+        showSearchButton(false);
 
         if (id == R.id.nav_about) {
             setTitle("O aplikacji");
@@ -152,6 +207,27 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.GroupsActivity"));
             tx.commit();
+        } else if (id == R.id.nav_diploma) {
+            setTitle("Praca dyplomowa");
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.DiplomaActivity"));
+            tx.commit();
+        } else if (id == R.id.nav_syllabus) {
+            setTitle("Syllabus");
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SyllabusActivity"));
+            tx.commit();
+        } else if (id == R.id.nav_skos) {
+            setTitle("SkOs");
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment skosactivity_ = new SkosActivity();
+            tx.replace(R.id.frameLayoutMain, skosactivity_);
+            tx.commit();
+            skosactivity = (SkosActivity) skosactivity_;
+
+            searchView.setQuery("", false);
+            searchView.clearFocus();
+            searchView.setIconified(true);
         } else if (id == R.id.nav_logout) {
             RememberPassword rp = new RememberPassword(this);
 

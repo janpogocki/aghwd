@@ -324,11 +324,7 @@ public class PartialMarksExplorer extends Fragment {
                 }
             });
 
-            if (fpm.status == -1) {
-                rlNoData.setVisibility(View.VISIBLE);
-                rlLoader.setVisibility(View.GONE);
-            }
-            else if (isError){
+            if (fpm == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
                 Snackbar.make(root.findViewById(R.id.relativeLayoutMain), "Problem z połączeniem sieciowym", Snackbar.LENGTH_LONG)
@@ -345,6 +341,10 @@ public class PartialMarksExplorer extends Fragment {
                         refreshMarks(root);
                     }
                 });
+            }
+            else if (fpm.status == -1) {
+                rlNoData.setVisibility(View.VISIBLE);
+                rlLoader.setVisibility(View.GONE);
             }
             else {
                 final ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expandableListView);

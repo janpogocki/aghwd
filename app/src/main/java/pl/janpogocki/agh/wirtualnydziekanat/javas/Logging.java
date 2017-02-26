@@ -123,14 +123,13 @@ public class Logging {
                     list2.add(current3ownTextTrimmed);
             }
 
-            // Add if status != "przeniesienie"
-            //if (!list2.get(7).contains("przeniesienie"))
+            // Add if student status is different from absolwent
+            if (!list2.get(7).toLowerCase().contains("absolwent"))
                 list.add(list2);
         }
 
         // Checks whether list is not empty
         if (list.size() > 0){
-            //Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = list.size()-1;
             Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = tableRows.size()-1;
             Storage.summarySemesters = list;
 

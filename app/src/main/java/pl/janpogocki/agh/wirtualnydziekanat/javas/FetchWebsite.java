@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -21,6 +22,7 @@ import javax.net.ssl.SSLContext;
 public class FetchWebsite {
     private String URL = "";
     private String locationHTTP = "";
+    private Integer responseCode;
 
     public FetchWebsite(String _url){
         URL = _url;
@@ -28,13 +30,15 @@ public class FetchWebsite {
 
     public String getWebsite(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
         String ret = "";
-        BufferedReader reader = null;
 
         // Send data
         try
         {
+            BufferedReader reader;
+
             // Defined URL  where to send data
             URL url = new URL(URL);
+
             HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
             SSLContext sc;
@@ -74,6 +78,78 @@ public class FetchWebsite {
             if (conn.getResponseCode() / 100 == 3)
                 locationHTTP = conn.getHeaderField("Location");
 
+            responseCode = conn.getResponseCode();
+
+            // Get the server response
+            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            StringBuilder sb = new StringBuilder();
+            String line;
+
+            // Read Server Response
+            while((line = reader.readLine()) != null)
+            {
+                // Append server response in string
+                sb.append(line + "\n");
+            }
+            ret = sb.toString();
+
+            reader.close();
+            conn.disconnect();
+
+        } catch(Exception ex){
+            ex.printStackTrace();
+        }
+
+        return ret;
+    }
+
+    public String getWebsiteHTTP(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
+        String ret = "";
+
+        // Send data
+        try
+        {
+            BufferedReader reader;
+
+            // Defined URL  where to send data
+            URL url = new URL(URL);
+
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+
+            conn.setReadTimeout(10000);
+            conn.setConnectTimeout(15000);
+
+            conn.setRequestMethod("GET");
+
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
+
+            // Sending cookies if _sendCookies is true and List with cookies is set
+            if (Cookies.setList) {
+                if (_sendCookies && !(Cookies.getCookies().equals("")))
+                    conn.addRequestProperty("Cookie", Cookies.getCookies());
+            }
+
+            // Sending POST data if exists
+            if (!(_POSTdata.equals(""))){
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                wr.write(_POSTdata);
+                wr.flush();
+            }
+
+            // Getting cookies form server if _receiveCookies
+            if (_receiveCookies && !Cookies.setList) {
+                Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+            }
+            else if (_receiveCookies && Cookies.setList)
+                Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+            // Getting Location if redirect
+            if (conn.getResponseCode() / 100 == 3)
+                locationHTTP = conn.getHeaderField("Location");
+
+            responseCode = conn.getResponseCode();
+
             // Get the server response
             reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             StringBuilder sb = new StringBuilder();
@@ -99,6 +175,10 @@ public class FetchWebsite {
 
     public String getLocationHTTP(){
         return locationHTTP;
+    }
+
+    public Integer getResponseCode(){
+        return responseCode;
     }
 
     public Bitmap getBitmap(Boolean _sendCookies, Boolean _receiveCookies) throws Exception {

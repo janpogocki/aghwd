@@ -11,6 +11,21 @@
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_menu_groups"
             android:title="Moduły i grupy" />
+
+        <item
+            android:id="@+id/nav_diploma"
+            android:icon="@drawable/ic_menu_diploma"
+            android:title="Praca dyplomowa" />
+
+        <item
+            android:id="@+id/nav_syllabus"
+            android:icon="@drawable/ic_menu_syllabus"
+            android:title="Syllabus" />
+
+        <item
+            android:id="@+id/nav_skos"
+            android:icon="@drawable/ic_menu_skos"
+            android:title="SkOs" />
     </group>
 
 

@@ -2,9 +2,9 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 
 import android.content.Context;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,20 +14,20 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchGroups;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchDiploma;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
-public class GroupsActivity extends Fragment {
+public class DiplomaActivity extends Fragment {
 
-    FetchGroups fg;
+    FetchDiploma fd;
 
     public static Fragment newInstance(Context context) {
         AboutActivity f = new AboutActivity();
         return f;
     }
 
-    private void refreshGroups(ViewGroup root) {
-        if (Storage.groupsAndModules == null || Storage.groupsAndModules.size() == 0){
+    private void refreshDiploma(ViewGroup root) {
+        if (Storage.diploma == null || Storage.diploma.size() == 0){
             // There's no downloaded data. Do that.
             RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
 
@@ -41,22 +41,22 @@ public class GroupsActivity extends Fragment {
 
             rlData.setVisibility(View.VISIBLE);
 
-            showGroups(root);
+            showDiploma(root);
         }
     }
 
-    private void showGroups(final ViewGroup root){
+    private void showDiploma(final ViewGroup root){
         ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
 
         ListAdapter listAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return Storage.groupsAndModules.size();
+                return Storage.diploma.get(0).size();
             }
 
             @Override
             public Object getItem(int position) {
-                return Storage.groupsAndModules.get(position);
+                return Storage.diploma.get(position);
             }
 
             @Override
@@ -66,9 +66,8 @@ public class GroupsActivity extends Fragment {
 
             @Override
             public View getView(int position, View convertView, ViewGroup parent) {
-                String nameGroup = Storage.groupsAndModules.get(position).get(0);
-                String shortcutGroup = Storage.groupsAndModules.get(position).get(1);
-                String formGroup = Storage.groupsAndModules.get(position).get(2);
+                String nameLeft = Storage.diploma.get(0).get(position);
+                String nameRight = Storage.diploma.get(1).get(position);
 
                 if (convertView == null) {
                     LayoutInflater infalInflater = (LayoutInflater) root.getContext()
@@ -80,9 +79,9 @@ public class GroupsActivity extends Fragment {
                 TextView textView2ndLine = (TextView) convertView.findViewById(R.id.textView2ndLine);
                 TextView textView3rdLine = (TextView) convertView.findViewById(R.id.textView3rdLine);
 
-                textViewHeader.setText(nameGroup);
-                textView2ndLine.setText(formGroup);
-                textView3rdLine.setText(shortcutGroup);
+                textViewHeader.setText(nameLeft);
+                textView2ndLine.setText(nameRight);
+                textView3rdLine.setVisibility(View.GONE);
 
                 return convertView;
             }
@@ -95,7 +94,7 @@ public class GroupsActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_groups, null);
 
-        refreshGroups(root);
+        refreshDiploma(root);
 
         return root;
     }
@@ -109,7 +108,7 @@ public class GroupsActivity extends Fragment {
             try {
                 root = params[0];
 
-                fg = new FetchGroups();
+                fd = new FetchDiploma();
 
                 return root;
             } catch (Exception e) {
@@ -127,8 +126,8 @@ public class GroupsActivity extends Fragment {
 
             rlLoader.setVisibility(View.GONE);
 
-            if (fg == null || isError){
-                Storage.groupsAndModules = null;
+            if (fd == null || isError){
+                Storage.diploma = null;
                 rlOffline.setVisibility(View.VISIBLE);
                 Snackbar.make(root.findViewById(R.id.activity_groups), "Problem z połączeniem sieciowym", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -139,17 +138,17 @@ public class GroupsActivity extends Fragment {
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
 
-                        refreshGroups(root);
+                        refreshDiploma(root);
                     }
                 });
             }
-            else if (fg.status == -1){
+            else if (fd.status == -1){
                 rlNoData.setVisibility(View.VISIBLE);
             }
             else {
                 // Have it, show it
                 rlData.setVisibility(View.VISIBLE);
-                showGroups(root);
+                showDiploma(root);
             }
 
         }

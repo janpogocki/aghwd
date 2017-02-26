@@ -12,15 +12,18 @@ import java.util.List;
  */
 
 public class Storage {
-    public static String albumNumber, nameAndSurname, photoUserURL, peselNumber, choosenMultiKierunekValue = "";
+    public static String albumNumber, nameAndSurname, photoUserURL, peselNumber, choosenMultiKierunekValue, syllabusURL = "";
     public static int currentSemester, currentSemesterListPointer, currentSemesterListPointerPartialMarks = 0;
     public static Bitmap photoUser = null;
-    public static Boolean oneMoreBackPressedButtonMeansExit = false;
+    public static Boolean oneMoreBackPressedButtonMeansExit, openedBrowser = false;
     public static Boolean multiKierunek = false;
     public static HashMap<Integer, String> currentSemesterHTML = new HashMap<>();
     public static HashMap<Integer, List<String>> currentSemesterPartialMarksHTML = new HashMap<>();
     public static List<List<String>> summarySemesters = new ArrayList<>();
     public static List<List<String>> groupsAndModules = new ArrayList<>();
+    public static List<List<String>> diploma = new ArrayList<>();
+    public static List<List<String>> skosList = new ArrayList<>();
+    public static List<String> universityStatus = new ArrayList<>();
     public static List<String> multiKierunekValues = new ArrayList<>();
     public static List<String> multiKierunekLabelNames = new ArrayList<>();
 

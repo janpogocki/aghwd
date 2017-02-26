@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.janpogocki.agh.wirtualnydziekanat"
-    android:versionCode="18"
+    android:versionCode="19"
     android:versionName="@string/appVersion">
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -46,11 +46,11 @@
         <activity android:name=".AboutActivity" />
         <activity android:name=".MarksExplorer" />
         <activity android:name=".SummaryActivity" />
-        <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings" />
         <activity android:name=".GroupsActivity" />
-        <activity android:name=".PartialMarksExplorer"></activity>
+        <activity android:name=".DiplomaActivity" />
+        <activity android:name=".PartialMarksExplorer" />
+        <activity android:name=".SyllabusActivity" />
+        <activity android:name=".SkosActivity"></activity>
     </application>
 
 </manifest>
