@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity
                 return false;
             }
         });
-        searchView.setQueryHint("Wpisuj nazwisko...");
+        searchView.setQueryHint("Szukaj nazwiska...");
     }
 
     @Override

@@ -123,8 +123,8 @@ public class Logging {
                     list2.add(current3ownTextTrimmed);
             }
 
-            // Add if student status is different from absolwent
-            if (!list2.get(7).toLowerCase().contains("absolwent"))
+            // Add if student status is different from absolwent ???
+            //if (!list2.get(7).toLowerCase().contains("absolwent"))
                 list.add(list2);
         }
 
