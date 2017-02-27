@@ -15,4 +15,18 @@
         android:visible="false"
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_previous_week"
+        android:icon="@drawable/ic_left"
+        android:title="@string/previous_week"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_next_week"
+        android:icon="@drawable/ic_right"
+        android:title="@string/next_week"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

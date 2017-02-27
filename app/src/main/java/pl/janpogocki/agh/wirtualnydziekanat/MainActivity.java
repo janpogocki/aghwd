@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity
     Menu MenuWithActionBar = null;
     SearchView searchView = null;
     SkosActivity skosactivity = null;
+    ScheduleActivity scheduleactivity = null;
 
     public void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -38,14 +39,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showSearchButton(Boolean val){
-        if (val)
-            MenuWithActionBar.findItem(R.id.action_search).setVisible(true);
-        else
-            MenuWithActionBar.findItem(R.id.action_search).setVisible(false);
+        MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
+    }
+
+    public void showScheduleButtons(Boolean val){
+        MenuWithActionBar.findItem(R.id.action_previous_week).setVisible(val);
+        MenuWithActionBar.findItem(R.id.action_next_week).setVisible(val);
     }
 
     private void setupSearchView(){
         searchView.setIconifiedByDefault(true);
+        searchView.setMaxWidth(Integer.MAX_VALUE);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
@@ -176,6 +180,12 @@ public class MainActivity extends AppCompatActivity
         else if (id == R.id.action_search) {
             setupSearchView();
         }
+        else if (id == R.id.action_previous_week) {
+            scheduleactivity.changeWeek("Poprzedni");
+        }
+        else if (id == R.id.action_next_week) {
+            scheduleactivity.changeWeek("Następny");
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -191,6 +201,7 @@ public class MainActivity extends AppCompatActivity
         MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
         showSearchButton(false);
+        showScheduleButtons(false);
 
         if (id == R.id.nav_about) {
             setTitle("O aplikacji");
@@ -212,6 +223,13 @@ public class MainActivity extends AppCompatActivity
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.DiplomaActivity"));
             tx.commit();
+        } else if (id == R.id.nav_schedule) {
+            setTitle("Podział godzin");
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment scheduleactivity_ = new ScheduleActivity();
+            tx.replace(R.id.frameLayoutMain, scheduleactivity_);
+            tx.commit();
+            scheduleactivity = (ScheduleActivity) scheduleactivity_;
         } else if (id == R.id.nav_syllabus) {
             setTitle("Syllabus");
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();

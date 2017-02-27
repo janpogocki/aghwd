@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.janpogocki.agh.wirtualnydziekanat"
-    android:versionCode="20"
+    android:versionCode="21"
     android:versionName="@string/appVersion">
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -50,7 +50,8 @@
         <activity android:name=".DiplomaActivity" />
         <activity android:name=".PartialMarksExplorer" />
         <activity android:name=".SyllabusActivity" />
-        <activity android:name=".SkosActivity"></activity>
+        <activity android:name=".SkosActivity" />
+        <activity android:name=".ScheduleActivity"></activity>
     </application>
 
 </manifest>

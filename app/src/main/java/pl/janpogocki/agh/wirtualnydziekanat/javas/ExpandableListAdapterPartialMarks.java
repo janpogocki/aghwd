@@ -71,6 +71,8 @@ public class ExpandableListAdapterPartialMarks extends BaseExpandableListAdapter
 
         if (childUwagi.trim().equals(""))
             txtListChildUwagi.setVisibility(View.GONE);
+        else
+            txtListChildUwagi.setVisibility(View.VISIBLE);
 
         return convertView;
     }

@@ -21,6 +21,7 @@ public class Storage {
     public static HashMap<Integer, List<String>> currentSemesterPartialMarksHTML = new HashMap<>();
     public static List<List<String>> summarySemesters = new ArrayList<>();
     public static List<List<String>> groupsAndModules = new ArrayList<>();
+    public static List<List<String>> schedule = new ArrayList<>();
     public static List<List<String>> diploma = new ArrayList<>();
     public static List<List<String>> skosList = new ArrayList<>();
     public static List<String> universityStatus = new ArrayList<>();
