@@ -198,6 +198,7 @@ public class LogIn extends AppCompatActivity {
                     }
 
                     relativeLayout3.setVisibility(View.GONE);
+                    Storage.loggedIn = true;
 
                     // Jump to MainActivity
                     Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
@@ -292,6 +293,7 @@ public class LogIn extends AppCompatActivity {
             }
             else {
                 relativeLayout3.setVisibility(View.GONE);
+                Storage.loggedIn = true;
 
                 // Jump to MainActivity
                 Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);

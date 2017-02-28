@@ -2,6 +2,7 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -71,50 +72,58 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Storage.oneMoreBackPressedButtonMeansExit = false;
-
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-        // Setting up personal data in drawer header
-        TextView textView, textView2;
-        ImageView imageView;
-        View headerNV = navigationView.getHeaderView(0);
-        textView = (TextView) headerNV.findViewById(R.id.textView);
-        textView2 = (TextView) headerNV.findViewById(R.id.textView2);
-        imageView = (ImageView) headerNV.findViewById(R.id.imageView);
-        textView.setText(Storage.nameAndSurname);
-        textView2.setText(Storage.albumNumber);
-        imageView.setImageBitmap(Storage.photoUser);
-
-        // Generate semesters entries
-        MenuItem menuNV = navigationView.getMenu().findItem(R.id.semester);
-        SubMenu subMenuMenuMV = menuNV.getSubMenu();
-        for (int i=0; i<Storage.summarySemesters.size(); i++){
-            subMenuMenuMV.add(R.id.semesterItems, i, i, "Semestr " + Storage.getSemesterNumberById(i)).setIcon(R.drawable.ic_menu_semester);
+        // check if savedInstanceState is not null (then LogIn)
+        if (!Storage.loggedIn && savedInstanceState == null){
+            Intent openLogIn = new Intent(getApplicationContext(), LogIn.class);
+            startActivity(openLogIn);
         }
-        navigationView.getMenu().findItem(R.id.semester).getSubMenu().setGroupCheckable(R.id.semesterItems, true, true);
+        else {
+            Storage.loggedIn = false;
+            Storage.oneMoreBackPressedButtonMeansExit = false;
 
-        // If multidirectionars enable switch dir
-        if (Storage.multiKierunek)
-            navigationView.getMenu().findItem(R.id.nav_relogging).setVisible(true);
+            setContentView(R.layout.activity_main);
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            setSupportActionBar(toolbar);
 
-        // Load newest semester and check it on sidebar
-        setTitle("Semestr " + Storage.getSemesterNumberById(Storage.currentSemester));
-        navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
-        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-        tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
-        tx.commit();
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
+
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
+
+            // Setting up personal data in drawer header
+            TextView textView, textView2;
+            ImageView imageView;
+            View headerNV = navigationView.getHeaderView(0);
+            textView = (TextView) headerNV.findViewById(R.id.textView);
+            textView2 = (TextView) headerNV.findViewById(R.id.textView2);
+            imageView = (ImageView) headerNV.findViewById(R.id.imageView);
+            textView.setText(Storage.nameAndSurname);
+            textView2.setText(Storage.albumNumber);
+            imageView.setImageBitmap(Storage.photoUser);
+
+            // Generate semesters entries
+            MenuItem menuNV = navigationView.getMenu().findItem(R.id.semester);
+            SubMenu subMenuMenuMV = menuNV.getSubMenu();
+            for (int i = 0; i < Storage.summarySemesters.size(); i++) {
+                subMenuMenuMV.add(R.id.semesterItems, i, i, "Semestr " + Storage.getSemesterNumberById(i)).setIcon(R.drawable.ic_menu_semester);
+            }
+            navigationView.getMenu().findItem(R.id.semester).getSubMenu().setGroupCheckable(R.id.semesterItems, true, true);
+
+            // If multidirectionars enable switch dir
+            if (Storage.multiKierunek)
+                navigationView.getMenu().findItem(R.id.nav_relogging).setVisible(true);
+
+            // Load newest semester and check it on sidebar
+            setTitle("Semestr " + Storage.getSemesterNumberById(Storage.currentSemester));
+            navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+            tx.commit();
+        }
     }
 
     @Override
@@ -253,11 +262,11 @@ public class MainActivity extends AppCompatActivity
                 rp.remove();
 
             Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
         } else if (id == R.id.nav_relogging) {
             Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
-            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(i);
         } else if (id >= 0 && id <= 40){
             // Marks
