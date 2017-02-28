@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
-        else if (Storage.openedBrowser) {
+        else if (Storage.openedBrowser != null && Storage.openedBrowser) {
             skosactivity.backButtonPressedWhenBrowserOpened();
             searchView.setQuery("", false);
             searchView.clearFocus();
