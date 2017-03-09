@@ -31,12 +31,10 @@ public class FetchWebsite {
     private Integer responseCode;
 
     private class TrivialTrustManager implements X509TrustManager {
-        public void checkClientTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+        public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         }
 
-        public void checkServerTrusted(X509Certificate[] chain, String authType)
-                throws CertificateException {
+        public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
             // do some checks on the chain here
         }
 

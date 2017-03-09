@@ -28,9 +28,9 @@ public class FetchSyllabus {
         // Check website existence
         if (fw.getResponseCode() / 100 == 2){
             fwParsed = Jsoup.parse(fww);
-            String linkDepartment = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.department-link.table-item-link:contains(" + nazwaWydzialu + ")").get(0).attr("href");
+            Storage.syllabusURLlinkDepartment = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.department-link.table-item-link:contains(" + nazwaWydzialu + ")").get(0).attr("href");
 
-            fw = new FetchWebsite(linkDepartment);
+            fw = new FetchWebsite(Storage.syllabusURLlinkDepartment);
             fww = fw.getWebsiteHTTP(false, false, "");
 
             fwParsed = Jsoup.parse(fww);

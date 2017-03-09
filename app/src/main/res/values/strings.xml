@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="appVersion">1.2.4</string>
+    <string name="app_version">1.2.5</string> <!-- w manifescie tak samo zmienic -->
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>

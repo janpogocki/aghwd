@@ -65,7 +65,7 @@ public class ExpandableListAdapterPartialMarks extends BaseExpandableListAdapter
         TextView txtListChildUwagi = (TextView) convertView.findViewById(R.id.textViewUwagi);
         TextView txtListChildMark = (TextView) convertView.findViewById(R.id.textViewMark);
         txtListChildCategory.setText(childCategory);
-        txtListChildData.setText(childData + " - " + childProwadzacy);
+        txtListChildData.setText(childData + "\n" + childProwadzacy);
         txtListChildUwagi.setText(childUwagi);
         txtListChildMark.setText(childMark);
 

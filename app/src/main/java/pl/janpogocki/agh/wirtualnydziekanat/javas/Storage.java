@@ -12,7 +12,7 @@ import java.util.List;
  */
 
 public class Storage {
-    public static String albumNumber, nameAndSurname, photoUserURL, peselNumber, choosenMultiKierunekValue, syllabusURL = "";
+    public static String albumNumber, nameAndSurname, photoUserURL, peselNumber, choosenMultiKierunekValue, syllabusURL, syllabusURLlinkDepartment = "";
     public static int currentSemester, currentSemesterListPointer, currentSemesterListPointerPartialMarks = 0;
     public static Bitmap photoUser = null;
     public static Boolean oneMoreBackPressedButtonMeansExit, openedBrowser, loggedIn = false;
