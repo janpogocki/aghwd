@@ -9,9 +9,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 
+import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSession;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 /**
  * Created by Jan on 16.07.2016.
@@ -23,6 +29,31 @@ public class FetchWebsite {
     private String URL = "";
     private String locationHTTP = "";
     private Integer responseCode;
+
+    private class TrivialTrustManager implements X509TrustManager {
+        public void checkClientTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+        }
+
+        public void checkServerTrusted(X509Certificate[] chain, String authType)
+                throws CertificateException {
+            // do some checks on the chain here
+        }
+
+        public X509Certificate[] getAcceptedIssuers() {
+            return new X509Certificate[0];
+        }
+    }
+
+    private class TrivialHostVerifier implements HostnameVerifier {
+
+        @Override
+        public boolean verify(String host, SSLSession session) {
+            // check host and return true if verified
+            return true;
+        }
+
+    }
 
     public FetchWebsite(String _url){
         URL = _url;
@@ -43,7 +74,9 @@ public class FetchWebsite {
 
             SSLContext sc;
             sc = SSLContext.getInstance("TLS");
-            sc.init(null, null, new java.security.SecureRandom());
+            sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+            HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
             conn.setSSLSocketFactory(sc.getSocketFactory());
 
             conn.setReadTimeout(10000);
@@ -66,6 +99,7 @@ public class FetchWebsite {
             }
 
             // conn.setDoInput(true);
+            conn.connect();
 
             // Getting cookies form server if _receiveCookies
             if (_receiveCookies && !Cookies.setList) {
@@ -187,7 +221,9 @@ public class FetchWebsite {
 
         SSLContext sc;
         sc = SSLContext.getInstance("TLS");
-        sc.init(null, null, new java.security.SecureRandom());
+        sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
         conn.setSSLSocketFactory(sc.getSocketFactory());
 
         conn.setDoInput(true);
