@@ -9,6 +9,9 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 
@@ -17,6 +20,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 /**
@@ -29,28 +33,59 @@ public class FetchWebsite {
     private String URL = "";
     private String locationHTTP = "";
     private Integer responseCode;
+    private X509TrustManager finalTm = null;
 
     private class TrivialTrustManager implements X509TrustManager {
+        private void doCheck(){
+            if (finalTm == null) {
+                TrustManagerFactory tmf = null;
+                try {
+                    tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                    tmf.init((KeyStore) null);
+                } catch (NoSuchAlgorithmException e) {
+                    e.printStackTrace();
+                } catch (KeyStoreException e) {
+                    e.printStackTrace();
+                }
+
+                // Get hold of the default trust manager
+                X509TrustManager x509Tm = null;
+                for (TrustManager tm : tmf.getTrustManagers()) {
+                    if (tm instanceof X509TrustManager) {
+                        x509Tm = (X509TrustManager) tm;
+                        break;
+                    }
+                }
+
+                finalTm = x509Tm;
+            }
+        }
+
+        @Override
+        public X509Certificate[] getAcceptedIssuers() {
+            doCheck();
+            return finalTm.getAcceptedIssuers();
+        }
+
         public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
+            doCheck();
+            finalTm.checkClientTrusted(chain, authType);
         }
 
         public void checkServerTrusted(X509Certificate[] chain, String authType) throws CertificateException {
-            // do some checks on the chain here
-        }
-
-        public X509Certificate[] getAcceptedIssuers() {
-            return new X509Certificate[0];
+            doCheck();
+            finalTm.checkServerTrusted(chain, authType);
         }
     }
 
     private class TrivialHostVerifier implements HostnameVerifier {
-
         @Override
         public boolean verify(String host, SSLSession session) {
-            // check host and return true if verified
-            return true;
+            if (host.equalsIgnoreCase("dziekanat.agh.edu.pl"))
+                return true;
+            else
+                return false;
         }
-
     }
 
     public FetchWebsite(String _url){
