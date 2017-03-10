@@ -28,17 +28,20 @@ public class FetchSyllabus {
         // Check website existence
         if (fw.getResponseCode() / 100 == 2){
             fwParsed = Jsoup.parse(fww);
-            Storage.syllabusURLlinkDepartment = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.department-link.table-item-link:contains(" + nazwaWydzialu + ")").get(0).attr("href");
+            String linkDepartment = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.department-link.table-item-link:contains(" + nazwaWydzialu + ")").get(0).attr("href");
 
-            fw = new FetchWebsite(Storage.syllabusURLlinkDepartment);
+            fw = new FetchWebsite(linkDepartment);
             fww = fw.getWebsiteHTTP(false, false, "");
 
-            fwParsed = Jsoup.parse(fww);
+            if (fw.getResponseCode() / 100 == 2) {
+                Storage.syllabusURLlinkDepartment = linkDepartment;
+                fwParsed = Jsoup.parse(fww);
 
-            if (level.contains("pierwszego"))
-                Storage.syllabusURL = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.table-item-link:contains(" + kierunek + ")").get(0).attr("href");
-            else
-                Storage.syllabusURL = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.table-item-link:contains(" + kierunek + " - " + specjalizacja + ")").get(0).attr("href");
+                if (level.contains("pierwszego"))
+                    Storage.syllabusURL = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.table-item-link:contains(" + kierunek + ")").get(0).attr("href");
+                else if (specjalizacja.length() > 0)
+                    Storage.syllabusURL = FetchSyllabus.URLdomainSyllabus + fwParsed.select("a.table-item-link:contains(" + kierunek + " - " + specjalizacja + ")").get(0).attr("href");
+            }
         }
     }
 }
