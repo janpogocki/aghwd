@@ -90,7 +90,7 @@ public class SyllabusActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_syllabus, null);
 
-        if (Storage.universityStatus == null || Storage.universityStatus.size() == 0 || Storage.syllabusURL.equals("")){
+        if (Storage.universityStatus == null || Storage.universityStatus.size() == 0 || "".equals(Storage.syllabusURL)){
             // There's no downloaded data. Do that.
             RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
 
