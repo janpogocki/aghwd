@@ -45,7 +45,7 @@ public class FetchWebsite {
     private class TrivialHostVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String host, SSLSession session) {
-            if (host.equalsIgnoreCase("dziekanat.agh.edu.pl"))
+            if (host.equalsIgnoreCase("dziekanat.agh.edu.pl") || host.equalsIgnoreCase("api.janpogocki.pl"))
                 return true;
             else
                 return false;

@@ -35,9 +35,9 @@ public class SyllabusActivity extends Fragment {
         WebView webView = (WebView) root.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
 
-        if (!Storage.syllabusURL.equals("") && !Storage.syllabusURLlinkDepartment.equals(""))
+        if (!"".equals(Storage.syllabusURL) && !"".equals(Storage.syllabusURLlinkDepartment))
             webView.loadUrl(Storage.syllabusURL);
-        else if (Storage.syllabusURL.equals("") && !Storage.syllabusURLlinkDepartment.equals(""))
+        else if ("".equals(Storage.syllabusURL) && !"".equals(Storage.syllabusURLlinkDepartment))
             webView.loadUrl(Storage.syllabusURLlinkDepartment);
         else
             webView.loadUrl(FetchSyllabus.URLdomainSyllabus);
