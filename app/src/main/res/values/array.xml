@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="start_screen_entries">
+        <item>Najnowszy semestr</item>
+        <item>Podsumowanie</item>
+        <item>Podział godzin</item>
+    </string-array>
+
+    <string-array name="start_screen_values">
+        <item>semester</item>
+        <item>summary</item>
+        <item>schedule</item>
+    </string-array>
+</resources>

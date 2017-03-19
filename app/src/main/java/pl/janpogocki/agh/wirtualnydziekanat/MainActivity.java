@@ -2,8 +2,9 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
@@ -18,6 +19,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,6 +35,21 @@ public class MainActivity extends AppCompatActivity
     SearchView searchView = null;
     SkosActivity skosactivity = null;
     ScheduleActivity scheduleactivity = null;
+
+    public void resetMainLayoutVisibility(Boolean value) {
+        FrameLayout frameLayoutMain = (FrameLayout) findViewById(R.id.frameLayoutMain);
+        FrameLayout frameLayoutMainV7 = (FrameLayout) findViewById(R.id.frameLayoutMainV7);
+
+        // true for frameLayoutMain, false for V7
+        if (value){
+            frameLayoutMain.setVisibility(View.VISIBLE);
+            frameLayoutMainV7.setVisibility(View.GONE);
+        }
+        else {
+            frameLayoutMain.setVisibility(View.GONE);
+            frameLayoutMainV7.setVisibility(View.VISIBLE);
+        }
+    }
 
     public void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -117,12 +134,34 @@ public class MainActivity extends AppCompatActivity
             if (Storage.multiKierunek)
                 navigationView.getMenu().findItem(R.id.nav_relogging).setVisible(true);
 
-            // Load newest semester and check it on sidebar
-            setTitle("Semestr " + Storage.getSemesterNumberById(Storage.currentSemester));
-            navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
-            tx.commit();
+            // Load startup preferences and show user's startup screen
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            Storage.sharedPreferencesStartScreen = sharedPreferences.getString("default_start_screen", "semester");
+
+            if ("summary".equals(Storage.sharedPreferencesStartScreen)){
+                navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
+                setTitle("Podsumowanie");
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
+                tx.commit();
+            }
+            else if ("schedule".equals(Storage.sharedPreferencesStartScreen)){
+                navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
+                setTitle("Podział godzin");
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                Fragment scheduleactivity_ = new ScheduleActivity();
+                tx.replace(R.id.frameLayoutMain, scheduleactivity_);
+                tx.commit();
+                scheduleactivity = (ScheduleActivity) scheduleactivity_;
+            }
+            else {
+                // Load newest semester and check it on sidebar
+                setTitle("Semestr " + Storage.getSemesterNumberById(Storage.currentSemester));
+                navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
+                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+                tx.commit();
+            }
         }
     }
 
@@ -159,9 +198,11 @@ public class MainActivity extends AppCompatActivity
 
         searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         setupSearchView();
-        return super.onCreateOptionsMenu(menu);
 
-        //return true;
+        if ("semester".equals(Storage.sharedPreferencesStartScreen))
+            MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
+
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -211,11 +252,19 @@ public class MainActivity extends AppCompatActivity
 
         showSearchButton(false);
         showScheduleButtons(false);
+        resetMainLayoutVisibility(true);
 
         if (id == R.id.nav_about) {
             setTitle("O aplikacji");
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.AboutActivity"));
+            tx.commit();
+        } else if (id == R.id.nav_settings) {
+            setTitle("Ustawienia");
+            resetMainLayoutVisibility(false);
+            android.app.FragmentTransaction tx = getFragmentManager().beginTransaction();
+            android.app.Fragment settingsactivity_ = new SettingsActivity();
+            tx.replace(R.id.frameLayoutMainV7, settingsactivity_);
             tx.commit();
         } else if (id == R.id.nav_summary) {
             setTitle("Podsumowanie");

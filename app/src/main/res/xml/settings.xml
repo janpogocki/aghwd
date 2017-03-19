@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent">
+    <PreferenceCategory
+        android:title="Uruchamianie aplikacji"
+        android:key="pref_key_startup_settings">
+
+        <ListPreference
+            android:key="default_start_screen"
+            android:title="@string/settings_start_screen_title"
+            android:defaultValue="@string/default_start_screen_value"
+            android:negativeButtonText="@string/action_cancel"
+            android:summary="%s"
+            android:entries="@array/start_screen_entries"
+            android:entryValues="@array/start_screen_values" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

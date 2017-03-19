@@ -1,17 +1,22 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -27,7 +32,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class ScheduleActivity extends Fragment {
 
-    FetchSchedule fs;
+    private static FetchSchedule fs;
     ViewGroup root;
     String postValue = "";
     String viewstateName = "__VIEWSTATE";
@@ -115,6 +120,60 @@ public class ScheduleActivity extends Fragment {
         }
     }
 
+    private void showEaiibSchedule(ViewGroup root, int status){
+        final RelativeLayout rlWebViewLoader = (RelativeLayout) root.findViewById(R.id.rlWebViewLoader);
+        ProgressBar progressBar = (ProgressBar) root.findViewById(R.id.progressBarWebView);
+        progressBar.setScaleY(2f);
+
+        WebView webView = (WebView) root.findViewById(R.id.webView);
+        webView.getSettings().setJavaScriptEnabled(true);
+
+        if (status-2000 > 0)
+            webView.loadUrl(FetchSchedule.URLdomainEaiibSchedule + "/view/timetable/" + (status-2000));
+        else if (status-2000 == 0)
+            webView.loadUrl(FetchSchedule.URLdomainEaiibSchedule);
+
+        webView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if(event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    WebView webView = (WebView) v;
+
+                    switch(keyCode)
+                    {
+                        case KeyEvent.KEYCODE_BACK:
+                            if(webView.canGoBack())
+                            {
+                                webView.goBack();
+                                return true;
+                            }
+                            break;
+                    }
+                }
+
+                return false;
+            }
+        });
+
+        webView.setWebViewClient(new WebViewClient(){
+            @Override
+            public void onPageStarted(WebView view, String url, Bitmap favicon) {
+                rlWebViewLoader.setVisibility(View.VISIBLE);
+
+                // check if not syllabuskrk.agh.edu.pl domain
+                if (!url.contains(FetchSchedule.URLdomainEaiibSchedule))
+                    view.stopLoading();
+            }
+
+            @Override
+            public void onPageFinished (WebView webView, String url){
+                webView.loadUrl("javascript:(function() {document.querySelector(\"button.fc-agendaDay-button\").click();document.querySelector(\"div.btn-group\").style.cssText='display:none';})()");
+                rlWebViewLoader.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private void showSchedule(final ViewGroup root){
         ((MainActivity) getActivity()).showScheduleButtons(true);
         ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
@@ -186,7 +245,7 @@ public class ScheduleActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        root = (ViewGroup) inflater.inflate(R.layout.activity_groups, null);
+        root = (ViewGroup) inflater.inflate(R.layout.activity_schedule, null);
 
         refreshSchedule(root);
 
@@ -214,6 +273,7 @@ public class ScheduleActivity extends Fragment {
         @Override
         protected void onPostExecute(ViewGroup result){
             final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+            final RelativeLayout rlDataWebView = (RelativeLayout) root.findViewById(R.id.rlDataWebView);
             final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
             final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
             final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
@@ -239,6 +299,11 @@ public class ScheduleActivity extends Fragment {
             else if (fs.status == -1){
                 ((MainActivity) getActivity()).showScheduleButtons(true);
                 rlNoData.setVisibility(View.VISIBLE);
+            }
+            else if (fs.status >= 2000 && fs.status < 3000){
+                // EAIIB schedule
+                rlDataWebView.setVisibility(View.VISIBLE);
+                showEaiibSchedule(root, fs.status);
             }
             else {
                 // Have it, show it

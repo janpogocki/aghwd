@@ -1,11 +1,12 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="app_version">1.2.10</string> <!-- w manifescie tak samo zmienic -->
+    <string name="app_version">1.2.11</string> <!-- w manifescie tak samo zmienic -->
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
 
     <string name="action_settings">Ustawienia</string>
+    <string name="action_cancel">Anuluj</string>
     <string name="app_full_name">AGH Wirtualny Dziekanat</string>
     <string name="app_full_name_without_agh">Wirtualny Dziekanat</string>
     <string name="log_in">Zaloguj się</string>
@@ -18,5 +19,8 @@
 
     <string name="next_week">Następny tydzień</string>
     <string name="previous_week">Poprzedni tydzień</string>
+
+    <string name="default_start_screen_value">semester</string>
+    <string name="settings_start_screen_title">Domyślny ekran po zalogowaniu</string>
 
 </resources>
