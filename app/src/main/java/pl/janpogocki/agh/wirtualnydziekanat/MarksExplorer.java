@@ -41,6 +41,7 @@ public class MarksExplorer extends Fragment {
     FetchMarks fm;
 
     RelativeLayout rlLoader, rlData;
+    TextView textView3, textView3bis;
 
     Boolean goBack = false;
     String viewstateName = "__VIEWSTATE";
@@ -88,6 +89,39 @@ public class MarksExplorer extends Fragment {
         afi.start();
     }
 
+    private void animateFadeIn(TextView tv, View view, int offset){
+        Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadein);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+    }
+
+    private void animateFadeOut(final TextView tv, View view, int offset){
+        Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadeout);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+
+        afi.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                tv.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
     public void exploreMarks(View view) {
         prepareListData();
 
@@ -116,6 +150,13 @@ public class MarksExplorer extends Fragment {
         progressBarECTS = (ProgressBar) view.findViewById(R.id.progressBarECTS);
         relativeLayoutProgressBars = (RelativeLayout) view.findViewById(R.id.relativeLayoutProgressBars);
         relativeLayoutExpListView = (RelativeLayout) view.findViewById(R.id.relativeLayoutExpListView);
+
+        textViewAvgSemester.setText("0.0");
+        textViewAvgYear.setText("0.0");
+        textViewECTS.setText("0");
+        progressBarAvgSemester.setProgress(0);
+        progressBarAvgYear.setProgress(0);
+        progressBarECTS.setProgress(0);
 
         animateFadeIn(relativeLayoutProgressBars, view, 500);
         animateFadeIn(relativeLayoutExpListView, view, 1200);
@@ -148,6 +189,10 @@ public class MarksExplorer extends Fragment {
         Storage.currentSemesterListPointer = Storage.summarySemesters.size()-1;
         AsyncTaskRunner runner = new AsyncTaskRunner();
         runner.execute(root);
+
+        // wait for change loading subtitle
+        animateFadeOut(textView3, root, 3000);
+        animateFadeIn(textView3bis, root, 3250);
     }
 
     private void goThroughSemester() {
@@ -205,11 +250,17 @@ public class MarksExplorer extends Fragment {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_marks_explorer, null);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+        textView3 = (TextView) root.findViewById(R.id.textView3);
+        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
 
         // do in background
         rlLoader.setVisibility(View.VISIBLE);
         AsyncTaskRunner runner = new AsyncTaskRunner();
         runner.execute(root);
+
+        // wait for change loading subtitle
+        animateFadeOut(textView3, root, 3000);
+        animateFadeIn(textView3bis, root, 3250);
 
         return root;
     }
@@ -269,7 +320,7 @@ public class MarksExplorer extends Fragment {
             if (fm == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
-                Snackbar.make(root.findViewById(R.id.relativeLayoutMain), "Problem z połączeniem sieciowym", Snackbar.LENGTH_LONG)
+                Snackbar.make(root.findViewById(R.id.relativeLayoutMain), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {

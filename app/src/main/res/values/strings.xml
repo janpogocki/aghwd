@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="app_version">1.2.11</string> <!-- w manifescie tak samo zmienic -->
+    <string name="app_version">1.3.0</string> <!-- w manifescie tak samo zmienic -->
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
@@ -10,8 +10,20 @@
     <string name="app_full_name">AGH Wirtualny Dziekanat</string>
     <string name="app_full_name_without_agh">Wirtualny Dziekanat</string>
     <string name="log_in">Zaloguj się</string>
+    <string name="log_in_fill_all_inputs">Wprowadź dane logowania</string>
+    <string name="log_in_fail_server_down">Brak połączenia z serwerem</string>
+    <string name="log_in_fail_wrong_data">Logowanie nie powiodło się - zły numer albumu lub hasło</string>
+    <string name="log_in_fail_incomplete_index_title">Ups…</string>
+    <string name="log_in_fail_incomplete_index_content">Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.</string>
+    <string name="log_in_multikierunek">Wybierz kierunek</string>
     <string name="log_in_remember">Zapamiętaj mnie</string>
-    <string name="title_activity_settings">Settings</string>
+    <string name="log_in_loading">Trwa ładowanie…</string>
+    <string name="loading_longer">To może potrwać trochę dłużej…</string>
+    <string name="click_to_reconnect">Stuknij, aby spróbować ponownie</string>
+    <string name="no_data_to_show">Brak danych do wyświetlenia</string>
+    <string name="no_data_skos">Brak wyników</string>
+
+    <string name="double_click_to_exit">Stuknij ponownie, aby zakończyć</string>
 
     <string name="menu_marks">Oceny końcowe</string>
     <string name="menu_partial_marks">Oceny cząstkowe</string>
@@ -20,7 +32,8 @@
     <string name="next_week">Następny tydzień</string>
     <string name="previous_week">Poprzedni tydzień</string>
 
+    <string name="skos_search">Szukaj nazwiska…</string>
+
     <string name="default_start_screen_value">semester</string>
     <string name="settings_start_screen_title">Domyślny ekran po zalogowaniu</string>
-
 </resources>

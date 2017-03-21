@@ -58,6 +58,7 @@ public class FetchWebsite {
 
     public String getWebsite(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
         String ret = "";
+        Storage.timeOfLastConnection = System.currentTimeMillis();
 
         // Send data
         try

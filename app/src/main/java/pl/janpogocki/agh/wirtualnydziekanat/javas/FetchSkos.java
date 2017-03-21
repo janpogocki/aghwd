@@ -21,7 +21,6 @@ public class FetchSkos {
     public FetchSkos(Context context) {
         FetchWebsite fw;
         String fww;
-        String [] alfabet = {"A", "B", "C", "Ć", "D", "E", "F", "G", "H", "I", "J", "K", "L", "Ł", "M", "N", "O", "P", "Q", "R", "S", "Ś", "T", "U", "V", "W", "Z", "Ż"};
         String filename = "skos.txt";
 
         List<List<String>> list = new ArrayList<>();

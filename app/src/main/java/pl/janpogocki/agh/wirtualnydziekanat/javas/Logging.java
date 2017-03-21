@@ -1,5 +1,7 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.graphics.BitmapFactory;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -7,6 +9,8 @@ import org.jsoup.select.Elements;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import pl.janpogocki.agh.wirtualnydziekanat.R;
 
 /**
  * Created by Jan on 15.07.2016.
@@ -56,8 +60,6 @@ public class Logging {
             getUserInfos();
         }
         else if (fw.getLocationHTTP().equals("/KierunkiStudiow.aspx")) {
-            Storage.multiKierunekClear();
-
             fw = new FetchWebsite(URLdomain + fw.getLocationHTTP());
             fww = fw.getWebsite(true, true, "");
 
@@ -100,9 +102,13 @@ public class Logging {
         Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").attr("src");
         Storage.peselNumber = fwParsed.select(".tabDwuCzesciowaPLeft").get(4).ownText();
 
-        // Jump to profile photo
-        fw = new FetchWebsite(Storage.photoUserURL);
-        Storage.photoUser = fw.getBitmap(true, true);
+        // Jump to profile photo if exists
+        if (!Storage.photoUserURL.equals(URLdomain + "/")) {
+            fw = new FetchWebsite(Storage.photoUserURL);
+            Storage.photoUser = fw.getBitmap(true, true);
+        }
+        else
+            Storage.photoUser = BitmapFactory.decodeResource(Storage.resource, R.drawable.user_no_image);
 
         // Count semesters at PrzebiegStudiow.aspx
         fw = new FetchWebsite(URLdomain + "/PrzebiegStudiow.aspx");

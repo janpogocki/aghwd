@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
@@ -19,6 +21,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import java.io.IOException;
+import java.util.Random;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Logging;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
@@ -30,7 +33,7 @@ public class LogIn extends AppCompatActivity {
     EditText editText, editText2;
     Button button;
     Switch switch1;
-    TextView textView12;
+    TextView textView3, textView3bis, textView12;
     Logging logging = null;
 
     private void hideKeyboard(View view) {
@@ -38,18 +41,66 @@ public class LogIn extends AppCompatActivity {
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
+    private void animateFadeIn(TextView tv, int offset){
+        Animation afi = AnimationUtils.loadAnimation(this, R.anim.fadein);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+    }
+
+    private void animateFadeOut(final TextView tv, int offset){
+        Animation afi = AnimationUtils.loadAnimation(this, R.anim.fadeout);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+
+        afi.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                tv.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+    }
+
+    private String getRandomTip(){
+        String [] arrayOfTips = getResources().getStringArray(R.array.log_in_random_tip);
+        Random random = new Random(System.currentTimeMillis());
+        int randValue = random.nextInt(arrayOfTips.length);
+
+        return arrayOfTips[randValue];
+    }
+
     private void doLogging(String _login, String _password, String _isSave){
+        textView3.setText(R.string.log_in_loading);
+
         // replace layouts
         relativeLayout2.setVisibility(View.GONE);
         relativeLayout3.setVisibility(View.VISIBLE);
 
         AsyncTaskRunner runner = new AsyncTaskRunner();
         runner.execute(_login, _password, _isSave);
+
+        // show tips
+        animateFadeOut(textView3, 800);
+        textView3bis.setText(getRandomTip());
+        animateFadeIn(textView3bis, 1100);
     }
 
     private void logInButtonPressed(View v){
         if (editText.getText().toString().equals("") || editText2.getText().toString().equals("")){
-            Snackbar.make(findViewById(R.id.relativeLayout), "Wprowadź dane logowania", Snackbar.LENGTH_LONG)
+            Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fill_all_inputs, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
         else {
@@ -77,6 +128,8 @@ public class LogIn extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_log_in);
 
+        Storage.resource = getResources();
+
         relativeLayout2 = (RelativeLayout) findViewById(R.id.relativeLayout2);
         relativeLayout3 = (RelativeLayout) findViewById(R.id.relativeLayout3);
         relativeLayout4 = (RelativeLayout) findViewById(R.id.relativeLayout4);
@@ -84,6 +137,8 @@ public class LogIn extends AppCompatActivity {
         editText2 = (EditText) findViewById(R.id.editText2);
         button = (Button) findViewById(R.id.button);
         switch1 = (Switch) findViewById(R.id.switch1);
+        textView3 = (TextView) findViewById(R.id.textView3);
+        textView3bis = (TextView) findViewById(R.id.textView3bis);
         textView12 = (TextView) findViewById(R.id.textView12);
         RememberPassword rp = new RememberPassword(this);
 
@@ -172,8 +227,8 @@ public class LogIn extends AppCompatActivity {
 
                     // build dialog window
                     final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
-                    builder.setTitle("Ups...")
-                            .setMessage("Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.")
+                    builder.setTitle(R.string.log_in_fail_incomplete_index_title)
+                            .setMessage(R.string.log_in_fail_incomplete_index_content)
                             .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int id) {}
@@ -185,7 +240,7 @@ public class LogIn extends AppCompatActivity {
                     relativeLayout2.setVisibility(View.VISIBLE);
                     relativeLayout3.setVisibility(View.GONE);
                     editText2.setText("");
-                    Snackbar.make(findViewById(R.id.relativeLayout0), "Logowanie nie powiodło się - zły numer albumu lub hasło", Snackbar.LENGTH_LONG)
+                    Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_wrong_data, Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 } else if (logging.status == 0) {
                     // is ok, log in
@@ -197,7 +252,7 @@ public class LogIn extends AppCompatActivity {
                         }
                     }
 
-                    relativeLayout3.setVisibility(View.GONE);
+                    //relativeLayout3.setVisibility(View.GONE);
                     Storage.loggedIn = true;
 
                     // Jump to MainActivity
@@ -222,7 +277,7 @@ public class LogIn extends AppCompatActivity {
 
                     final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
                     Storage.choosenMultiKierunekValue = Storage.multiKierunekValues.get(0);
-                    builder.setTitle("Wybierz kierunek")
+                    builder.setTitle(R.string.log_in_multikierunek)
                             .setSingleChoiceItems(multiKierunekLabelNamesCharSequence, 0,
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -248,7 +303,7 @@ public class LogIn extends AppCompatActivity {
             } catch(NullPointerException e){
                 e.printStackTrace();
                 relativeLayout3.setVisibility(View.GONE);
-                Snackbar.make(findViewById(R.id.relativeLayout), "Błąd połączenia z serwerem", Snackbar.LENGTH_LONG)
+                Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 if (rp.isRemembered())
@@ -282,8 +337,8 @@ public class LogIn extends AppCompatActivity {
 
                 // build dialog window
                 final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
-                builder.setTitle("Ups...")
-                        .setMessage("Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.")
+                builder.setTitle(R.string.log_in_fail_incomplete_index_title)
+                        .setMessage(R.string.log_in_fail_incomplete_index_content)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int id) {}
@@ -292,7 +347,7 @@ public class LogIn extends AppCompatActivity {
                 builder.create().show();
             }
             else {
-                relativeLayout3.setVisibility(View.GONE);
+                //relativeLayout3.setVisibility(View.GONE);
                 Storage.loggedIn = true;
 
                 // Jump to MainActivity

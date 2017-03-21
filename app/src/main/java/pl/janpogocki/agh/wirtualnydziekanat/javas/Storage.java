@@ -1,5 +1,6 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
@@ -16,6 +17,8 @@ public class Storage {
             choosenMultiKierunekValue = "", syllabusURL = "", syllabusURLlinkDepartment = "",
             sharedPreferencesStartScreen = "";
     public static int currentSemester = 0, currentSemesterListPointer = 0, currentSemesterListPointerPartialMarks = 0;
+    public static long timeOfLastConnection = 0;
+    public static Resources resource = null;
     public static Bitmap photoUser = null;
     public static Boolean oneMoreBackPressedButtonMeansExit = false, openedBrowser = false, loggedIn = false;
     public static Boolean multiKierunek = false;
@@ -32,12 +35,5 @@ public class Storage {
 
     public static String getSemesterNumberById(int id){
         return Storage.summarySemesters.get(id).get(2);
-    }
-
-    public static void multiKierunekClear(){
-        multiKierunek = false;
-        multiKierunekValues = new ArrayList<>();
-        multiKierunekLabelNames = new ArrayList<>();
-        choosenMultiKierunekValue = "";
     }
 }

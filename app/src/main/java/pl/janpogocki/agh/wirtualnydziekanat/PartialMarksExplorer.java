@@ -13,6 +13,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -38,6 +39,7 @@ public class PartialMarksExplorer extends Fragment {
     FetchPartialMarks fpm = null;
 
     RelativeLayout rlLoader, rlData;
+    TextView textView3, textView3bis;
 
     Boolean goBack = false;
     String viewstateName = "__VIEWSTATE";
@@ -62,6 +64,39 @@ public class PartialMarksExplorer extends Fragment {
         afi.setDuration(500);
         afi.setStartOffset(offset);
         afi.start();
+    }
+
+    private void animateFadeIn(TextView tv, View view, int offset){
+        Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadein);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+    }
+
+    private void animateFadeOut(final TextView tv, View view, int offset){
+        Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadeout);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+
+        afi.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                tv.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     public void exploreMarks(View view) {
@@ -262,11 +297,17 @@ public class PartialMarksExplorer extends Fragment {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_partial_marks_explorer, null);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+        textView3 = (TextView) root.findViewById(R.id.textView3);
+        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
 
         // do in background
         rlLoader.setVisibility(View.VISIBLE);
         PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
         runner.execute(root);
+
+        // wait for change loading subtitle
+        animateFadeOut(textView3, root, 3000);
+        animateFadeIn(textView3bis, root, 3250);
 
         return root;
     }
@@ -327,7 +368,7 @@ public class PartialMarksExplorer extends Fragment {
             if (fpm == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
-                Snackbar.make(root.findViewById(R.id.relativeLayoutMain), "Problem z połączeniem sieciowym", Snackbar.LENGTH_LONG)
+                Snackbar.make(root.findViewById(R.id.relativeLayoutMain), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {

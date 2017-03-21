@@ -24,6 +24,17 @@
             android:id="@+id/progressBar3"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="@string/log_in_loading"
+            android:id="@+id/textView3"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_below="@+id/progressBar3"
+            android:layout_centerHorizontal="true" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -60,7 +71,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Kliknij, by spróbować ponownie"
+            android:text="@string/click_to_reconnect"
             android:id="@+id/textView16"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/imageView3"
@@ -86,7 +97,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Brak danych do wyświetlenia"
+            android:text="@string/no_data_to_show"
             android:id="@+id/textView17"
             android:layout_marginTop="20dp"
             android:layout_below="@+id/imageView4"

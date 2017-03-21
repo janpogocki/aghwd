@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string-array name="log_in_random_tip">
+        <item>Dzięki za polecanie AGH WD\nswoim znajomym! :)</item>
+        <item>Dzięki za bardzo dobrą ocenę\naplikacji w Google Play! :)</item>
+        <item>Siemanko, jak tam dzisiaj? :)</item>
+        <item>Cześć! :)</item>
+        <item>Indeks jest już prawie gotowy… ;)</item>
+        <item>Ciekawe, jak dzisiaj pracują serwery?</item>
+        <item>Egzamin czy kolokwium? :(</item>
+        <item>Fajnie, że znowu wróciłeś! :)</item>
+        <item>Miłego dnia! ;)</item>
+        <item>Miło Cię znowu widzieć :)</item>
+        <item>Korzystaj z apki odpowiedzialnie ;)</item>
+        <item>Zgaduję: chcesz sprawdzić\npodział godzin?</item>
+        <item>Ależ się to kółko kręci…</item>
+        <item>Co tam na miasteczku? ;)</item>
+        <item>Pamiętaj: 8 godzin snu to minimum :)</item>
+        <item>Już dobrze, nie wzdychaj tak! ;D</item>
+        <item>Ile razy dzisiaj przeklinałeś?\nNiepotrzebnie! :)</item>
+    </string-array>
+
     <string-array name="start_screen_entries">
         <item>Najnowszy semestr</item>
         <item>Podsumowanie</item>

@@ -9,10 +9,13 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchSyllabus;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchUniversityStatus;
@@ -21,10 +24,44 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 public class SyllabusActivity extends Fragment {
 
     FetchUniversityStatus fus;
+    TextView textView3, textView3bis;
 
     public static Fragment newInstance(Context context) {
         AboutActivity f = new AboutActivity();
         return f;
+    }
+
+    private void animateFadeIn(TextView tv, View view, int offset){
+        Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadein);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+    }
+
+    private void animateFadeOut(final TextView tv, View view, int offset){
+        Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadeout);
+        tv.setAnimation(afi);
+        afi.setDuration(250);
+        afi.setStartOffset(offset);
+        afi.start();
+
+        afi.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                tv.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
     }
 
     private void refreshSyllabusWebView(ViewGroup root){
@@ -89,6 +126,8 @@ public class SyllabusActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_syllabus, null);
+        textView3 = (TextView) root.findViewById(R.id.textView3);
+        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
 
         if (Storage.universityStatus == null || Storage.universityStatus.size() == 0 || "".equals(Storage.syllabusURL)){
             // There's no downloaded data. Do that.
@@ -97,6 +136,10 @@ public class SyllabusActivity extends Fragment {
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
             runner.execute(root);
+
+            // wait for change loading subtitle
+            animateFadeOut(textView3, root, 3000);
+            animateFadeIn(textView3bis, root, 3250);
         }
         else {
             // Have it, show it.

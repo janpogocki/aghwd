@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="pl.janpogocki.agh.wirtualnydziekanat"
-    android:versionCode="30"
-    android:versionName="1.2.11">
+    android:versionCode="32"
+    android:versionName="1.3.0">
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
@@ -28,6 +28,7 @@
 
         <activity
             android:name=".LogIn"
+            android:screenOrientation="portrait"
             android:configChanges="orientation|screenSize"
             android:noHistory="true"
             android:theme="@style/AppTheme.NoActionBarr"

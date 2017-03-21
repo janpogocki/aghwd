@@ -283,7 +283,7 @@ public class ScheduleActivity extends Fragment {
             if (fs == null || isError){
                 Storage.groupsAndModules = null;
                 rlOffline.setVisibility(View.VISIBLE);
-                Snackbar.make(root.findViewById(R.id.activity_groups), "Problem z połączeniem sieciowym", Snackbar.LENGTH_LONG)
+                Snackbar.make(root.findViewById(R.id.activity_groups), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
