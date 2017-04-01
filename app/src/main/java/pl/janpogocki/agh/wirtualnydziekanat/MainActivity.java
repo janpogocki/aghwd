@@ -1,7 +1,5 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -38,6 +36,14 @@ public class MainActivity extends AppCompatActivity
     SkosActivity skosactivity = null;
     ScheduleActivity scheduleactivity = null;
 
+    public void restartApp(){
+        Storage.clearStorage();
+
+        Intent i = getBaseContext().getPackageManager().getLaunchIntentForPackage(getBaseContext().getPackageName());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(i);
+    }
+
     public void resetMainLayoutVisibility(Boolean value) {
         FrameLayout frameLayoutMain = (FrameLayout) findViewById(R.id.frameLayoutMain);
         FrameLayout frameLayoutMainV7 = (FrameLayout) findViewById(R.id.frameLayoutMainV7);
@@ -59,10 +65,16 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void showSearchButton(Boolean val){
+        if (MenuWithActionBar == null)
+            restartApp();
+
         MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
     }
 
     public void showScheduleButtons(Boolean val){
+        if (MenuWithActionBar == null)
+            restartApp();
+
         MenuWithActionBar.findItem(R.id.action_previous_week).setVisible(val);
         MenuWithActionBar.findItem(R.id.action_next_week).setVisible(val);
     }
@@ -94,14 +106,7 @@ public class MainActivity extends AppCompatActivity
         // check if savedInstanceState is not null (then LogIn)
         if ((System.currentTimeMillis()-Storage.timeOfLastConnection) > 60000*20
                 || Storage.summarySemesters == null || Storage.summarySemesters.size() == 0){
-            Intent mStartActivity = new Intent(this, LogIn.class);
-            int mPendingIntentId = 124356;
-            PendingIntent mPendingIntent = PendingIntent.getActivity(this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            super.onBackPressed();
-            finish();
-            System.exit(0);
+            restartApp();
         }
     }
 
@@ -111,14 +116,7 @@ public class MainActivity extends AppCompatActivity
 
         // check if savedInstanceState is not null (then LogIn)
         if (!Storage.loggedIn && savedInstanceState == null){
-            Intent mStartActivity = new Intent(this, LogIn.class);
-            int mPendingIntentId = 124356;
-            PendingIntent mPendingIntent = PendingIntent.getActivity(this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            super.onBackPressed();
-            finish();
-            System.exit(0);
+            restartApp();
         }
         else {
             Storage.loggedIn = false;
@@ -336,23 +334,9 @@ public class MainActivity extends AppCompatActivity
             if (rp.isRemembered())
                 rp.remove();
 
-            Intent mStartActivity = new Intent(this, LogIn.class);
-            int mPendingIntentId = 124356;
-            PendingIntent mPendingIntent = PendingIntent.getActivity(this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            super.onBackPressed();
-            finish();
-            System.exit(0);
+            restartApp();
         } else if (id == R.id.nav_relogging) {
-            Intent mStartActivity = new Intent(this, LogIn.class);
-            int mPendingIntentId = 124356;
-            PendingIntent mPendingIntent = PendingIntent.getActivity(this, mPendingIntentId, mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
-            AlarmManager mgr = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
-            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
-            super.onBackPressed();
-            finish();
-            System.exit(0);
+            restartApp();
         } else if (id >= 0 && id <= 40){
             // Marks
             MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);

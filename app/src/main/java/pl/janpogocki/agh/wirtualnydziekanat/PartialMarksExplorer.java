@@ -139,6 +139,10 @@ public class PartialMarksExplorer extends Fragment {
         Storage.currentSemesterListPointerPartialMarks = Storage.summarySemesters.size()-1;
         PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
         runner.execute(root);
+
+        // wait for change loading subtitle
+        animateFadeOut(textView3, root, 3000);
+        animateFadeIn(textView3bis, root, 3250);
     }
 
     private List<String> fetchAjaxResponse(String _viewstateValue, String _viewstateGeneratorValue, String _eventValidationValue, String _fww) {

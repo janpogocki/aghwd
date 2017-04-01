@@ -254,7 +254,15 @@ public class MarksExplorer extends Fragment {
         textView3bis = (TextView) root.findViewById(R.id.textView3bis);
 
         // do in background
-        rlLoader.setVisibility(View.VISIBLE);
+
+        if ("semester".equals(Storage.sharedPreferencesStartScreen) && Storage.firstRunMarksExplorer) {
+            Storage.firstRunMarksExplorer = false;
+        }
+        else {
+            rlLoader.setVisibility(View.VISIBLE);
+            Storage.firstRunMarksExplorer = false;
+        }
+
         AsyncTaskRunner runner = new AsyncTaskRunner();
         runner.execute(root);
 

@@ -219,7 +219,24 @@ public class LogIn extends AppCompatActivity {
         protected void onPostExecute(Logging result){
             RememberPassword rp = new RememberPassword(LogIn.this);
             try {
-                if (logging.status == -2) {
+                if (logging.status == -3 || logging.status == -4) {
+                    // cannot login because of technical work
+                    relativeLayout3.setVisibility(View.GONE);
+
+                    if (rp.isRemembered())
+                        relativeLayout4.setVisibility(View.VISIBLE);
+                    else
+                        relativeLayout2.setVisibility(View.VISIBLE);
+
+                    if (logging.status == -3) {
+                        Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_technical_works, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                    else {
+                        Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_unknown_error, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                } else if (logging.status == -2) {
                     // agh index is not ready to view
                     relativeLayout2.setVisibility(View.VISIBLE);
                     relativeLayout3.setVisibility(View.GONE);
@@ -252,7 +269,6 @@ public class LogIn extends AppCompatActivity {
                         }
                     }
 
-                    //relativeLayout3.setVisibility(View.GONE);
                     Storage.loggedIn = true;
 
                     // Jump to MainActivity
@@ -347,7 +363,6 @@ public class LogIn extends AppCompatActivity {
                 builder.create().show();
             }
             else {
-                //relativeLayout3.setVisibility(View.GONE);
                 Storage.loggedIn = true;
 
                 // Jump to MainActivity

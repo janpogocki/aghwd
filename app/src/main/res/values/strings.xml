@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="app_version">1.3.0</string> <!-- w manifescie tak samo zmienic -->
+    <string name="app_version">1.3.1</string> <!-- w manifescie tak samo zmienic -->
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
@@ -13,6 +13,8 @@
     <string name="log_in_fill_all_inputs">Wprowadź dane logowania</string>
     <string name="log_in_fail_server_down">Brak połączenia z serwerem</string>
     <string name="log_in_fail_wrong_data">Logowanie nie powiodło się - zły numer albumu lub hasło</string>
+    <string name="log_in_fail_technical_works">Logowanie nie powiodło się - serwer ma problemy techniczne</string>
+    <string name="log_in_fail_unknown_error">Nieznany błąd serwera</string>
     <string name="log_in_fail_incomplete_index_title">Ups…</string>
     <string name="log_in_fail_incomplete_index_content">Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.</string>
     <string name="log_in_multikierunek">Wybierz kierunek</string>

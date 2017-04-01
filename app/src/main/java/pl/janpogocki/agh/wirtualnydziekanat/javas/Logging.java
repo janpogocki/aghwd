@@ -17,7 +17,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.R;
  * Logging to Wirtualna Uczelnia class
  */
 public class Logging {
-    public int status = -1;
+    public int status = -4;
     public static String URLdomain = "https://dziekanat.agh.edu.pl";
     private String viewstateName = "__VIEWSTATE";
     private String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
@@ -27,6 +27,12 @@ public class Logging {
 
     // establish connetion, send POST data and get session cookies
     public Logging(String albumNumber, String password) throws Exception {
+        doLogging(albumNumber, password);
+    }
+
+    private void doLogging(String albumNumber, String password) throws Exception {
+        Storage.clearStorage();
+
         String URLaddress = URLdomain + "/Logowanie2.aspx";
         String albumNumberName = "ctl00$ctl00$ContentPlaceHolder$MiddleContentPlaceHolder$txtIdent";
         String passwordName = "ctl00$ctl00$ContentPlaceHolder$MiddleContentPlaceHolder$txtHaslo";
@@ -84,6 +90,16 @@ public class Logging {
 
             status = 1;
             Storage.multiKierunek = true;
+        }
+        else {
+            fwParsed = Jsoup.parse(fww);
+
+            if (fwParsed.select(".error_label").get(0).ownText().contains("technicznych"))
+                status = -3;
+            else if (fwParsed.select(".error_label").get(0).ownText().contains("Zła nazwa użytkownika lub hasło"))
+                status = -1;
+            else
+                status = -4;
         }
     }
 

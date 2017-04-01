@@ -27,7 +27,7 @@ import javax.net.ssl.X509TrustManager;
 
 public class FetchWebsite {
     private String URL = "";
-    private String locationHTTP = "";
+    private String locationHTTP;
     private Integer responseCode;
 
     private class TrivialTrustManager implements X509TrustManager {
@@ -107,9 +107,7 @@ public class FetchWebsite {
                 Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
             // Getting Location if redirect
-            if (conn.getResponseCode() / 100 == 3)
-                locationHTTP = conn.getHeaderField("Location");
-
+            locationHTTP = conn.getHeaderField("Location");
             responseCode = conn.getResponseCode();
 
             // Get the server response
@@ -177,9 +175,7 @@ public class FetchWebsite {
                 Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
             // Getting Location if redirect
-            if (conn.getResponseCode() / 100 == 3)
-                locationHTTP = conn.getHeaderField("Location");
-
+            locationHTTP = conn.getHeaderField("Location");
             responseCode = conn.getResponseCode();
 
             // Get the server response
@@ -206,7 +202,10 @@ public class FetchWebsite {
     }
 
     public String getLocationHTTP(){
-        return locationHTTP;
+        if (locationHTTP == null)
+            return "";
+        else
+            return locationHTTP;
     }
 
     public Integer getResponseCode(){
