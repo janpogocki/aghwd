@@ -144,7 +144,9 @@ public class MainActivity extends AppCompatActivity
             imageView = (ImageView) headerNV.findViewById(R.id.imageView);
             textView.setText(Storage.nameAndSurname);
             textView2.setText(Storage.albumNumber);
-            imageView.setImageBitmap(Storage.photoUser);
+
+            if (Storage.photoUser != null)
+                imageView.setImageBitmap(Storage.photoUser);
 
             // Generate semesters entries
             MenuItem menuNV = navigationView.getMenu().findItem(R.id.semester);

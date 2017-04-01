@@ -34,6 +34,11 @@ public class FetchSchedule {
         viewstateGeneratorValue = fwParsed.getElementById(viewstateGeneratorName).attr("value");
         eventValidationValue = fwParsed.getElementById(eventValidationName).attr("value");
 
+        // Check dates
+        Elements datesRange = fwParsed.select("#ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_lblData");
+        if (datesRange.size() == 1)
+            Storage.scheduleDates = datesRange.get(0).ownText().replace("od: ", "").replace(" do: ", " - ");
+
         Elements tableRows = fwParsed.select(".gridDane");
 
         List<List<String>> list = new ArrayList<>();

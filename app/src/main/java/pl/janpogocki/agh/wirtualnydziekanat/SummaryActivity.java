@@ -79,7 +79,9 @@ public class SummaryActivity extends Fragment {
         textViewPeselNumber = (TextView) root.findViewById(R.id.textViewPeselNumber);
         listView = (ListView) root.findViewById(R.id.listView);
 
-        imageViewPhotoUser.setImageBitmap(Storage.photoUser);
+        if (Storage.photoUser != null)
+            imageViewPhotoUser.setImageBitmap(Storage.photoUser);
+
         textViewNameAndSurname.setText(Storage.nameAndSurname);
         textViewAlbumNumber.setText(Storage.albumNumber);
         textViewPeselNumber.setText(Storage.peselNumber);

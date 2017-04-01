@@ -81,7 +81,7 @@ public class FetchWebsite {
             conn.setConnectTimeout(15000);
             conn.setDoOutput(true);
             conn.setInstanceFollowRedirects(false);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
             // Sending cookies if _sendCookies is true and List with cookies is set
             if (Cookies.setList) {
@@ -152,7 +152,7 @@ public class FetchWebsite {
             conn.setRequestMethod("GET");
 
             conn.setInstanceFollowRedirects(false);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36");
+            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
             // Sending cookies if _sendCookies is true and List with cookies is set
             if (Cookies.setList) {
@@ -224,6 +224,7 @@ public class FetchWebsite {
         conn.setSSLSocketFactory(sc.getSocketFactory());
 
         conn.setDoInput(true);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
         // Sending cookies if _sendCookies
         if (_sendCookies && !(Cookies.getCookies().equals("")))

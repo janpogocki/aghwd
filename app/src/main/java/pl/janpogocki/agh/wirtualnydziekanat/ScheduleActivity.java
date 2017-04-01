@@ -49,7 +49,9 @@ public class ScheduleActivity extends Fragment {
         RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
+        RelativeLayout rlDates = (RelativeLayout) root.findViewById(R.id.rlDates);
 
+        rlDates.setVisibility(View.GONE);
         rlLoader.setVisibility(View.VISIBLE);
         rlData.setVisibility(View.GONE);
         rlNoData.setVisibility(View.GONE);
@@ -175,6 +177,9 @@ public class ScheduleActivity extends Fragment {
     }
 
     private void showSchedule(final ViewGroup root){
+        TextView textDates = (TextView) root.findViewById(R.id.textDates);
+        textDates.setText(Storage.scheduleDates);
+
         ((MainActivity) getActivity()).showScheduleButtons(true);
         ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
 
@@ -277,10 +282,12 @@ public class ScheduleActivity extends Fragment {
             final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
             final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
             final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
+            final RelativeLayout rlDates = (RelativeLayout) root.findViewById(R.id.rlDates);
 
             rlLoader.setVisibility(View.GONE);
 
             if (fs == null || isError){
+                rlDates.setVisibility(View.GONE);
                 Storage.groupsAndModules = null;
                 rlOffline.setVisibility(View.VISIBLE);
                 Snackbar.make(root.findViewById(R.id.activity_groups), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
@@ -298,15 +305,21 @@ public class ScheduleActivity extends Fragment {
             }
             else if (fs.status == -1){
                 ((MainActivity) getActivity()).showScheduleButtons(true);
+                TextView textDates = (TextView) root.findViewById(R.id.textDates);
+                textDates.setText(Storage.scheduleDates);
+
+                rlDates.setVisibility(View.VISIBLE);
                 rlNoData.setVisibility(View.VISIBLE);
             }
             else if (fs.status >= 2000 && fs.status < 3000){
                 // EAIIB schedule
+                rlDates.setVisibility(View.GONE);
                 rlDataWebView.setVisibility(View.VISIBLE);
                 showEaiibSchedule(root, fs.status);
             }
             else {
                 // Have it, show it
+                rlDates.setVisibility(View.VISIBLE);
                 rlData.setVisibility(View.VISIBLE);
                 showSchedule(root);
             }

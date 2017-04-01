@@ -21,6 +21,7 @@ public class Storage {
     public static String syllabusURL = "";
     public static String syllabusURLlinkDepartment = "";
     public static String sharedPreferencesStartScreen = "";
+    public static String scheduleDates = "";
     public static int currentSemester = 0;
     public static int currentSemesterListPointer = 0;
     public static int currentSemesterListPointerPartialMarks = 0;
@@ -56,6 +57,7 @@ public class Storage {
         syllabusURL = "";
         syllabusURLlinkDepartment = "";
         sharedPreferencesStartScreen = "";
+        scheduleDates = "";
         currentSemester = 0;
         currentSemesterListPointer = 0;
         currentSemesterListPointerPartialMarks = 0;

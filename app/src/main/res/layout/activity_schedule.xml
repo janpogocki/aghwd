@@ -12,9 +12,35 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/rlDates"
+        android:background="@color/colorLightGray2"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textDates"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:gravity="center"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:text="(brak daty)" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_alignBottom="@+id/textDates"
+            android:background="@color/colorLightGray3" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/rlLoader"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_below="@id/rlDates">
 
         <ProgressBar
             style="?android:attr/progressBarStyleLarge"
@@ -38,16 +64,16 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/rlData"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:id="@+id/rlData">
+        android:layout_below="@id/rlDates">
 
         <ListView
             android:id="@+id/listViewGroups"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
     </RelativeLayout>
@@ -56,7 +82,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:id="@+id/rlOffline">
+        android:id="@+id/rlOffline"
+        android:layout_below="@id/rlDates">
 
         <ImageView
             android:layout_width="150dp"
@@ -82,7 +109,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:id="@+id/rlNoData">
+        android:id="@+id/rlNoData"
+        android:layout_below="@id/rlDates">
 
         <ImageView
             android:layout_width="150dp"
@@ -112,7 +140,8 @@
         android:paddingBottom="0dp"
         android:paddingLeft="0dp"
         android:paddingRight="0dp"
-        android:paddingTop="0dp">
+        android:paddingTop="0dp"
+        android:layout_below="@id/rlDates">
 
         <RelativeLayout
             android:layout_width="match_parent"

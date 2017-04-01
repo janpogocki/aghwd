@@ -115,16 +115,14 @@ public class Logging {
         fwParsed = Jsoup.parse(fww);
         Storage.nameAndSurname = fwParsed.select("#ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").get(0).ownText().split(" – nr albumu: ")[0];
         Storage.albumNumber = tempAlbumNumber;
-        Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").attr("src");
         Storage.peselNumber = fwParsed.select(".tabDwuCzesciowaPLeft").get(4).ownText();
 
         // Jump to profile photo if exists
-        if (!Storage.photoUserURL.equals(URLdomain + "/")) {
+        if (fwParsed.getElementsByTag("img").size() > 0) {
+            Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").get(0).attr("src");
             fw = new FetchWebsite(Storage.photoUserURL);
             Storage.photoUser = fw.getBitmap(true, true);
         }
-        else
-            Storage.photoUser = BitmapFactory.decodeResource(Storage.resource, R.drawable.user_no_image);
 
         // Count semesters at PrzebiegStudiow.aspx
         fw = new FetchWebsite(URLdomain + "/PrzebiegStudiow.aspx");
