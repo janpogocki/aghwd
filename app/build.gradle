@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 25
     }
     buildTypes {
         release {
@@ -20,10 +20,14 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-    compile 'com.android.support:appcompat-v7:25.2.0'
-    compile 'com.android.support:design:25.2.0'
-    compile 'com.android.support:support-v4:25.2.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.maksim88:PasswordEditText:v0.9'
     compile 'org.jsoup:jsoup:1.10.2'
+    compile 'com.google.firebase:firebase-messaging:11.0.4'
+    compile 'com.google.android.gms:play-services-base:11.0.4'
     testCompile 'junit:junit:4.12'
 }
+
+apply plugin: 'com.google.gms.google-services'

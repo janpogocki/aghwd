@@ -17,6 +17,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchSyllabus;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchUniversityStatus;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
@@ -125,6 +127,9 @@ public class SyllabusActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.syllabus), null);
+
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_syllabus, null);
         textView3 = (TextView) root.findViewById(R.id.textView3);
         textView3bis = (TextView) root.findViewById(R.id.textView3bis);

@@ -14,11 +14,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchGroups;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class GroupsActivity extends Fragment {
 
+    FirebaseAnalytics mFirebaseAnalytics;
     FetchGroups fg;
 
     public static Fragment newInstance(Context context) {
@@ -93,11 +96,19 @@ public class GroupsActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_groups, null);
 
         refreshGroups(root);
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.groups), null);
     }
 
     private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {

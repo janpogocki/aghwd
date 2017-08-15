@@ -18,6 +18,8 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SkosActivity extends Fragment {
 
+    FirebaseAnalytics mFirebaseAnalytics;
     public ViewGroup root;
     FetchSkos fs;
     ListView listViewGroups;
@@ -159,10 +162,18 @@ public class SkosActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         root = (ViewGroup) inflater.inflate(R.layout.activity_skos, container, false);
 
         refreshSkos(root);
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.skos), null);
     }
 
     private class SearchAdapter extends BaseAdapter {

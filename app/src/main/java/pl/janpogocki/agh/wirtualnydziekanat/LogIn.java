@@ -5,9 +5,11 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SwitchCompat;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -17,8 +19,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.io.IOException;
 import java.util.Random;
@@ -32,9 +39,12 @@ public class LogIn extends AppCompatActivity {
     RelativeLayout relativeLayout2, relativeLayout3, relativeLayout4;
     EditText editText, editText2;
     Button button;
-    Switch switch1;
+    SwitchCompat switch1;
     TextView textView3, textView3bis, textView12;
     Logging logging = null;
+    FirebaseAnalytics mFirebaseAnalytics;
+    AsyncTaskRunner runner;
+    AsyncTaskRunner2 runner2;
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -89,8 +99,7 @@ public class LogIn extends AppCompatActivity {
         relativeLayout2.setVisibility(View.GONE);
         relativeLayout3.setVisibility(View.VISIBLE);
 
-        AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(_login, _password, _isSave);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, _login, _password, _isSave);
 
         // show tips
         animateFadeOut(textView3, 800);
@@ -110,7 +119,7 @@ public class LogIn extends AppCompatActivity {
             if (switch1.isChecked())
                 doLogging(login, password, "true");
             else
-                doLogging(login, password, "");
+                doLogging(login, password, "false");
 
             hideKeyboard(v);
         }
@@ -118,83 +127,119 @@ public class LogIn extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        this.finish();
-        System.exit(0);
+        if (runner != null && runner2 != null && (runner.getStatus() == AsyncTask.Status.RUNNING || runner2.getStatus() == AsyncTask.Status.RUNNING)){
+            finish();
+            System.exit(0);
+        }
+        else {
+            super.onBackPressed();
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_log_in);
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        runner = new AsyncTaskRunner();
+        runner2 = new AsyncTaskRunner2();
+        loadActivity();
+    }
 
-        Storage.resource = getResources();
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.logging), this.getClass().getSimpleName());
+    }
 
-        relativeLayout2 = (RelativeLayout) findViewById(R.id.relativeLayout2);
-        relativeLayout3 = (RelativeLayout) findViewById(R.id.relativeLayout3);
-        relativeLayout4 = (RelativeLayout) findViewById(R.id.relativeLayout4);
-        editText = (EditText) findViewById(R.id.editText);
-        editText2 = (EditText) findViewById(R.id.editText2);
-        button = (Button) findViewById(R.id.button);
-        switch1 = (Switch) findViewById(R.id.switch1);
-        textView3 = (TextView) findViewById(R.id.textView3);
-        textView3bis = (TextView) findViewById(R.id.textView3bis);
-        textView12 = (TextView) findViewById(R.id.textView12);
-        RememberPassword rp = new RememberPassword(this);
-
-        if (rp.isRemembered()){
-            // layout listiner
-            relativeLayout4.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        relativeLayout4.setVisibility(View.GONE);
-                        RememberPassword rp = new RememberPassword(LogIn.this);
-                        doLogging(rp.getLogin(), rp.getPassword(), "");
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-
-            // do firstly if everything is ok
-            try {
-                doLogging(rp.getLogin(), rp.getPassword(), "");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
+    private void loadActivity(){
+        GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
+        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (status != ConnectionResult.SUCCESS) {
+            googleApiAvailability.makeGooglePlayServicesAvailable(LogIn.this)
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            loadActivity();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            finish();
+                            System.exit(0);
+                        }
+                    });
         }
         else {
-            relativeLayout2.setVisibility(View.VISIBLE);
+            setContentView(R.layout.activity_log_in);
 
-            textView12.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (switch1.isChecked())
-                        switch1.setChecked(false);
-                    else
-                        switch1.setChecked(true);
-                }
-            });
+            Storage.resource = getResources();
 
-            editText2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_GO) {
-                        logInButtonPressed(editText2.getRootView());
-                        return true;
+            relativeLayout2 = (RelativeLayout) findViewById(R.id.relativeLayout2);
+            relativeLayout3 = (RelativeLayout) findViewById(R.id.relativeLayout3);
+            relativeLayout4 = (RelativeLayout) findViewById(R.id.relativeLayout4);
+            editText = (EditText) findViewById(R.id.editText);
+            editText2 = (EditText) findViewById(R.id.editText2);
+            button = (Button) findViewById(R.id.button);
+            switch1 = (SwitchCompat) findViewById(R.id.switch1);
+            textView3 = (TextView) findViewById(R.id.textView3);
+            textView3bis = (TextView) findViewById(R.id.textView3bis);
+            textView12 = (TextView) findViewById(R.id.textView12);
+            RememberPassword rp = new RememberPassword(this);
+
+            if (rp.isRemembered()) {
+                // layout listiner
+                relativeLayout4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            relativeLayout4.setVisibility(View.GONE);
+                            RememberPassword rp = new RememberPassword(LogIn.this);
+                            doLogging(rp.getLogin(), rp.getPassword(), "true");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    return false;
-                }
-            });
+                });
 
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v){
-                    logInButtonPressed(v);
+                // do firstly if everything is ok
+                try {
+                    doLogging(rp.getLogin(), rp.getPassword(), "true");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            });
+
+            } else {
+                relativeLayout2.setVisibility(View.VISIBLE);
+
+                textView12.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (switch1.isChecked())
+                            switch1.setChecked(false);
+                        else
+                            switch1.setChecked(true);
+                    }
+                });
+
+                editText2.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                        if (actionId == EditorInfo.IME_ACTION_GO) {
+                            logInButtonPressed(editText2.getRootView());
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        logInButtonPressed(v);
+                    }
+                });
+            }
         }
     }
 
@@ -207,7 +252,7 @@ public class LogIn extends AppCompatActivity {
                 login = params[0];
                 password = params[1];
                 isSave = params[2];
-                logging = new Logging(params[0], params[1]);
+                logging = new Logging(login, password, Boolean.parseBoolean(isSave), LogIn.this);
                 return logging;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -261,14 +306,6 @@ public class LogIn extends AppCompatActivity {
                             .setAction("Action", null).show();
                 } else if (logging.status == 0) {
                     // is ok, log in
-                    if (isSave.length() > 1) {
-                        try {
-                            rp.save(login, password);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                     Storage.loggedIn = true;
 
                     // Jump to MainActivity
@@ -276,14 +313,6 @@ public class LogIn extends AppCompatActivity {
                     startActivity(openMarks);
                 } else if (logging.status == 1) {
                     // is ok, log in
-                    if (isSave.length() > 1) {
-                        try {
-                            rp.save(login, password);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-
                     // hide loader
                     relativeLayout3.setVisibility(View.GONE);
 
@@ -308,8 +337,7 @@ public class LogIn extends AppCompatActivity {
                                     relativeLayout3.setVisibility(View.VISIBLE);
 
                                     // do logging in background
-                                    AsyncTaskRunner2 runner2 = new AsyncTaskRunner2();
-                                    runner2.execute();
+                                    runner2.executeOnExecutor(THREAD_POOL_EXECUTOR);
                                 }
                             })
                             .setCancelable(false);
@@ -328,7 +356,6 @@ public class LogIn extends AppCompatActivity {
                     relativeLayout2.setVisibility(View.VISIBLE);
             }
         }
-
     }
 
     private class AsyncTaskRunner2 extends AsyncTask<Logging, Logging, Logging> {
@@ -370,6 +397,5 @@ public class LogIn extends AppCompatActivity {
                 startActivity(openMarks);
             }
         }
-
     }
 }

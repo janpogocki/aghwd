@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "589318361995",
+    "firebase_url": "https://aghwd-4ab8a.firebaseio.com",
+    "project_id": "aghwd-4ab8a",
+    "storage_bucket": "aghwd-4ab8a.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:589318361995:android:14a77cc9b3294fcf",
+        "android_client_info": {
+          "package_name": "pl.janpogocki.agh.wirtualnydziekanat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "589318361995-1am28u67roemk28i9phj0h29fbem47h8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.janpogocki.agh.wirtualnydziekanat",
+            "certificate_hash": "39327c82843a3c7f1d62ffabcd0da8948877c8ec"
+          }
+        },
+        {
+          "client_id": "589318361995-ktk1bnqqc02dqvq7qsevc7q19tckgdlg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "pl.janpogocki.agh.wirtualnydziekanat",
+            "certificate_hash": "0a40037ee46dc1f4cfcf70f2fddc0c5540bb97dd"
+          }
+        },
+        {
+          "client_id": "589318361995-3b1jeghjr928t7cuqutrsdq1e33cgu8s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8J9ud8WL5rHZcMucy8wv89imtI1dmajI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "589318361995-3b1jeghjr928t7cuqutrsdq1e33cgu8s.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

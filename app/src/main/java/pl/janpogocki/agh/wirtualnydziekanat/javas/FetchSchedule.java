@@ -16,10 +16,10 @@ import java.util.List;
 public class FetchSchedule {
     public static String URLdomainEaiibSchedule = "http://planzajec.eaiib.agh.edu.pl";
     public int status;
-    String viewstateName = "__VIEWSTATE";
-    String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
-    String eventValidationName = "__EVENTVALIDATION";
-    String viewstateValue, viewstateGeneratorValue, eventValidationValue;
+    private String viewstateName = "__VIEWSTATE";
+    private String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
+    private String eventValidationName = "__EVENTVALIDATION";
+    private String viewstateValue, viewstateGeneratorValue, eventValidationValue;
 
     public FetchSchedule(String _post) {
         FetchWebsite fw;

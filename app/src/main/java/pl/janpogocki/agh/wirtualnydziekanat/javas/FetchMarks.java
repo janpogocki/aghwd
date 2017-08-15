@@ -107,8 +107,10 @@ public class FetchMarks {
                 if (!current2.getList().get(9).equals("0")) {
                     db2.add(current2.getList().get(9));
                     // If mark exists...
-                    if (current2.getList().get(2).length() > 1)
+                    if (current2.getList().get(2).length() > 1 && current2.getList().get(2).contains(" "))
                         db2.add(current2.getList().get(2).split(" ")[0]);
+                    else if (current2.getList().get(2).length() > 1 && !current2.getList().get(2).contains(" "))
+                        db2.add(current2.getList().get(2));
                     else
                         db2.add("");
                     break;
@@ -147,9 +149,10 @@ public class FetchMarks {
                 db3.add(current2.getLabel());
                 db3.add(current2.getList().get(8));
                 for (int i=3; i<=5; i++){
-                    if (current2.getList().get(i).length() > 1){
+                    if (current2.getList().get(i).length() > 1 && current2.getList().get(i).contains(" "))
                         db3.add(current2.getList().get(i).split(" ")[0] + "\n" + current2.getList().get(i).split(" ")[1]);
-                    }
+                    else if (current2.getList().get(i).length() > 1 && !current2.getList().get(i).contains(" "))
+                        db3.add(current2.getList().get(i) + "\n");
                     else
                         db3.add(" ");
                 }

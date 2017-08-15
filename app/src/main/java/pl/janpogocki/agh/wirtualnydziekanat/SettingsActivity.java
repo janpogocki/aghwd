@@ -1,13 +1,68 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
+import android.content.SharedPreferences;
 import android.preference.PreferenceFragment;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SettingsActivity extends PreferenceFragment {
 
+    FirebaseAnalytics mFirebaseAnalytics;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
+
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.settings);
+
+        RememberPassword rememberPassword = new RememberPassword(getActivity());
+        if (!rememberPassword.isRemembered()){
+            getPreferenceManager().getSharedPreferences().edit().putBoolean("marks_notifications", false).apply();
+            getPreferenceScreen().findPreference("marks_notifications").setEnabled(false);
+            getPreferenceScreen().findPreference("marks_notifications").setDefaultValue(false);
+            getPreferenceScreen().findPreference("marks_notifications").setSummary(getPreferenceScreen()
+                    .findPreference("marks_notifications").getSummary() + "\n\n" + getString(R.string.only_with_remember_password));
+
+            getPreferenceManager().getSharedPreferences().edit().putBoolean("news_notifications", false).apply();
+            getPreferenceScreen().findPreference("news_notifications").setEnabled(false);
+            getPreferenceScreen().findPreference("news_notifications").setDefaultValue(false);
+            getPreferenceScreen().findPreference("news_notifications").setSummary(getPreferenceScreen()
+                    .findPreference("news_notifications").getSummary() + "\n\n" + getString(R.string.only_with_remember_password));
+        }
+
+        SharedPreferences.OnSharedPreferenceChangeListener listener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+
+                        if (key.equals("marks_notifications")){
+                            if (sharedPreferences.getBoolean("marks_notifications", true))
+                                FirebaseMessaging.getInstance().subscribeToTopic(Storage.albumNumber);
+                            else
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
+                        }
+                        else if (key.equals("news_notifications")){
+                            if (sharedPreferences.getBoolean("news_notifications", true))
+                                FirebaseMessaging.getInstance().subscribeToTopic("news");
+                            else
+                                FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
+                        }
+                    }
+                };
+
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.action_settings), null);
     }
 }

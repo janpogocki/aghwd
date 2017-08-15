@@ -17,7 +17,7 @@ import java.util.List;
 public class FetchPartialMarks {
     private List<LabelAndList<LabelAndList<List<String>>>> database = new ArrayList<>();
     public int status;
-    String tableName = "ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_rg_Przedmioty_ctl00";
+    private String tableName = "ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_rg_Przedmioty_ctl00";
 
     public FetchPartialMarks(List<String> HTML2interprete){
         if (HTML2interprete == null || HTML2interprete.isEmpty() || HTML2interprete.get(0).equals("0"))

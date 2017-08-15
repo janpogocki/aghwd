@@ -20,6 +20,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +34,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class ScheduleActivity extends Fragment {
 
+    FirebaseAnalytics mFirebaseAnalytics;
     private static FetchSchedule fs;
     ViewGroup root;
     String postValue = "";
@@ -250,11 +253,19 @@ public class ScheduleActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         root = (ViewGroup) inflater.inflate(R.layout.activity_schedule, null);
 
         refreshSchedule(root);
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.schedule), null);
     }
 
     private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {

@@ -1,5 +1,7 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import org.jsoup.Jsoup;
@@ -7,10 +9,10 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import pl.janpogocki.agh.wirtualnydziekanat.R;
 
 /**
  * Created by Jan on 15.07.2016.
@@ -19,19 +21,24 @@ import pl.janpogocki.agh.wirtualnydziekanat.R;
 public class Logging {
     public int status = -4;
     public static String URLdomain = "https://dziekanat.agh.edu.pl";
+    public static String photoFileName = "profile.bmp";
+    private String albumNumber = "";
+    private String password = "";
+    private boolean saveAccount;
+    private Context context;
     private String viewstateName = "__VIEWSTATE";
     private String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
     private String eventValidationName = "__EVENTVALIDATION";
     private String viewstateValue, viewstateGeneratorValue, eventValidationValue;
-    private String tempAlbumNumber = "";
 
     // establish connetion, send POST data and get session cookies
-    public Logging(String albumNumber, String password) throws Exception {
-        doLogging(albumNumber, password);
-    }
-
-    private void doLogging(String albumNumber, String password) throws Exception {
+    public Logging(String _albumNumber, String _password, boolean _saveAccount, Context _context) throws Exception {
         Storage.clearStorage();
+
+        albumNumber = _albumNumber;
+        password = _password;
+        saveAccount = _saveAccount;
+        context = _context;
 
         String URLaddress = URLdomain + "/Logowanie2.aspx";
         String albumNumberName = "ctl00$ctl00$ContentPlaceHolder$MiddleContentPlaceHolder$txtIdent";
@@ -62,7 +69,6 @@ public class Logging {
 
         // If everything is OK, then we are parsing Wynik2.aspx to get info's
         if (fw.getLocationHTTP().equals("/Ogloszenia.aspx")){
-            tempAlbumNumber = albumNumber;
             getUserInfos();
         }
         else if (fw.getLocationHTTP().equals("/KierunkiStudiow.aspx")) {
@@ -109,19 +115,38 @@ public class Logging {
         String fww;
         Document fwParsed;
 
-        fw = new FetchWebsite(URLdomain + "/Wynik2.aspx");
-        fww = fw.getWebsite(true, true, "");
+        Storage.albumNumber = albumNumber;
 
-        fwParsed = Jsoup.parse(fww);
-        Storage.nameAndSurname = fwParsed.select("#ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").get(0).ownText().split(" – nr albumu: ")[0];
-        Storage.albumNumber = tempAlbumNumber;
-        Storage.peselNumber = fwParsed.select(".tabDwuCzesciowaPLeft").get(4).ownText();
+        RememberPassword rp = new RememberPassword(context);
 
-        // Jump to profile photo if exists
-        if (fwParsed.getElementsByTag("img").size() > 0) {
-            Storage.photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").get(0).attr("src");
-            fw = new FetchWebsite(Storage.photoUserURL);
-            Storage.photoUser = fw.getBitmap(true, true);
+        // Checks if pesel number and name and surname is cached
+        if (rp.hasExtraData()){
+            Storage.nameAndSurname = rp.getNameAndSurname();
+            Storage.peselNumber = rp.getPeselNumber();
+            File file = new File(context.getFilesDir() + "/" + photoFileName);
+
+            if (file.exists())
+                Storage.photoUser = BitmapFactory.decodeFile(context.getFilesDir() + "/" + photoFileName);
+        }
+        else {
+            fw = new FetchWebsite(URLdomain + "/Wynik2.aspx");
+            fww = fw.getWebsite(true, true, "");
+
+            fwParsed = Jsoup.parse(fww);
+            Storage.nameAndSurname = fwParsed.select("#ctl00_ctl00_ContentPlaceHolder_wumasterWhoIsLoggedIn").get(0).ownText().split(" – nr albumu: ")[0];
+            Storage.peselNumber = fwParsed.select(".tabDwuCzesciowaPLeft").get(4).ownText();
+
+            // Jump to profile photo if exists and save it to cache
+            if (fwParsed.getElementsByTag("img").size() > 0) {
+                String photoUserURL = URLdomain + "/" + fwParsed.getElementsByTag("img").get(0).attr("src");
+                fw = new FetchWebsite(photoUserURL);
+                Storage.photoUser = fw.getBitmap(true, true);
+
+                // Save photo cache
+                FileOutputStream out = new FileOutputStream(context.getFilesDir() + "/" + photoFileName);
+                Storage.photoUser.compress(Bitmap.CompressFormat.PNG, 100, out);
+                out.close();
+            }
         }
 
         // Count semesters at PrzebiegStudiow.aspx
@@ -143,9 +168,7 @@ public class Logging {
                     list2.add(current3ownTextTrimmed);
             }
 
-            // Add if student status is different from absolwent ???
-            //if (!list2.get(7).toLowerCase().contains("absolwent"))
-                list.add(list2);
+            list.add(list2);
         }
 
         // Checks whether list is not empty
@@ -162,6 +185,11 @@ public class Logging {
         }
         else {
             status = -2;
+        }
+
+        // Save data to Android Account
+        if (saveAccount) {
+            rp.save(albumNumber, password, Storage.peselNumber, Storage.nameAndSurname);
         }
     }
 

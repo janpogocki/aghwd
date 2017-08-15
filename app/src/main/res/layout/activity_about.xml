@@ -161,12 +161,27 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="\nZnalazłeś/łaś błąd? Masz propozycję? Zobaczymy, co się da zrobić. :) Skontaktuj się ze mną poprzez moją stronę internetową.\n"
+                    android:text="\nOceń aplikację w Google Play\n★ ★ ★ ★ ★\n"
+                    android:textAllCaps="true"
+                    android:textSize="15dp"
+                    android:textColor="@color/colorAccent"
+                    android:id="@+id/googlePlayLink"
+                    android:gravity="center"
+                    android:textStyle="bold"
+                    android:layout_below="@+id/textView10"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Znalazłeś/łaś błąd? Masz propozycję? Zobaczymy, co się da zrobić. :) Skontaktuj się ze mną poprzez moją stronę internetową.\n"
                     android:textSize="15dp"
                     android:id="@+id/textView11"
                     android:gravity="left"
                     android:textStyle="bold"
-                    android:layout_below="@+id/textView10"
+                    android:layout_below="@+id/googlePlayLink"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true" />
 

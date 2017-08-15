@@ -13,9 +13,13 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SummaryActivity extends Fragment {
+
+    FirebaseAnalytics mFirebaseAnalytics;
 
     public static Fragment newInstance(Context context) {
         SummaryActivity f = new SummaryActivity();
@@ -23,7 +27,15 @@ public class SummaryActivity extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.summary), null);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         final ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_summary, null);
 
         ImageView imageViewPhotoUser;

@@ -1,43 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:id="@+id/summaryItems" android:checkableBehavior="single">
         <item
             android:id="@+id/nav_summary"
             android:icon="@drawable/ic_menu_summary"
-            android:title="Podsumowanie" />
+            android:title="@string/summary" />
 
         <item
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_menu_groups"
-            android:title="Moduły i grupy" />
+            android:title="@string/groups" />
 
         <item
             android:id="@+id/nav_diploma"
             android:icon="@drawable/ic_menu_diploma"
-            android:title="Praca dyplomowa" />
+            android:title="@string/diploma" />
 
         <item
             android:id="@+id/nav_schedule"
             android:icon="@drawable/ic_menu_schedule"
-            android:title="Podział godzin" />
+            android:title="@string/schedule" />
 
         <item
             android:id="@+id/nav_syllabus"
             android:icon="@drawable/ic_menu_syllabus"
-            android:title="Syllabus" />
+            android:title="@string/syllabus" />
 
         <item
             android:id="@+id/nav_skos"
             android:icon="@drawable/ic_menu_skos"
-            android:title="SkOs" />
+            android:title="@string/skos" />
     </group>
 
 
 
 
-    <item android:title="Oceny" android:id="@+id/semester">
+    <item android:title="@string/marks" android:id="@+id/semester">
         <menu>
             <group android:id="@+id/semesterItems" android:checkableBehavior="single">
 
@@ -48,7 +47,7 @@
 
     <item
         android:id="@+id/settings"
-        android:title="Opcje">
+        android:title="@string/options">
         <menu>
             <group
                 android:id="@+id/settingsItems"
@@ -56,23 +55,23 @@
                 <item
                     android:id="@+id/nav_settings"
                     android:icon="@drawable/ic_menu_settings"
-                    android:title="Ustawienia" />
+                    android:title="@string/action_settings" />
 
                 <item
                     android:id="@+id/nav_about"
                     android:icon="@drawable/ic_menu_about"
-                    android:title="O aplikacji" />
+                    android:title="@string/about_app" />
 
                 <item
                     android:id="@+id/nav_relogging"
                     android:icon="@drawable/ic_menu_relogging"
-                    android:title="Zmień kierunek"
+                    android:title="@string/relogging"
                     android:visible="false" />
 
                 <item
                     android:id="@+id/nav_logout"
                     android:icon="@drawable/ic_menu_logout"
-                    android:title="Wyloguj się" />
+                    android:title="@string/logout" />
             </group>
         </menu>
     </item>

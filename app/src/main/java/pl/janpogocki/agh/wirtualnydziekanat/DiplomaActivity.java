@@ -14,11 +14,14 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchDiploma;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class DiplomaActivity extends Fragment {
 
+    FirebaseAnalytics mFirebaseAnalytics;
     FetchDiploma fd;
 
     public static Fragment newInstance(Context context) {
@@ -92,11 +95,19 @@ public class DiplomaActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_groups, null);
 
         refreshDiploma(root);
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.diploma), null);
     }
 
     private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {

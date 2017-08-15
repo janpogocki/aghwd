@@ -24,6 +24,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.messaging.FirebaseMessaging;
+
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
@@ -35,6 +38,8 @@ public class MainActivity extends AppCompatActivity
     SearchView searchView = null;
     SkosActivity skosactivity = null;
     ScheduleActivity scheduleactivity = null;
+    FirebaseAnalytics mFirebaseAnalytics;
+    String notificationsStatusFirebase;
 
     public void restartApp(){
         Storage.clearStorage();
@@ -108,11 +113,19 @@ public class MainActivity extends AppCompatActivity
                 || Storage.summarySemesters == null || Storage.summarySemesters.size() == 0){
             restartApp();
         }
+
+        // todo
+        //mFirebaseAnalytics.setUserProperty("default_view", Storage.sharedPreferencesStartScreen);
+        mFirebaseAnalytics.setUserProperty("powiadomienia", notificationsStatusFirebase);
     }
+
+    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
         // check if savedInstanceState is not null (then LogIn)
         if (!Storage.loggedIn && savedInstanceState == null){
@@ -152,7 +165,7 @@ public class MainActivity extends AppCompatActivity
             MenuItem menuNV = navigationView.getMenu().findItem(R.id.semester);
             SubMenu subMenuMenuMV = menuNV.getSubMenu();
             for (int i = 0; i < Storage.summarySemesters.size(); i++) {
-                subMenuMenuMV.add(R.id.semesterItems, i, i, "Semestr " + Storage.getSemesterNumberById(i)).setIcon(R.drawable.ic_menu_semester);
+                subMenuMenuMV.add(R.id.semesterItems, i, i, getString(R.string.semester) + " " + Storage.getSemesterNumberById(i)).setIcon(R.drawable.ic_menu_semester);
             }
             navigationView.getMenu().findItem(R.id.semester).getSubMenu().setGroupCheckable(R.id.semesterItems, true, true);
 
@@ -166,14 +179,14 @@ public class MainActivity extends AppCompatActivity
 
             if ("summary".equals(Storage.sharedPreferencesStartScreen)){
                 navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
-                setTitle("Podsumowanie");
+                setTitle(getString(R.string.summary));
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                 tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
                 tx.commit();
             }
             else if ("schedule".equals(Storage.sharedPreferencesStartScreen)){
                 navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
-                setTitle("Podział godzin");
+                setTitle(getString(R.string.schedule));
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                 Fragment scheduleactivity_ = new ScheduleActivity();
                 tx.replace(R.id.frameLayoutMain, scheduleactivity_);
@@ -182,13 +195,46 @@ public class MainActivity extends AppCompatActivity
             }
             else {
                 // Load newest semester and check it on sidebar
-                setTitle("Semestr " + Storage.getSemesterNumberById(Storage.currentSemester));
+                setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
                 navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                 tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
                 tx.commit();
             }
+
+            // Subscribe to notifications or not
+            RememberPassword rememberPassword = new RememberPassword(this);
+            if (rememberPassword.isRemembered()){
+                StringBuilder stringBuilder = new StringBuilder();
+
+                if (sharedPreferences.getBoolean("marks_notifications", true)) {
+                    FirebaseMessaging.getInstance().subscribeToTopic(Storage.albumNumber);
+                    stringBuilder.append("marks ");
+                }
+
+                if (sharedPreferences.getBoolean("news_notifications", true)) {
+                    FirebaseMessaging.getInstance().subscribeToTopic("news");
+                    stringBuilder.append("news ");
+                }
+
+                if (stringBuilder.length() == 0)
+                    stringBuilder.append("N/A");
+
+                notificationsStatusFirebase = stringBuilder.toString();
+            }
         }
+    }
+
+    @Override
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode);
+
+        if ("summary".equals(Storage.sharedPreferencesStartScreen))
+            navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
+        else if ("schedule".equals(Storage.sharedPreferencesStartScreen))
+            navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
+        else
+            navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
     }
 
     @Override
@@ -257,10 +303,10 @@ public class MainActivity extends AppCompatActivity
             setupSearchView();
         }
         else if (id == R.id.action_previous_week) {
-            scheduleactivity.changeWeek("Poprzedni");
+            scheduleactivity.changeWeek(getString(R.string.previous));
         }
         else if (id == R.id.action_next_week) {
-            scheduleactivity.changeWeek("Następny");
+            scheduleactivity.changeWeek(getString(R.string.next));
         }
 
         return super.onOptionsItemSelected(item);
@@ -281,46 +327,46 @@ public class MainActivity extends AppCompatActivity
         resetMainLayoutVisibility(true);
 
         if (id == R.id.nav_about) {
-            setTitle("O aplikacji");
+            setTitle(getString(R.string.about_app));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.AboutActivity"));
             tx.commit();
         } else if (id == R.id.nav_settings) {
-            setTitle("Ustawienia");
+            setTitle(getString(R.string.action_settings));
             resetMainLayoutVisibility(false);
             android.app.FragmentTransaction tx = getFragmentManager().beginTransaction();
             android.app.Fragment settingsactivity_ = new SettingsActivity();
             tx.replace(R.id.frameLayoutMainV7, settingsactivity_);
             tx.commit();
         } else if (id == R.id.nav_summary) {
-            setTitle("Podsumowanie");
+            setTitle(getString(R.string.summary));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
             tx.commit();
         } else if (id == R.id.nav_groups) {
-            setTitle("Moduły i grupy");
+            setTitle(getString(R.string.groups));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.GroupsActivity"));
             tx.commit();
         } else if (id == R.id.nav_diploma) {
-            setTitle("Praca dyplomowa");
+            setTitle(getString(R.string.diploma));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.DiplomaActivity"));
             tx.commit();
         } else if (id == R.id.nav_schedule) {
-            setTitle("Podział godzin");
+            setTitle(getString(R.string.schedule));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment scheduleactivity_ = new ScheduleActivity();
             tx.replace(R.id.frameLayoutMain, scheduleactivity_);
             tx.commit();
             scheduleactivity = (ScheduleActivity) scheduleactivity_;
         } else if (id == R.id.nav_syllabus) {
-            setTitle("Syllabus");
+            setTitle(getString(R.string.syllabus));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SyllabusActivity"));
             tx.commit();
         } else if (id == R.id.nav_skos) {
-            setTitle("SkOs");
+            setTitle(getString(R.string.skos));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment skosactivity_ = new SkosActivity();
             tx.replace(R.id.frameLayoutMain, skosactivity_);
@@ -336,14 +382,27 @@ public class MainActivity extends AppCompatActivity
             if (rp.isRemembered())
                 rp.remove();
 
+            Bundle bundle = new Bundle();
+            bundle.putString("action", getString(R.string.logout));
+            mFirebaseAnalytics.logEvent("navbar_action", bundle);
+
+            FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
+            FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
+            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("marks_notifications").apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("news_notifications").apply();
+
             restartApp();
         } else if (id == R.id.nav_relogging) {
+            Bundle bundle = new Bundle();
+            bundle.putString("action", getString(R.string.relogging));
+            mFirebaseAnalytics.logEvent("navbar_action", bundle);
+
             restartApp();
         } else if (id >= 0 && id <= 40){
             // Marks
             MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
             Storage.currentSemester = id;
-            setTitle("Semestr " + Storage.getSemesterNumberById(id));
+            setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(id));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
             tx.commit();

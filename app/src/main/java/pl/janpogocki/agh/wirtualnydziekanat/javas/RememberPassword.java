@@ -2,24 +2,16 @@ package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.accounts.AccountManagerCallback;
-import android.accounts.AccountManagerFuture;
-import android.accounts.AuthenticatorException;
-import android.accounts.NetworkErrorException;
-import android.accounts.OperationCanceledException;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 /**
  * Created by Jan on 04.08.2016.
- * Encrypt and return password saved in internal storage
+ * Store password in secure storage
  */
 
 public class RememberPassword {
@@ -33,7 +25,7 @@ public class RememberPassword {
         getAccount();
     }
 
-    public void getAccount(){
+    private void getAccount(){
         Account[] accounts = accountManager.getAccountsByType("pl.janpogocki.agh.wirtualnydziekanat");
         for (Account account : accounts) {
             if (account.name.length() >= 6) {
@@ -43,32 +35,57 @@ public class RememberPassword {
         }
     }
 
-    public Boolean isRemembered(){
+    public boolean isRemembered(){
         if (myAccount != null)
             return true;
         else
             return false;
     }
 
-    public void save(String _login, String _password) {
+    public boolean hasExtraData(){
+        try {
+            if (getPeselNumber() != null && getNameAndSurname() != null)
+                return true;
+        } catch (IOException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public void save(String _login, String _password, String _pesel, String _nameAndSurname) {
         Account account = new Account(_login, "pl.janpogocki.agh.wirtualnydziekanat");
-        accountManager.addAccountExplicitly(account, _password, null);
+        Bundle extraData = new Bundle();
+        extraData.putString("peselNumber", _pesel);
+        extraData.putString("nameAndSurname", _nameAndSurname);
+        accountManager.addAccountExplicitly(account, _password, extraData);
     }
 
     public void remove(){
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
             accountManager.removeAccount(myAccount, null, null, null);
         } else {
             accountManager.removeAccount(myAccount, null, null);
         }
+
+        // delete cached photo
+        File file = new File(context.getFilesDir() + "/" + Logging.photoFileName);
+        file.delete();
     }
 
     public String getLogin() throws IOException {
         return myAccount.name;
     }
 
-    public String getPassword() throws IOException{
+    public String getPassword() throws IOException {
         return accountManager.getPassword(myAccount);
+    }
+
+    public String getPeselNumber() throws IOException {
+        return accountManager.getUserData(myAccount, "peselNumber");
+    }
+
+    public String getNameAndSurname() throws IOException {
+        return accountManager.getUserData(myAccount, "nameAndSurname");
     }
 }

@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:paddingBottom="0dp"
     android:paddingLeft="0dp"
     android:paddingRight="0dp"
@@ -20,28 +21,24 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="false">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
+            android:orientation="vertical"
             android:paddingBottom="@dimen/activity_horizontal_margin"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_horizontal_margin"
             android:layout_height="wrap_content"
-            android:id="@+id/relativeLayout0"
-            android:layout_alignLeft="@+id/scrollView"
-            android:layout_alignStart="@+id/scrollView">
+            android:id="@+id/relativeLayout0">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/relativeLayout"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true">
+                android:id="@+id/relativeLayout">
 
                 <ImageView
                     android:layout_width="wrap_content"
-                    android:layout_height="200dp"
+                    android:layout_height="180dp"
                     android:id="@+id/imageView"
                     android:src="@drawable/agh_kolor"
                     android:contentDescription="aghLogo"
@@ -58,6 +55,7 @@
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:text="@string/app_full_name_without_agh"
                     android:id="@+id/textView2"
+                    android:layout_marginTop="-5dp"
                     android:layout_below="@+id/imageView"
                     android:layout_centerHorizontal="true" />
 
@@ -68,20 +66,22 @@
                     android:id="@+id/textView14"
                     android:layout_below="@+id/textView2"
                     android:layout_centerHorizontal="true"
-                    android:textSize="12sp"
+                    android:textSize="12dp"
                     android:layout_marginTop="5dp" />
 
             </RelativeLayout>
+            
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:id="@+id/frameLayout"
+                android:layout_weight="1" />
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:id="@+id/relativeLayout2"
-                android:layout_below="@+id/relativeLayout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:visibility="gone"
-                android:layout_marginTop="50dp">
+                android:visibility="gone">
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -130,28 +130,24 @@
                     android:layout_below="@+id/editText2layout"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginTop="15dp"
                     android:id="@+id/linearLayout">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceMedium"
                         android:text="@string/log_in_remember"
                         android:id="@+id/textView12"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
                         android:layout_marginLeft="3dp"
+                        android:layout_weight="1"
                         android:layout_gravity="center_vertical"
                         android:clickable="true" />
 
-                    <Switch
-                        android:layout_width="match_parent"
+                    <android.support.v7.widget.SwitchCompat
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:id="@+id/switch1"
-                        android:layout_alignTop="@+id/textView12"
-                        android:layout_alignParentRight="true"
-                        android:layout_alignParentEnd="true"
                         android:checked="true"
                         android:layout_marginRight="3dp" />
                 </LinearLayout>
@@ -169,19 +165,22 @@
                     android:layout_alignParentEnd="true"
                     android:background="@color/colorAccent"
                     android:textColor="@color/colorWhiteBackground"
+                    android:textSize="15dp"
                     android:layout_marginTop="15dp" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="35dp"
+                    android:layout_below="@id/button"/>
 
             </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
                 android:id="@+id/relativeLayout3"
-                android:layout_below="@+id/relativeLayout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:visibility="gone"
-                android:layout_marginTop="70dp">
+                android:visibility="gone">
 
                 <ProgressBar
                     style="?android:attr/progressBarStyleLarge"
@@ -217,12 +216,10 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:visibility="gone"
                 android:id="@+id/relativeLayout4"
-                android:layout_below="@+id/relativeLayout"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
+                android:layout_weight="2"
                 android:clickable="true">
 
                 <ImageView
@@ -245,7 +242,7 @@
                     android:layout_centerHorizontal="true" />
             </RelativeLayout>
 
-        </RelativeLayout>
+        </LinearLayout>
     </ScrollView>
 
 

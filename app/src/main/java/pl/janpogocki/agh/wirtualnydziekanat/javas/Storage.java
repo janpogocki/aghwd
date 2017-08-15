@@ -15,7 +15,6 @@ import java.util.List;
 public class Storage {
     public static String albumNumber = "";
     public static String nameAndSurname = "";
-    public static String photoUserURL = "";
     public static String peselNumber = "";
     public static String choosenMultiKierunekValue = "";
     public static String syllabusURL = "";
@@ -51,7 +50,6 @@ public class Storage {
     public static void clearStorage(){
         albumNumber = "";
         nameAndSurname = "";
-        photoUserURL = "";
         peselNumber = "";
         choosenMultiKierunekValue = "";
         syllabusURL = "";

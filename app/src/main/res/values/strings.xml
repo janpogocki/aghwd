@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="app_version">1.3.3</string>
+    <string name="app_version">1.3.4 beta</string>
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
@@ -9,6 +9,7 @@
     <string name="action_cancel">Anuluj</string>
     <string name="app_full_name">AGH Wirtualny Dziekanat</string>
     <string name="app_full_name_without_agh">Wirtualny Dziekanat</string>
+    <string name="logging">Logowanie</string>
     <string name="log_in">Zaloguj się</string>
     <string name="log_in_fill_all_inputs">Wprowadź dane logowania</string>
     <string name="log_in_fail_server_down">Brak połączenia z serwerem</string>
@@ -33,9 +34,35 @@
 
     <string name="next_week">Następny tydzień</string>
     <string name="previous_week">Poprzedni tydzień</string>
+    <string name="previous">Poprzedni</string>
+    <string name="next">Następny</string>
 
     <string name="skos_search">Szukaj nazwiska…</string>
 
     <string name="default_start_screen_value">semester</string>
     <string name="settings_start_screen_title">Domyślny ekran po zalogowaniu</string>
+
+    <string name="notification_new_mark_title">Nowa ocena w AGH WD</string>
+    <string name="notification_new_mark_text">Stuknij, aby uruchomić aplikację</string>
+    <string name="app_startup">Uruchamianie aplikacji</string>
+    <string name="push_notifications">Powiadomienia push</string>
+    <string name="new_marks">Nowe oceny</string>
+    <string name="new_marks_summary">Wysyłane każdorazowo po wpisaniu nowej oceny</string>
+    <string name="agh_urgent_info">Ważne informacje od AGH</string>
+    <string name="agh_urgent_info_summary">Tylko pilne wiadomości, bez spamu</string>
+    <string name="only_with_remember_password">Opcja dostępna tylko przy zalogowaniu z zapamiętaniem hasła</string>
+
+    <string name="summary">Podsumowanie</string>
+    <string name="groups">Moduły i grupy</string>
+    <string name="diploma">Praca dyplomowa</string>
+    <string name="schedule">Podział godzin</string>
+    <string name="syllabus">Syllabus</string>
+    <string name="skos">SkOs</string>
+    <string name="semester">Semestr</string>
+    <string name="marks">Oceny</string>
+    <string name="options">Opcje</string>
+    <string name="about_app">O aplikacji</string>
+    <string name="relogging">Zmień kierunek</string>
+    <string name="logout">Wyloguj się</string>
+
 </resources>

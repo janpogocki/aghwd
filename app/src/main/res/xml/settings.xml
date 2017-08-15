@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
     <PreferenceCategory
-        android:title="Uruchamianie aplikacji"
+        android:title="@string/app_startup"
         android:key="pref_key_startup_settings">
 
         <ListPreference
@@ -14,6 +14,24 @@
             android:summary="%s"
             android:entries="@array/start_screen_entries"
             android:entryValues="@array/start_screen_values" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/push_notifications"
+        android:key="pref_key_notifications">
+
+        <SwitchPreference
+            android:key="marks_notifications"
+            android:title="@string/new_marks"
+            android:defaultValue="true"
+            android:summary="@string/new_marks_summary" />
+
+        <SwitchPreference
+            android:key="news_notifications"
+            android:title="@string/agh_urgent_info"
+            android:defaultValue="true"
+            android:summary="@string/agh_urgent_info_summary" />
 
     </PreferenceCategory>
 </PreferenceScreen>

@@ -19,6 +19,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.google.firebase.analytics.FirebaseAnalytics;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.UnsupportedEncodingException;
@@ -35,6 +37,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class MarksExplorer extends Fragment {
 
+    FirebaseAnalytics mFirebaseAnalytics;
     ExpandableListAdapter listAdapter;
     List<List<String>> listDataHeader;
     HashMap<String, List<List<String>>> listDataChild;
@@ -247,6 +250,8 @@ public class MarksExplorer extends Fragment {
     // MAIN THREAD
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_marks_explorer, null);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
@@ -271,6 +276,12 @@ public class MarksExplorer extends Fragment {
         animateFadeIn(textView3bis, root, 3250);
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.menu_marks), null);
     }
 
     private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {
@@ -316,6 +327,10 @@ public class MarksExplorer extends Fragment {
             srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                 @Override
                 public void onRefresh() {
+                    Bundle bundle = new Bundle();
+                    bundle.putString("activity", "marks");
+                    mFirebaseAnalytics.logEvent("swipe_refresh", bundle);
+
                     rlData.setVisibility(View.GONE);
                     rlLoader.setVisibility(View.VISIBLE);
                     srl.setRefreshing(false);
