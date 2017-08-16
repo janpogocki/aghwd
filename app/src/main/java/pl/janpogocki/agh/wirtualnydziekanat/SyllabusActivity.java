@@ -3,8 +3,10 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ public class SyllabusActivity extends Fragment {
 
     FetchUniversityStatus fus;
     TextView textView3, textView3bis;
+    Context activityContext;
 
     public static Fragment newInstance(Context context) {
         AboutActivity f = new AboutActivity();
@@ -66,7 +69,7 @@ public class SyllabusActivity extends Fragment {
         });
     }
 
-    private void refreshSyllabusWebView(ViewGroup root){
+    private void refreshSyllabusWebView(View root){
         final RelativeLayout rlWebViewLoader = (RelativeLayout) root.findViewById(R.id.rlWebViewLoader);
         ProgressBar progressBar = (ProgressBar) root.findViewById(R.id.progressBarWebView);
         progressBar.setScaleY(2f);
@@ -125,15 +128,7 @@ public class SyllabusActivity extends Fragment {
         });
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
-        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.syllabus), null);
-
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_syllabus, null);
-        textView3 = (TextView) root.findViewById(R.id.textView3);
-        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
-
+    private void refreshSyllabus(View root){
         if (Storage.universityStatus == null || Storage.universityStatus.size() == 0 || "".equals(Storage.syllabusURL)){
             // There's no downloaded data. Do that.
             RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -152,16 +147,34 @@ public class SyllabusActivity extends Fragment {
             rlData.setVisibility(View.VISIBLE);
             refreshSyllabusWebView(root);
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.syllabus), null);
+
+        View root = inflater.inflate(R.layout.activity_syllabus, container, false);
+        textView3 = (TextView) root.findViewById(R.id.textView3);
+        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
+
+        refreshSyllabus(root);
 
         return root;
     }
 
-    private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {
-        ViewGroup root;
+    private class AsyncTaskRunner extends AsyncTask<View, View, View> {
+        View root;
         Boolean isError = false;
 
         @Override
-        protected ViewGroup doInBackground(ViewGroup... params) {
+        protected View doInBackground(View... params) {
             try {
                 root = params[0];
 
@@ -169,20 +182,45 @@ public class SyllabusActivity extends Fragment {
 
                 return root;
             } catch (Exception e) {
+                Log.i("aghwd", "FetchUniversityStatus error", e);
                 isError = true;
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(ViewGroup result){
+        protected void onPostExecute(View result){
             final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
             final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
 
             rlLoader.setVisibility(View.GONE);
-            rlData.setVisibility(View.VISIBLE);
 
-            refreshSyllabusWebView(root);
+            if (fus == null || isError){
+                Storage.universityStatus = null;
+                rlOffline.setVisibility(View.VISIBLE);
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
+
+                rlOffline.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rlOffline.setVisibility(View.GONE);
+                        rlLoader.setVisibility(View.VISIBLE);
+
+                        refreshSyllabus(root);
+                    }
+                });
+            }
+            else if (fus.status == -1){
+                rlNoData.setVisibility(View.VISIBLE);
+            }
+            else {
+                // Have it, show it
+                rlData.setVisibility(View.VISIBLE);
+                refreshSyllabus(root);
+            }
         }
 
     }

@@ -8,6 +8,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,6 +44,7 @@ public class MarksExplorer extends Fragment {
     List<List<String>> listDataHeader;
     HashMap<String, List<List<String>>> listDataChild;
     FetchMarks fm;
+    Context activityContext;
 
     RelativeLayout rlLoader, rlData;
     TextView textView3, textView3bis;
@@ -128,7 +131,7 @@ public class MarksExplorer extends Fragment {
     public void exploreMarks(View view) {
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(getContext(), listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapter(activityContext, listDataHeader, listDataChild);
 
         ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
@@ -136,7 +139,7 @@ public class MarksExplorer extends Fragment {
         try {
             Thread.sleep(500);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            Log.i("aghwd", "Sleep error", e);
         }
     }
 
@@ -184,7 +187,7 @@ public class MarksExplorer extends Fragment {
         listDataChild = fm.getChildren();
     }
 
-    private void refreshMarks(ViewGroup root) {
+    private void refreshMarks(View root) {
         for (int i=0; i<Storage.summarySemesters.size()-1; i++){
             Storage.currentSemesterHTML.remove(i);
         }
@@ -198,7 +201,7 @@ public class MarksExplorer extends Fragment {
         animateFadeIn(textView3bis, root, 3250);
     }
 
-    private void goThroughSemester() {
+    private void goThroughSemester() throws Exception {
         if (Storage.currentSemester < Storage.currentSemesterListPointer) {
             // go back
             goBack = true;
@@ -235,7 +238,7 @@ public class MarksExplorer extends Fragment {
                         POSTgenerator.add(buttonForwardName, buttonForwardValue);
                     }
                 } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
+                    Log.i("aghwd", "POSTgenerator error", e);
                 }
 
                 String data = POSTgenerator.getGeneratedPOST();
@@ -247,12 +250,18 @@ public class MarksExplorer extends Fragment {
         }
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
+
     // MAIN THREAD
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_marks_explorer, null);
+        View root = inflater.inflate(R.layout.activity_marks_explorer, container, false);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         textView3 = (TextView) root.findViewById(R.id.textView3);
@@ -284,12 +293,12 @@ public class MarksExplorer extends Fragment {
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.menu_marks), null);
     }
 
-    private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {
-        ViewGroup root;
+    private class AsyncTaskRunner extends AsyncTask<View, View, View> {
+        View root;
         Boolean isError = false;
 
         @Override
-        protected ViewGroup doInBackground(ViewGroup... params) {
+        protected View doInBackground(View... params) {
             try {
                 root = params[0];
                 goThroughSemester();
@@ -300,25 +309,26 @@ public class MarksExplorer extends Fragment {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.i("aghwd", "Sleep error", e);
                 }
 
                 return root;
             } catch (Exception e) {
+                Log.i("aghwd", "FetchMarks error", e);
                 isError = true;
                 return null;
             }
         }
 
         @Override
-        protected void onProgressUpdate(ViewGroup... params){
+        protected void onProgressUpdate(View... params){
             exploreMarks(root);
             rlLoader.setVisibility(View.GONE);
 
         }
 
         @Override
-        protected void onPostExecute(ViewGroup result){
+        protected void onPostExecute(View result){
             final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
             final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
             final SwipeRefreshLayout srl = (SwipeRefreshLayout) root.findViewById(R.id.swiperefresh);
@@ -328,7 +338,7 @@ public class MarksExplorer extends Fragment {
                 @Override
                 public void onRefresh() {
                     Bundle bundle = new Bundle();
-                    bundle.putString("activity", "marks");
+                    bundle.putString(FirebaseAnalytics.Param.VALUE, "marks");
                     mFirebaseAnalytics.logEvent("swipe_refresh", bundle);
 
                     rlData.setVisibility(View.GONE);
@@ -343,8 +353,8 @@ public class MarksExplorer extends Fragment {
             if (fm == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
-                Snackbar.make(root.findViewById(R.id.relativeLayoutMain), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override

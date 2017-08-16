@@ -17,7 +17,7 @@ public class FetchUniversityStatus {
     public int status;
     FetchSyllabus fs;
 
-    public FetchUniversityStatus(Boolean _fetchSyllabus) {
+    public FetchUniversityStatus(Boolean _fetchSyllabus) throws Exception {
         FetchWebsite fw;
         String fww;
         Document fwParsed;

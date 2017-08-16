@@ -16,7 +16,7 @@ import java.util.List;
 public class FetchDiploma {
     public int status;
 
-    public FetchDiploma() {
+    public FetchDiploma() throws Exception {
         FetchWebsite fw;
         String fww;
         Document fwParsed;

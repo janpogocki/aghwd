@@ -20,6 +20,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 public class SummaryActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
+    Context activityContext;
 
     public static Fragment newInstance(Context context) {
         SummaryActivity f = new SummaryActivity();
@@ -33,10 +34,16 @@ public class SummaryActivity extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
 
-        final ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_summary, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
+
+        final View root = inflater.inflate(R.layout.activity_summary, container, false);
 
         ImageView imageViewPhotoUser;
         TextView textViewNameAndSurname, textViewAlbumNumber, textViewPeselNumber;
@@ -70,7 +77,7 @@ public class SummaryActivity extends Fragment {
                 if (convertView == null) {
                     LayoutInflater infalInflater = (LayoutInflater) root.getContext()
                             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = infalInflater.inflate(R.layout.summary_list_item, null);
+                    convertView = infalInflater.inflate(R.layout.summary_list_item, parent, false);
                 }
 
                 TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);

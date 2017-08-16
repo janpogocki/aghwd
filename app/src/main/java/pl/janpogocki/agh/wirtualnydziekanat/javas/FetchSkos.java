@@ -1,6 +1,7 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,7 +19,7 @@ import java.util.List;
 public class FetchSkos {
     public int status;
 
-    public FetchSkos(Context context) {
+    public FetchSkos(Context context) throws Exception {
         FetchWebsite fw;
         String fww;
         String filename = "skos.txt";
@@ -41,7 +42,7 @@ public class FetchSkos {
                 outputStream.write(fww.getBytes());
                 outputStream.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.i("aghwd", "Can't open stream", e);
             }
         }
 
@@ -64,7 +65,7 @@ public class FetchSkos {
             r.close();
             inputStream.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.i("aghwd", "Can't open stream", e);
         }
 
         if (list1.size() > 0 && list1.size() == list2.size() && list2.size() == list3.size()){

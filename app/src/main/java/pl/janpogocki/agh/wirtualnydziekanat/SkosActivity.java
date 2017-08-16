@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +30,8 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 public class SkosActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
-    public ViewGroup root;
+    View root;
+    Context activityContext;
     FetchSkos fs;
     ListView listViewGroups;
     ListAdapter listAdapter;
@@ -88,7 +90,7 @@ public class SkosActivity extends Fragment {
             return null;
     }
 
-    private void refreshSkos(ViewGroup root) {
+    private void refreshSkos(View root) {
         if (Storage.skosList == null || Storage.skosList.size() == 0){
             // There's no downloaded data. Do that.
             RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -112,18 +114,18 @@ public class SkosActivity extends Fragment {
         RelativeLayout rlBrowser = (RelativeLayout) root.findViewById(R.id.rlBrowser);
         rlBrowser.setVisibility(View.GONE);
         rlData.setVisibility(View.VISIBLE);
-        ((MainActivity) getActivity()).showSearchButton(true);
+        ((MainActivity) activityContext).showSearchButton(true);
         Storage.openedBrowser = false;
     }
 
     private void switch2browser(final String _url){
         // close searchbar
-        ((MainActivity) getActivity()).showSearchButton(false);
+        ((MainActivity) activityContext).showSearchButton(false);
 
         Storage.openedBrowser = true;
         Storage.oneMoreBackPressedButtonMeansExit = false;
 
-        ((MainActivity) getActivity()).hideKeyboard(getView());
+        ((MainActivity) activityContext).hideKeyboard(getView());
 
         final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -152,8 +154,8 @@ public class SkosActivity extends Fragment {
         });
     }
 
-    private void showSkos(final ViewGroup root){
-        ((MainActivity) getActivity()).showSearchButton(true);
+    private void showSkos(final View root){
+        ((MainActivity) activityContext).showSearchButton(true);
         listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
 
         listAdapter = new SearchAdapter(Storage.skosList);
@@ -161,10 +163,16 @@ public class SkosActivity extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
 
-        root = (ViewGroup) inflater.inflate(R.layout.activity_skos, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
+
+        root = inflater.inflate(R.layout.activity_skos, container, false);
 
         refreshSkos(root);
         return root;
@@ -207,7 +215,7 @@ public class SkosActivity extends Fragment {
             if (convertView == null) {
                 LayoutInflater infalInflater = (LayoutInflater) root.getContext()
                         .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                convertView = infalInflater.inflate(R.layout.summary_list_item, null);
+                convertView = infalInflater.inflate(R.layout.summary_list_item, parent, false);
             }
 
             TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);
@@ -231,27 +239,27 @@ public class SkosActivity extends Fragment {
         }
     }
 
-    private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {
-        ViewGroup root;
+    private class AsyncTaskRunner extends AsyncTask<View, View, View> {
+        View root;
         Boolean isError = false;
 
         @Override
-        protected ViewGroup doInBackground(ViewGroup... params) {
+        protected View doInBackground(View... params) {
             try {
                 root = params[0];
 
-                fs = new FetchSkos(getActivity());
+                fs = new FetchSkos(activityContext);
 
                 return root;
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.i("aghwd", "FetchSkos error", e);
                 isError = true;
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(ViewGroup result){
+        protected void onPostExecute(View result){
             final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
             final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
             final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
@@ -261,8 +269,8 @@ public class SkosActivity extends Fragment {
             if (fs == null || fs.status == -1 || isError){
                 Storage.skosList = null;
                 rlOffline.setVisibility(View.VISIBLE);
-                Snackbar.make(root.findViewById(R.id.activity_skos), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override

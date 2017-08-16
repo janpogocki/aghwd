@@ -23,13 +23,14 @@ public class GroupsActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
     FetchGroups fg;
+    Context activityContext;
 
     public static Fragment newInstance(Context context) {
         AboutActivity f = new AboutActivity();
         return f;
     }
 
-    private void refreshGroups(ViewGroup root) {
+    private void refreshGroups(View root) {
         if (Storage.groupsAndModules == null || Storage.groupsAndModules.size() == 0){
             // There's no downloaded data. Do that.
             RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -48,7 +49,7 @@ public class GroupsActivity extends Fragment {
         }
     }
 
-    private void showGroups(final ViewGroup root){
+    private void showGroups(final View root){
         ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
 
         ListAdapter listAdapter = new BaseAdapter() {
@@ -95,10 +96,16 @@ public class GroupsActivity extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
 
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_groups, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
+
+        View root = inflater.inflate(R.layout.activity_groups, container, false);
 
         refreshGroups(root);
 
@@ -111,12 +118,12 @@ public class GroupsActivity extends Fragment {
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.groups), null);
     }
 
-    private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {
-        ViewGroup root;
+    private class AsyncTaskRunner extends AsyncTask<View, View, View> {
+        View root;
         Boolean isError = false;
 
         @Override
-        protected ViewGroup doInBackground(ViewGroup... params) {
+        protected View doInBackground(View... params) {
             try {
                 root = params[0];
 
@@ -130,7 +137,7 @@ public class GroupsActivity extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(ViewGroup result){
+        protected void onPostExecute(View result){
             final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
             final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
             final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
@@ -141,8 +148,8 @@ public class GroupsActivity extends Fragment {
             if (fg == null || isError){
                 Storage.groupsAndModules = null;
                 rlOffline.setVisibility(View.VISIBLE);
-                Snackbar.make(root.findViewById(R.id.activity_groups), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override

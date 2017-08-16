@@ -1,5 +1,6 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceFragment;
 import android.os.Bundle;
@@ -14,15 +15,17 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 public class SettingsActivity extends PreferenceFragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
+    Context activityContext;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
-
         super.onCreate(savedInstanceState);
+
+        activityContext = getActivity();
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
         addPreferencesFromResource(R.xml.settings);
 
-        RememberPassword rememberPassword = new RememberPassword(getActivity());
+        RememberPassword rememberPassword = new RememberPassword(activityContext);
         if (!rememberPassword.isRemembered()){
             getPreferenceManager().getSharedPreferences().edit().putBoolean("marks_notifications", false).apply();
             getPreferenceScreen().findPreference("marks_notifications").setEnabled(false);
@@ -40,7 +43,7 @@ public class SettingsActivity extends PreferenceFragment {
         SharedPreferences.OnSharedPreferenceChangeListener listener =
                 new SharedPreferences.OnSharedPreferenceChangeListener() {
                     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activityContext);
 
                         if (key.equals("marks_notifications")){
                             if (sharedPreferences.getBoolean("marks_notifications", true))

@@ -5,6 +5,7 @@ import android.accounts.AccountManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public class RememberPassword {
             if (getPeselNumber() != null && getNameAndSurname() != null)
                 return true;
         } catch (IOException | IllegalArgumentException e) {
-            e.printStackTrace();
+            Log.i("aghwd", "No AGHWD account", e);
         }
 
         return false;

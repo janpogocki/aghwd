@@ -1,6 +1,5 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
@@ -25,11 +24,9 @@ public class Storage {
     public static int currentSemesterListPointer = 0;
     public static int currentSemesterListPointerPartialMarks = 0;
     public static long timeOfLastConnection = 0;
-    public static Resources resource = null;
     public static Bitmap photoUser = null;
     public static Boolean oneMoreBackPressedButtonMeansExit = false;
     public static Boolean openedBrowser = false;
-    public static Boolean loggedIn = false;
     public static Boolean multiKierunek = false;
     public static Boolean firstRunMarksExplorer = true;
     public static HashMap<Integer, String> currentSemesterHTML = new HashMap<>();
@@ -43,7 +40,7 @@ public class Storage {
     public static List<String> multiKierunekValues = new ArrayList<>();
     public static List<String> multiKierunekLabelNames = new ArrayList<>();
 
-    public static String getSemesterNumberById(int id){
+    public static String getSemesterNumberById(int id) {
         return Storage.summarySemesters.get(id).get(2);
     }
 
@@ -60,11 +57,9 @@ public class Storage {
         currentSemesterListPointer = 0;
         currentSemesterListPointerPartialMarks = 0;
         timeOfLastConnection = 0;
-        resource = null;
         photoUser = null;
         oneMoreBackPressedButtonMeansExit = false;
         openedBrowser = false;
-        loggedIn = false;
         multiKierunek = false;
         firstRunMarksExplorer = true;
         currentSemesterHTML = new HashMap<>();

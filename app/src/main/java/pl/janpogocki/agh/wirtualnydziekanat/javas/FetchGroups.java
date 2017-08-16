@@ -16,7 +16,7 @@ import java.util.List;
 public class FetchGroups {
     public int status;
 
-    public FetchGroups() {
+    public FetchGroups() throws Exception {
         FetchWebsite fw;
         String fww;
         Document fwParsed;

@@ -6,6 +6,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,7 +37,8 @@ public class ScheduleActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
     private static FetchSchedule fs;
-    ViewGroup root;
+    View root;
+    Context activityContext;
     String postValue = "";
     String viewstateName = "__VIEWSTATE";
     String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
@@ -48,7 +50,7 @@ public class ScheduleActivity extends Fragment {
     }
 
     public void changeWeek(String direction) {
-        ((MainActivity) getActivity()).showScheduleButtons(false);
+        ((MainActivity) activityContext).showScheduleButtons(false);
         RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
@@ -96,7 +98,7 @@ public class ScheduleActivity extends Fragment {
             POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_radDataDo_calendar_SD", "[]");
             POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_radDataDo_calendar_AD", "[[1980,1,1],[2099,12,30],[" + todayYear + "," + todayMonth + "," + todayDay + "]]");
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            Log.i("aghwd", "POSTgenerator error", e);
         }
 
         postValue = POSTgenerator.getGeneratedPOST();
@@ -106,7 +108,7 @@ public class ScheduleActivity extends Fragment {
         runner.execute(root);
     }
 
-    private void refreshSchedule(ViewGroup root) {
+    private void refreshSchedule(View root) {
         if (Storage.schedule == null || Storage.schedule.size() == 0){
             // There's no downloaded data. Do that.
             RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -125,7 +127,7 @@ public class ScheduleActivity extends Fragment {
         }
     }
 
-    private void showEaiibSchedule(ViewGroup root, int status){
+    private void showEaiibSchedule(View root, int status){
         final RelativeLayout rlWebViewLoader = (RelativeLayout) root.findViewById(R.id.rlWebViewLoader);
         ProgressBar progressBar = (ProgressBar) root.findViewById(R.id.progressBarWebView);
         progressBar.setScaleY(2f);
@@ -179,11 +181,11 @@ public class ScheduleActivity extends Fragment {
         });
     }
 
-    private void showSchedule(final ViewGroup root){
+    private void showSchedule(final View root){
         TextView textDates = (TextView) root.findViewById(R.id.textDates);
         textDates.setText(Storage.scheduleDates);
 
-        ((MainActivity) getActivity()).showScheduleButtons(true);
+        ((MainActivity) activityContext).showScheduleButtons(true);
         ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
 
         ListAdapter listAdapter = new BaseAdapter() {
@@ -215,7 +217,7 @@ public class ScheduleActivity extends Fragment {
                 if (convertView == null) {
                     LayoutInflater infalInflater = (LayoutInflater) root.getContext()
                             .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                    convertView = infalInflater.inflate(R.layout.summary_list_item, null);
+                    convertView = infalInflater.inflate(R.layout.summary_list_item, parent, false);
                 }
 
                 TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);
@@ -234,7 +236,7 @@ public class ScheduleActivity extends Fragment {
                 try {
                     dateLesson = df.parse(dateAndTimeOfEndOfLesson);
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.i("aghwd", "Date parse error", e);
                 }
 
                 Date nowDate = new Date();
@@ -252,10 +254,16 @@ public class ScheduleActivity extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
 
-        root = (ViewGroup) inflater.inflate(R.layout.activity_schedule, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
+
+        root = inflater.inflate(R.layout.activity_schedule, container, false);
 
         refreshSchedule(root);
 
@@ -268,12 +276,12 @@ public class ScheduleActivity extends Fragment {
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.schedule), null);
     }
 
-    private class AsyncTaskRunner extends AsyncTask<ViewGroup, ViewGroup, ViewGroup> {
-        ViewGroup root;
+    private class AsyncTaskRunner extends AsyncTask<View, View, View> {
+        View root;
         Boolean isError = false;
 
         @Override
-        protected ViewGroup doInBackground(ViewGroup... params) {
+        protected View doInBackground(View... params) {
             try {
                 root = params[0];
 
@@ -281,13 +289,14 @@ public class ScheduleActivity extends Fragment {
 
                 return root;
             } catch (Exception e) {
+                Log.i("aghwd", "FetchSchedule error", e);
                 isError = true;
                 return null;
             }
         }
 
         @Override
-        protected void onPostExecute(ViewGroup result){
+        protected void onPostExecute(View result){
             final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
             final RelativeLayout rlDataWebView = (RelativeLayout) root.findViewById(R.id.rlDataWebView);
             final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -301,8 +310,8 @@ public class ScheduleActivity extends Fragment {
                 rlDates.setVisibility(View.GONE);
                 Storage.groupsAndModules = null;
                 rlOffline.setVisibility(View.VISIBLE);
-                Snackbar.make(root.findViewById(R.id.activity_groups), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -315,7 +324,7 @@ public class ScheduleActivity extends Fragment {
                 });
             }
             else if (fs.status == -1){
-                ((MainActivity) getActivity()).showScheduleButtons(true);
+                ((MainActivity) activityContext).showScheduleButtons(true);
                 TextView textDates = (TextView) root.findViewById(R.id.textDates);
                 textDates.setText(Storage.scheduleDates);
 

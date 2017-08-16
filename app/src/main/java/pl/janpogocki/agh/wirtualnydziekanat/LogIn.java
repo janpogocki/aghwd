@@ -1,5 +1,6 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -10,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SwitchCompat;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.animation.Animation;
@@ -45,6 +47,7 @@ public class LogIn extends AppCompatActivity {
     FirebaseAnalytics mFirebaseAnalytics;
     AsyncTaskRunner runner;
     AsyncTaskRunner2 runner2;
+    Activity activity;
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -99,6 +102,7 @@ public class LogIn extends AppCompatActivity {
         relativeLayout2.setVisibility(View.GONE);
         relativeLayout3.setVisibility(View.VISIBLE);
 
+        runner = new AsyncTaskRunner();
         runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, _login, _password, _isSave);
 
         // show tips
@@ -140,6 +144,7 @@ public class LogIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
+        activity = this;
         runner = new AsyncTaskRunner();
         runner2 = new AsyncTaskRunner2();
         loadActivity();
@@ -173,8 +178,6 @@ public class LogIn extends AppCompatActivity {
         else {
             setContentView(R.layout.activity_log_in);
 
-            Storage.resource = getResources();
-
             relativeLayout2 = (RelativeLayout) findViewById(R.id.relativeLayout2);
             relativeLayout3 = (RelativeLayout) findViewById(R.id.relativeLayout3);
             relativeLayout4 = (RelativeLayout) findViewById(R.id.relativeLayout4);
@@ -197,7 +200,7 @@ public class LogIn extends AppCompatActivity {
                             RememberPassword rp = new RememberPassword(LogIn.this);
                             doLogging(rp.getLogin(), rp.getPassword(), "true");
                         } catch (IOException e) {
-                            e.printStackTrace();
+                            Log.i("aghwd", "No login or password saved", e);
                         }
                     }
                 });
@@ -206,7 +209,7 @@ public class LogIn extends AppCompatActivity {
                 try {
                     doLogging(rp.getLogin(), rp.getPassword(), "true");
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.i("aghwd", "No login or password saved", e);
                 }
 
             } else {
@@ -255,7 +258,7 @@ public class LogIn extends AppCompatActivity {
                 logging = new Logging(login, password, Boolean.parseBoolean(isSave), LogIn.this);
                 return logging;
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.i("aghwd", "Internet error", e);
                 return null;
             }
         }
@@ -306,8 +309,6 @@ public class LogIn extends AppCompatActivity {
                             .setAction("Action", null).show();
                 } else if (logging.status == 0) {
                     // is ok, log in
-                    Storage.loggedIn = true;
-
                     // Jump to MainActivity
                     Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(openMarks);
@@ -337,15 +338,17 @@ public class LogIn extends AppCompatActivity {
                                     relativeLayout3.setVisibility(View.VISIBLE);
 
                                     // do logging in background
+                                    runner2 = new AsyncTaskRunner2();
                                     runner2.executeOnExecutor(THREAD_POOL_EXECUTOR);
                                 }
                             })
                             .setCancelable(false);
 
-                    builder.create().show();
+                    if (!activity.isFinishing())
+                        builder.create().show();
                 }
             } catch(NullPointerException e){
-                e.printStackTrace();
+                Log.i("aghwd", "Internet error", e);
                 relativeLayout3.setVisibility(View.GONE);
                 Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -365,7 +368,7 @@ public class LogIn extends AppCompatActivity {
                 logging.loggingAfterKierunekChoice();
                 return logging;
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.i("aghwd", "Logging afterKierunekChoice", e);
                 return null;
             }
         }
@@ -387,11 +390,10 @@ public class LogIn extends AppCompatActivity {
                             public void onClick(DialogInterface dialog, int id) {}
                         });
 
-                builder.create().show();
+                if (!activity.isFinishing())
+                    builder.create().show();
             }
             else {
-                Storage.loggedIn = true;
-
                 // Jump to MainActivity
                 Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(openMarks);

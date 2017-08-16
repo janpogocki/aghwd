@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class Logging {
     public int status = -4;
-    public static String URLdomain = "https://dziekanat.agh.edu.pl";
-    public static String photoFileName = "profile.bmp";
+    public static final String URLdomain = "https://dziekanat.agh.edu.pl";
+    public static final String photoFileName = "profile.bmp";
     private String albumNumber = "";
     private String password = "";
     private boolean saveAccount;

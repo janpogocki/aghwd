@@ -19,6 +19,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 public class AboutActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
+    Context activityContext;
 
     public static Fragment newInstance(Context context) {
         AboutActivity f = new AboutActivity();
@@ -26,10 +27,16 @@ public class AboutActivity extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        activityContext = context;
+    }
 
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.activity_about, null);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
+
+        View root = inflater.inflate(R.layout.activity_about, container, false);
 
         TextView textView6 = (TextView) root.findViewById(R.id.textView6);
         textView6.setText("v. " + textView6.getText());
@@ -39,7 +46,7 @@ public class AboutActivity extends Fragment {
             @Override
             public void onClick(View v) {
                 // build dialog window
-                final AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                final AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
                 builder.setTitle("Easter Egg")
                         .setMessage("Ku pamięci wszystkich studentów poległych podczas zdawania wszystkich poprzednich sesji. Runda honorowa wokół Ronda Ofiar Warunków. :)")
                         .setPositiveButton("Pamiętajmy na wieki!", new DialogInterface.OnClickListener() {

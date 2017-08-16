@@ -14,14 +14,14 @@ import java.util.List;
  */
 
 public class FetchSchedule {
-    public static String URLdomainEaiibSchedule = "http://planzajec.eaiib.agh.edu.pl";
+    public static final String URLdomainEaiibSchedule = "http://planzajec.eaiib.agh.edu.pl";
     public int status;
     private String viewstateName = "__VIEWSTATE";
     private String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
     private String eventValidationName = "__EVENTVALIDATION";
     private String viewstateValue, viewstateGeneratorValue, eventValidationValue;
 
-    public FetchSchedule(String _post) {
+    public FetchSchedule(String _post) throws Exception {
         FetchWebsite fw;
         String fww;
         Document fwParsed;

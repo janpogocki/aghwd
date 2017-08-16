@@ -56,224 +56,206 @@ public class FetchWebsite {
         URL = _url;
     }
 
-    public String getWebsite(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
-        String ret = "";
+    public String getWebsite(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
+        String ret;
         Storage.timeOfLastConnection = System.currentTimeMillis();
 
         // Send data
-        try
-        {
-            BufferedReader reader;
+        BufferedReader reader;
 
-            // Defined URL  where to send data
-            URL url = new URL(URL);
+        // Defined URL  where to send data
+        URL url = new URL(URL);
 
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
-            SSLContext sc;
-            sc = SSLContext.getInstance("TLS");
-            sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
-            conn.setSSLSocketFactory(sc.getSocketFactory());
+        SSLContext sc;
+        sc = SSLContext.getInstance("TLS");
+        sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
+        conn.setSSLSocketFactory(sc.getSocketFactory());
 
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setDoOutput(true);
-            conn.setInstanceFollowRedirects(false);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setDoOutput(true);
+        conn.setInstanceFollowRedirects(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
-            // Sending cookies if _sendCookies is true and List with cookies is set
-            if (Cookies.setList) {
-                if (_sendCookies && !(Cookies.getCookies().equals("")))
-                    conn.addRequestProperty("Cookie", Cookies.getCookies());
-            }
-
-            // Sending POST data if exists
-            if (!(_POSTdata.equals(""))){
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(_POSTdata);
-                wr.flush();
-            }
-
-            // conn.setDoInput(true);
-            conn.connect();
-
-            // Getting cookies form server if _receiveCookies
-            if (_receiveCookies && !Cookies.setList) {
-                Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
-            }
-            else if (_receiveCookies && Cookies.setList)
-                Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
-
-            // Getting Location if redirect
-            locationHTTP = conn.getHeaderField("Location");
-            responseCode = conn.getResponseCode();
-
-            // Get the server response
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-            ret = sb.toString();
-
-            reader.close();
-            conn.disconnect();
-
-        } catch(Exception ex){
-            ex.printStackTrace();
+        // Sending cookies if _sendCookies is true and List with cookies is set
+        if (Cookies.setList) {
+            if (_sendCookies && !(Cookies.getCookies().equals("")))
+                conn.addRequestProperty("Cookie", Cookies.getCookies());
         }
+
+        // Sending POST data if exists
+        if (!(_POSTdata.equals(""))){
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(_POSTdata);
+            wr.flush();
+        }
+
+        // conn.setDoInput(true);
+        conn.connect();
+
+        // Getting cookies form server if _receiveCookies
+        if (_receiveCookies && !Cookies.setList) {
+            Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else if (_receiveCookies && Cookies.setList)
+            Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+        // Getting Location if redirect
+        locationHTTP = conn.getHeaderField("Location");
+        responseCode = conn.getResponseCode();
+
+        // Get the server response
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        // Read Server Response
+        while((line = reader.readLine()) != null)
+        {
+            // Append server response in string
+            sb.append(line).append("\n");
+        }
+        ret = sb.toString();
+
+        reader.close();
+        conn.disconnect();
 
         return ret;
     }
 
-    public String getWebsiteSyllabus(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
-        String ret = "";
+    public String getWebsiteSyllabus(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
+        String ret;
         Storage.timeOfLastConnection = System.currentTimeMillis();
 
         // Send data
-        try
-        {
-            BufferedReader reader;
+        BufferedReader reader;
 
-            // Defined URL  where to send data
-            URL url = new URL(URL);
+        // Defined URL  where to send data
+        URL url = new URL(URL);
 
-            HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
 
-            SSLContext sc;
-            sc = SSLContext.getInstance("TLS");
-            sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
-            HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-            HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
-            conn.setSSLSocketFactory(sc.getSocketFactory());
+        SSLContext sc;
+        sc = SSLContext.getInstance("TLS");
+        sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
+        conn.setSSLSocketFactory(sc.getSocketFactory());
 
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
-            conn.setRequestMethod("GET");
-            conn.setInstanceFollowRedirects(false);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setRequestMethod("GET");
+        conn.setInstanceFollowRedirects(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
-            // Sending cookies if _sendCookies is true and List with cookies is set
-            if (Cookies.setList) {
-                if (_sendCookies && !(Cookies.getCookies().equals("")))
-                    conn.addRequestProperty("Cookie", Cookies.getCookies());
-            }
-
-            // Sending POST data if exists
-            if (!(_POSTdata.equals(""))){
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(_POSTdata);
-                wr.flush();
-            }
-
-            // conn.setDoInput(true);
-            conn.connect();
-
-            // Getting cookies form server if _receiveCookies
-            if (_receiveCookies && !Cookies.setList) {
-                Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
-            }
-            else if (_receiveCookies && Cookies.setList)
-                Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
-
-            // Getting Location if redirect
-            locationHTTP = conn.getHeaderField("Location");
-            responseCode = conn.getResponseCode();
-
-            // Get the server response
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-            ret = sb.toString();
-
-            reader.close();
-            conn.disconnect();
-
-        } catch(Exception ex){
-            ex.printStackTrace();
+        // Sending cookies if _sendCookies is true and List with cookies is set
+        if (Cookies.setList) {
+            if (_sendCookies && !(Cookies.getCookies().equals("")))
+                conn.addRequestProperty("Cookie", Cookies.getCookies());
         }
+
+        // Sending POST data if exists
+        if (!(_POSTdata.equals(""))){
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(_POSTdata);
+            wr.flush();
+        }
+
+        // conn.setDoInput(true);
+        conn.connect();
+
+        // Getting cookies form server if _receiveCookies
+        if (_receiveCookies && !Cookies.setList) {
+            Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else if (_receiveCookies && Cookies.setList)
+            Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+        // Getting Location if redirect
+        locationHTTP = conn.getHeaderField("Location");
+        responseCode = conn.getResponseCode();
+
+        // Get the server response
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        // Read Server Response
+        while((line = reader.readLine()) != null)
+        {
+            // Append server response in string
+            sb.append(line).append("\n");
+        }
+        ret = sb.toString();
+
+        reader.close();
+        conn.disconnect();
 
         return ret;
     }
 
-    public String getWebsiteHTTP(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata){
-        String ret = "";
+    public String getWebsiteHTTP(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
+        String ret;
 
         // Send data
-        try
-        {
-            BufferedReader reader;
+        BufferedReader reader;
 
-            // Defined URL  where to send data
-            URL url = new URL(URL);
+        // Defined URL  where to send data
+        URL url = new URL(URL);
 
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-            conn.setReadTimeout(10000);
-            conn.setConnectTimeout(15000);
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
 
-            conn.setRequestMethod("GET");
+        conn.setRequestMethod("GET");
 
-            conn.setInstanceFollowRedirects(false);
-            conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
+        conn.setInstanceFollowRedirects(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
-            // Sending cookies if _sendCookies is true and List with cookies is set
-            if (Cookies.setList) {
-                if (_sendCookies && !(Cookies.getCookies().equals("")))
-                    conn.addRequestProperty("Cookie", Cookies.getCookies());
-            }
-
-            // Sending POST data if exists
-            if (!(_POSTdata.equals(""))){
-                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-                wr.write(_POSTdata);
-                wr.flush();
-            }
-
-            // Getting cookies form server if _receiveCookies
-            if (_receiveCookies && !Cookies.setList) {
-                Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
-            }
-            else if (_receiveCookies && Cookies.setList)
-                Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
-
-            // Getting Location if redirect
-            locationHTTP = conn.getHeaderField("Location");
-            responseCode = conn.getResponseCode();
-
-            // Get the server response
-            reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            StringBuilder sb = new StringBuilder();
-            String line;
-
-            // Read Server Response
-            while((line = reader.readLine()) != null)
-            {
-                // Append server response in string
-                sb.append(line + "\n");
-            }
-            ret = sb.toString();
-
-            reader.close();
-            conn.disconnect();
-
-        } catch(Exception ex){
-            ex.printStackTrace();
+        // Sending cookies if _sendCookies is true and List with cookies is set
+        if (Cookies.setList) {
+            if (_sendCookies && !(Cookies.getCookies().equals("")))
+                conn.addRequestProperty("Cookie", Cookies.getCookies());
         }
+
+        // Sending POST data if exists
+        if (!(_POSTdata.equals(""))){
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(_POSTdata);
+            wr.flush();
+        }
+
+        // Getting cookies form server if _receiveCookies
+        if (_receiveCookies && !Cookies.setList) {
+            Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else if (_receiveCookies && Cookies.setList)
+            Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+        // Getting Location if redirect
+        locationHTTP = conn.getHeaderField("Location");
+        responseCode = conn.getResponseCode();
+
+        // Get the server response
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        // Read Server Response
+        while((line = reader.readLine()) != null)
+        {
+            // Append server response in string
+            sb.append(line).append("\n");
+        }
+        ret = sb.toString();
+
+        reader.close();
+        conn.disconnect();
 
         return ret;
     }

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -108,31 +109,29 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        // check if savedInstanceState is not null (then LogIn)
-        if ((System.currentTimeMillis()-Storage.timeOfLastConnection) > 60000*20
-                || Storage.summarySemesters == null || Storage.summarySemesters.size() == 0){
+        // if last connection to dziekanat.agh.edu.pl was 20 minutes ago - restart
+        if ((System.currentTimeMillis()-Storage.timeOfLastConnection) > 60000*20){
             restartApp();
+            finish();
+            System.exit(0);
         }
-
-        // todo
-        //mFirebaseAnalytics.setUserProperty("default_view", Storage.sharedPreferencesStartScreen);
-        mFirebaseAnalytics.setUserProperty("powiadomienia", notificationsStatusFirebase);
+        else {
+            mFirebaseAnalytics.setUserProperty("default_view", Storage.sharedPreferencesStartScreen);
+            mFirebaseAnalytics.setUserProperty("powiadomienia", notificationsStatusFirebase);
+        }
     }
-
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
-        // check if savedInstanceState is not null (then LogIn)
-        if (!Storage.loggedIn && savedInstanceState == null){
+        if (Storage.summarySemesters == null || Storage.summarySemesters.size() == 0){
             restartApp();
+            finish();
+            System.exit(0);
         }
         else {
-            Storage.loggedIn = false;
+            mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
             Storage.oneMoreBackPressedButtonMeansExit = false;
 
             setContentView(R.layout.activity_main);
@@ -177,14 +176,13 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             Storage.sharedPreferencesStartScreen = sharedPreferences.getString("default_start_screen", "semester");
 
-            if ("summary".equals(Storage.sharedPreferencesStartScreen)){
+            if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
                 navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
                 setTitle(getString(R.string.summary));
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
                 tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
                 tx.commit();
-            }
-            else if ("schedule".equals(Storage.sharedPreferencesStartScreen)){
+            } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
                 navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
                 setTitle(getString(R.string.schedule));
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
@@ -192,8 +190,7 @@ public class MainActivity extends AppCompatActivity
                 tx.replace(R.id.frameLayoutMain, scheduleactivity_);
                 tx.commit();
                 scheduleactivity = (ScheduleActivity) scheduleactivity_;
-            }
-            else {
+            } else {
                 // Load newest semester and check it on sidebar
                 setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
                 navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
@@ -204,7 +201,7 @@ public class MainActivity extends AppCompatActivity
 
             // Subscribe to notifications or not
             RememberPassword rememberPassword = new RememberPassword(this);
-            if (rememberPassword.isRemembered()){
+            if (rememberPassword.isRemembered()) {
                 StringBuilder stringBuilder = new StringBuilder();
 
                 if (sharedPreferences.getBoolean("marks_notifications", true)) {
@@ -335,7 +332,7 @@ public class MainActivity extends AppCompatActivity
             setTitle(getString(R.string.action_settings));
             resetMainLayoutVisibility(false);
             android.app.FragmentTransaction tx = getFragmentManager().beginTransaction();
-            android.app.Fragment settingsactivity_ = new SettingsActivity();
+            PreferenceFragment settingsactivity_ = new SettingsActivity();
             tx.replace(R.id.frameLayoutMainV7, settingsactivity_);
             tx.commit();
         } else if (id == R.id.nav_summary) {
@@ -383,7 +380,7 @@ public class MainActivity extends AppCompatActivity
                 rp.remove();
 
             Bundle bundle = new Bundle();
-            bundle.putString("action", getString(R.string.logout));
+            bundle.putString(FirebaseAnalytics.Param.VALUE, getString(R.string.logout));
             mFirebaseAnalytics.logEvent("navbar_action", bundle);
 
             FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
@@ -394,7 +391,7 @@ public class MainActivity extends AppCompatActivity
             restartApp();
         } else if (id == R.id.nav_relogging) {
             Bundle bundle = new Bundle();
-            bundle.putString("action", getString(R.string.relogging));
+            bundle.putString(FirebaseAnalytics.Param.VALUE, getString(R.string.relogging));
             mFirebaseAnalytics.logEvent("navbar_action", bundle);
 
             restartApp();

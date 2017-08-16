@@ -9,9 +9,9 @@ import org.jsoup.nodes.Document;
  */
 
 public class FetchSyllabus {
-    public static String URLdomainSyllabus = "https://www.syllabus.agh.edu.pl";
+    public static final String URLdomainSyllabus = "https://www.syllabus.agh.edu.pl";
 
-    public FetchSyllabus() {
+    public FetchSyllabus() throws Exception {
         FetchWebsite fw;
         String fww, rokRozpoczecia, nazwaWydzialu, kierunek, specjalizacja, typeOfStudy, level;
         Document fwParsed;
