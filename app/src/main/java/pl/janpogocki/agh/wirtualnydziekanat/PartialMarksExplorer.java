@@ -381,8 +381,9 @@ public class PartialMarksExplorer extends Fragment {
                 @Override
                 public void onRefresh() {
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.VALUE, "partial_marks");
-                    mFirebaseAnalytics.logEvent("swipe_refresh", bundle);
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "partial_marks");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "swipe_refresh");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
                     rlData.setVisibility(View.GONE);
                     rlLoader.setVisibility(View.VISIBLE);

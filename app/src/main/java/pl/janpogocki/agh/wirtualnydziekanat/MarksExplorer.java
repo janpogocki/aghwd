@@ -338,8 +338,9 @@ public class MarksExplorer extends Fragment {
                 @Override
                 public void onRefresh() {
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.VALUE, "marks");
-                    mFirebaseAnalytics.logEvent("swipe_refresh", bundle);
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "marks");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "swipe_refresh");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
                     rlData.setVisibility(View.GONE);
                     rlLoader.setVisibility(View.VISIBLE);

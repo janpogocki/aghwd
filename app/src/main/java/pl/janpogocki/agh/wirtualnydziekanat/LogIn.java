@@ -309,6 +309,16 @@ public class LogIn extends AppCompatActivity {
                             .setAction("Action", null).show();
                 } else if (logging.status == 0) {
                     // is ok, log in
+                    String firebaseIsRemembered;
+                    if (rp.isRemembered())
+                        firebaseIsRemembered = "with_remember_password";
+                    else
+                        firebaseIsRemembered = "without_remember_password";
+
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, firebaseIsRemembered);
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+
                     // Jump to MainActivity
                     Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(openMarks);
@@ -394,6 +404,17 @@ public class LogIn extends AppCompatActivity {
                     builder.create().show();
             }
             else {
+                RememberPassword rp = new RememberPassword(LogIn.this);
+                String firebaseIsRemembered;
+                if (rp.isRemembered())
+                    firebaseIsRemembered = "with_remember_password";
+                else
+                    firebaseIsRemembered = "without_remember_password";
+
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.SIGN_UP_METHOD, firebaseIsRemembered);
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.LOGIN, bundle);
+
                 // Jump to MainActivity
                 Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(openMarks);

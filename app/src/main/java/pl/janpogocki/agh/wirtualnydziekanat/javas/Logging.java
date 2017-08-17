@@ -182,14 +182,14 @@ public class Logging {
             Storage.currentSemesterHTML.put(Storage.currentSemester, fww);
 
             status = 0;
+
+            // Save data to Android Account
+            if (saveAccount) {
+                rp.save(albumNumber, password, Storage.peselNumber, Storage.nameAndSurname);
+            }
         }
         else {
             status = -2;
-        }
-
-        // Save data to Android Account
-        if (saveAccount) {
-            rp.save(albumNumber, password, Storage.peselNumber, Storage.nameAndSurname);
         }
     }
 

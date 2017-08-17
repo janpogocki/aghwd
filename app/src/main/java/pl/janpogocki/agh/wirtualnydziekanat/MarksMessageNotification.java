@@ -26,7 +26,7 @@ public class MarksMessageNotification {
                 // and vibration.
                 .setDefaults(Notification.DEFAULT_SOUND)
                 .setVibrate(new long[]{200, 200, 200, 200, 200, 200})
-                .setLights(Color.RED, 1000, 4000)
+                .setLights(Color.RED, 1000, 2000)
 
                 // Set required fields, including the small icon, the
                 // notification title, and text.

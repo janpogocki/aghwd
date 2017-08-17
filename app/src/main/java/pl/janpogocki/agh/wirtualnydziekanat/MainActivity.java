@@ -380,8 +380,9 @@ public class MainActivity extends AppCompatActivity
                 rp.remove();
 
             Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.VALUE, getString(R.string.logout));
-            mFirebaseAnalytics.logEvent("navbar_action", bundle);
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, getString(R.string.logout));
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "navbar_action");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
             FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
             FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
@@ -391,8 +392,9 @@ public class MainActivity extends AppCompatActivity
             restartApp();
         } else if (id == R.id.nav_relogging) {
             Bundle bundle = new Bundle();
-            bundle.putString(FirebaseAnalytics.Param.VALUE, getString(R.string.relogging));
-            mFirebaseAnalytics.logEvent("navbar_action", bundle);
+            bundle.putString(FirebaseAnalytics.Param.ITEM_ID, getString(R.string.relogging));
+            bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "navbar_action");
+            mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
             restartApp();
         } else if (id >= 0 && id <= 40){
