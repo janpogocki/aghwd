@@ -45,6 +45,11 @@ public class AboutActivity extends Fragment {
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "clicked");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "easter_egg");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                 // build dialog window
                 final AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
                 builder.setTitle("Easter Egg")
@@ -62,6 +67,11 @@ public class AboutActivity extends Fragment {
         googlePlayLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "clicked");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "google_play_link");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                 final String appPackageName = "pl.janpogocki.agh.wirtualnydziekanat";
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));

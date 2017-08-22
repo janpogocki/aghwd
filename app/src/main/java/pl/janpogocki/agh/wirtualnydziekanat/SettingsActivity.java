@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceFragment;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -12,7 +11,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
-public class SettingsActivity extends PreferenceFragment {
+public class SettingsActivity extends PreferenceFragment
+        implements SharedPreferences.OnSharedPreferenceChangeListener{
 
     FirebaseAnalytics mFirebaseAnalytics;
     Context activityContext;
@@ -39,33 +39,37 @@ public class SettingsActivity extends PreferenceFragment {
             getPreferenceScreen().findPreference("news_notifications").setSummary(getPreferenceScreen()
                     .findPreference("news_notifications").getSummary() + "\n\n" + getString(R.string.only_with_remember_password));
         }
-
-        SharedPreferences.OnSharedPreferenceChangeListener listener =
-                new SharedPreferences.OnSharedPreferenceChangeListener() {
-                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
-                        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(activityContext);
-
-                        if (key.equals("marks_notifications")){
-                            if (sharedPreferences.getBoolean("marks_notifications", true))
-                                FirebaseMessaging.getInstance().subscribeToTopic(Storage.albumNumber);
-                            else
-                                FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
-                        }
-                        else if (key.equals("news_notifications")){
-                            if (sharedPreferences.getBoolean("news_notifications", true))
-                                FirebaseMessaging.getInstance().subscribeToTopic("news");
-                            else
-                                FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
-                        }
-                    }
-                };
-
-        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(listener);
     }
 
     @Override
     public void onResume() {
         super.onResume();
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.action_settings), null);
+        getPreferenceManager().getSharedPreferences().registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getPreferenceManager().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        if (s.equals("marks_notifications")){
+            if (sharedPreferences.getBoolean("marks_notifications", true))
+                FirebaseMessaging.getInstance().subscribeToTopic(Storage.albumNumber);
+            else
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
+        }
+        else if (s.equals("news_notifications")){
+            if (sharedPreferences.getBoolean("news_notifications", true))
+                FirebaseMessaging.getInstance().subscribeToTopic("news");
+            else
+                FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
+        }
+        else if (s.equals("night_mode")){
+            ((MainActivity) activityContext).restartApp();
+        }
     }
 }

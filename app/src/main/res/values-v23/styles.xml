@@ -5,5 +5,17 @@
 
         <item name="colorPrimaryDark">@color/colorWhiteBackground</item>
         <item name="android:windowLightStatusBar">true</item>
+        <item name="aghMainLogo">@drawable/agh_kolor</item>
+        <item name="blackTint">@color/colorBlackText</item>
+    </style>
+
+    <style name="AppTheme.NoActionBarrNight" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorBlackText</item>
+
+        <item name="colorPrimaryDark">@color/colorPrimaryDarkNight</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="aghMainLogo">@drawable/agh_biale</item>
+        <item name="blackTint">@color/colorLightGray3</item>
     </style>
 </resources>

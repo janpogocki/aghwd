@@ -37,10 +37,7 @@ public class RememberPassword {
     }
 
     public boolean isRemembered(){
-        if (myAccount != null)
-            return true;
-        else
-            return false;
+        return myAccount != null;
     }
 
     public boolean hasExtraData(){

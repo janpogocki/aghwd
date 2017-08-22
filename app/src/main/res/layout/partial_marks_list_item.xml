@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorLightGray2">
+    style="@style/LightGray2">
 
     <RelativeLayout
         android:layout_width="40dp"
@@ -33,9 +33,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="@style/BlackTextMedium"
                     android:text="5.0"
-                    android:textColor="@color/colorBlackText"
                     android:textStyle="bold"
                     android:id="@+id/textViewMark"
                     android:gravity="center_vertical|center" />
@@ -52,9 +51,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="@style/BlackTextMedium"
                     android:text="Kategoria"
-                    android:textColor="@color/colorBlackText"
                     android:id="@+id/textViewCategory"
                     android:gravity="left" />
 

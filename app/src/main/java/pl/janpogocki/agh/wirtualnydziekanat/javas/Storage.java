@@ -29,6 +29,7 @@ public class Storage {
     public static Boolean openedBrowser = false;
     public static Boolean multiKierunek = false;
     public static Boolean firstRunMarksExplorer = true;
+    public static boolean nightMode = false;
     public static HashMap<Integer, String> currentSemesterHTML = new HashMap<>();
     public static HashMap<Integer, List<String>> currentSemesterPartialMarksHTML = new HashMap<>();
     public static List<List<String>> summarySemesters = new ArrayList<>();

@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorLightGray2">
+    style="@style/LightGray2">
 
     <RelativeLayout
         android:layout_width="40dp"
@@ -44,9 +44,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="@style/BlackTextMedium"
                     android:text=""
-                    android:textColor="@color/colorBlackText"
                     android:textStyle="bold"
                     android:id="@+id/textViewMark1"
                     android:gravity="center_vertical|center" />
@@ -76,10 +75,9 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="@style/BlackTextMedium"
                     android:text=""
                     android:textStyle="bold"
-                    android:textColor="@color/colorBlackText"
                     android:id="@+id/textViewMark2"
 
                     android:gravity="center" />
@@ -109,11 +107,10 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textAppearance="@style/BlackTextMedium"
                     android:text=""
                     android:textStyle="bold"
                     android:id="@+id/textViewMark3"
-                    android:textColor="@color/colorBlackText"
                     android:gravity="center_vertical|center|center_horizontal" />
             </RelativeLayout>
 

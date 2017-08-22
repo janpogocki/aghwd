@@ -35,4 +35,16 @@
         <item>summary</item>
         <item>schedule</item>
     </string-array>
+
+    <string-array name="night_mode_entries">
+        <item>Włączony</item>
+        <item>Automatyczny</item>
+        <item>Wyłączony</item>
+    </string-array>
+
+    <string-array name="night_mode_values">
+        <item>true</item>
+        <item>auto</item>
+        <item>false</item>
+    </string-array>
 </resources>

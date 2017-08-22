@@ -40,7 +40,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="180dp"
                     android:id="@+id/imageView"
-                    android:src="@drawable/agh_kolor"
+                    style="@style/AghMainLogo"
                     android:contentDescription="aghLogo"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
@@ -228,7 +228,8 @@
                     android:layout_height="150dp"
                     android:layout_marginTop="30dp"
                     android:id="@+id/imageView4"
-                    android:background="@drawable/offline"
+                    android:src="@drawable/ic_offline"
+                    style="@style/BlackTint"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true" />
 

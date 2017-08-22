@@ -90,7 +90,8 @@
             android:layout_height="150dp"
             android:layout_marginTop="30dp"
             android:id="@+id/imageView3"
-            android:background="@drawable/offline"
+            android:src="@drawable/ic_offline"
+            style="@style/BlackTint"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 
@@ -117,7 +118,8 @@
             android:layout_height="150dp"
             android:layout_marginTop="30dp"
             android:id="@+id/imageView4"
-            android:background="@drawable/ic_error"
+            android:src="@drawable/ic_error"
+            style="@style/BlackTint"
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true" />
 

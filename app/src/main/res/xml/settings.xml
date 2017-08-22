@@ -15,6 +15,15 @@
             android:entries="@array/start_screen_entries"
             android:entryValues="@array/start_screen_values" />
 
+        <ListPreference
+            android:key="night_mode"
+            android:title="@string/settings_night_mode_title"
+            android:defaultValue="@string/night_mode_value"
+            android:negativeButtonText="@string/action_cancel"
+            android:summary="%s"
+            android:entries="@array/night_mode_entries"
+            android:entryValues="@array/night_mode_values" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

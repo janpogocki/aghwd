@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -35,6 +37,7 @@ import java.util.Random;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Logging;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.SunriseAndSunsetCalculator;
 
 public class LogIn extends AppCompatActivity {
 
@@ -142,6 +145,20 @@ public class LogIn extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Load startup preferences and get user's night mode
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String nightModePreference = sharedPreferences.getString("night_mode", "false");
+
+        if (nightModePreference.equals("true")
+                || (nightModePreference.equals("auto") && !SunriseAndSunsetCalculator.isDaylight())){
+            Storage.nightMode = true;
+            setTheme(R.style.AppTheme_NoActionBarrNight);
+        }
+        else {
+            Storage.nightMode = false;
+            setTheme(R.style.AppTheme_NoActionBarr);
+        }
+
         super.onCreate(savedInstanceState);
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         activity = this;

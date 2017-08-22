@@ -123,6 +123,9 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if (Storage.nightMode)
+            setTheme(R.style.AppThemeNight);
+
         super.onCreate(savedInstanceState);
 
         if (Storage.summarySemesters == null || Storage.summarySemesters.size() == 0){
