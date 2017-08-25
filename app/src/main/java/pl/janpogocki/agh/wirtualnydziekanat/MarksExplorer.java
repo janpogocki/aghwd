@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pl.janpogocki.agh.wirtualnydziekanat.javas.AnimatedExpandableListView;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapter;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchMarks;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchWebsite;
@@ -133,14 +134,8 @@ public class MarksExplorer extends Fragment {
 
         listAdapter = new ExpandableListAdapter(activityContext, listDataHeader, listDataChild);
 
-        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
+        AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Log.i("aghwd", "Sleep error", e);
-        }
     }
 
     private void showResults(View view){
@@ -194,7 +189,7 @@ public class MarksExplorer extends Fragment {
 
         Storage.currentSemesterListPointer = Storage.summarySemesters.size()-1;
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -278,7 +273,7 @@ public class MarksExplorer extends Fragment {
         }
 
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -324,7 +319,6 @@ public class MarksExplorer extends Fragment {
         protected void onProgressUpdate(View... params){
             exploreMarks(root);
             rlLoader.setVisibility(View.GONE);
-
         }
 
         @Override
@@ -374,63 +368,56 @@ public class MarksExplorer extends Fragment {
                 rlLoader.setVisibility(View.GONE);
             }
             else {
-                final ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expandableListView);
+                final AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) root.findViewById(R.id.expandableListView);
                 rlData.setVisibility(View.VISIBLE);
                 showResults(root);
 
-                expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+                expandableListView.setOnGroupClickListener(new AnimatedExpandableListView.OnGroupClickListener() {
+
                     int previousGroup = -1;
 
                     @Override
-                    public void onGroupExpand(int groupPosition) {
-                        if(groupPosition > previousGroup && previousGroup != -1) {
-                            expandableListView.setSelection(0);
-                            expandableListView.collapseGroup(previousGroup);
+                    public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
+                        int diff = 0;
+
+                        if (previousGroup != -1 && previousGroup != groupPosition){
+                            expandableListView.collapseGroupWithAnimation(previousGroup);
+
+                            expandableListView.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    expandableListView.setSelection(groupPosition);
+                                }
+                            }, 400);
                         }
-                        else if (groupPosition < previousGroup && previousGroup != -1){
-                            expandableListView.collapseGroup(previousGroup);
-                            expandableListView.setSelection(0);
+                        else {
+                            diff = 700;
+                            previousGroup = -1;
                         }
+
+                        expandableListView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (expandableListView.isGroupExpanded(groupPosition)) {
+                                    expandableListView.collapseGroupWithAnimation(groupPosition);
+                                } else {
+                                    expandableListView.expandGroupWithAnimation(groupPosition);
+                                }
+                            }
+                        }, 700-diff);
+
                         previousGroup = groupPosition;
 
-                        expandableListView.setSelection(groupPosition);
+                        expandableListView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                expandableListView.smoothScrollToPositionFromTop(groupPosition, 0);
+                            }
+                        }, 1000-diff);
+
+                        return true;
                     }
                 });
-
-                // TODO scrollable progressbars?
-                /*expandableListView.setOnScrollListener(new AbsListView.OnScrollListener() {
-                    int mPosition = 0;
-                    int mOffset = 0;
-                    int roznica = 0;
-
-                    @Override
-                    public void onScrollStateChanged(AbsListView view, int scrollState) {
-                        int position = expandableListView.getFirstVisiblePosition();
-                        View v = expandableListView.getChildAt(0);
-                        int offset = (v == null) ? 0 : v.getTop();
-
-                        RelativeLayout.LayoutParams rlpbParams = (RelativeLayout.LayoutParams) relativeLayoutProgressBars.getLayoutParams();
-
-                        if (mPosition < position || (mPosition == position && mOffset < offset)){
-                            // Scrolled up
-                            roznica = roznica+scrollState;
-                            rlpbParams.setMargins(0, roznica, 0, 0);
-                            relativeLayoutProgressBars.setLayoutParams(rlpbParams);
-
-                        } else {
-                            // Scrolled down
-                            roznica = roznica-scrollState;
-                            rlpbParams.setMargins(0, roznica, 0, 0);
-                            relativeLayoutProgressBars.setLayoutParams(rlpbParams);
-
-                        }
-                    }
-
-                    @Override
-                    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-                    }
-                });*/
             }
 
         }

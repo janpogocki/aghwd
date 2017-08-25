@@ -123,7 +123,6 @@ public class SkosActivity extends Fragment {
         ((MainActivity) activityContext).showSearchButton(false);
 
         Storage.openedBrowser = true;
-        Storage.oneMoreBackPressedButtonMeansExit = false;
 
         ((MainActivity) activityContext).hideKeyboard(getView());
 

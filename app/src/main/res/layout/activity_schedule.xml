@@ -14,7 +14,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/rlDates"
-        android:background="@color/colorLightGray2"
+        style="@style/LightGray2"
         android:visibility="gone">
 
         <TextView
@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:layout_alignBottom="@+id/textDates"
-            android:background="@color/colorLightGray3" />
+            style="@style/LightGray3" />
 
     </RelativeLayout>
 

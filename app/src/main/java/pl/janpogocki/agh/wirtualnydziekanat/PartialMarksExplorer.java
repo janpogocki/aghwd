@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import pl.janpogocki.agh.wirtualnydziekanat.javas.AnimatedExpandableListView;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapterPartialMarks;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchPartialMarks;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchWebsite;
@@ -109,14 +110,8 @@ public class PartialMarksExplorer extends Fragment {
 
         listAdapter = new ExpandableListAdapterPartialMarks(activityContext, listDataHeader, listDataChild);
 
-        ExpandableListView expandableListView = (ExpandableListView) view.findViewById(R.id.expandableListView);
+        AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
-
-        try {
-            Thread.sleep(500);
-        } catch (InterruptedException e) {
-            Log.i("aghwd", "Sleep error", e);
-        }
     }
 
     private void showResults(View view){
@@ -143,7 +138,7 @@ public class PartialMarksExplorer extends Fragment {
 
         Storage.currentSemesterListPointerPartialMarks = Storage.summarySemesters.size()-1;
         PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
-        runner.execute(root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -320,7 +315,7 @@ public class PartialMarksExplorer extends Fragment {
         // do in background
         rlLoader.setVisibility(View.VISIBLE);
         PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
-        runner.execute(root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -417,26 +412,54 @@ public class PartialMarksExplorer extends Fragment {
                 rlLoader.setVisibility(View.GONE);
             }
             else {
-                final ExpandableListView expandableListView = (ExpandableListView) root.findViewById(R.id.expandableListView);
+                final AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) root.findViewById(R.id.expandableListView);
                 rlData.setVisibility(View.VISIBLE);
                 showResults(root);
 
-                expandableListView.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+                expandableListView.setOnGroupClickListener(new AnimatedExpandableListView.OnGroupClickListener() {
+
                     int previousGroup = -1;
 
                     @Override
-                    public void onGroupExpand(int groupPosition) {
-                        if(groupPosition > previousGroup && previousGroup != -1) {
-                            expandableListView.setSelection(0);
-                            expandableListView.collapseGroup(previousGroup);
+                    public boolean onGroupClick(ExpandableListView parent, View v, final int groupPosition, long id) {
+                        int diff = 0;
+
+                        if (previousGroup != -1 && previousGroup != groupPosition){
+                            expandableListView.collapseGroupWithAnimation(previousGroup);
+
+                            expandableListView.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    expandableListView.setSelection(groupPosition);
+                                }
+                            }, 400);
                         }
-                        else if (groupPosition < previousGroup && previousGroup != -1){
-                            expandableListView.collapseGroup(previousGroup);
-                            expandableListView.setSelection(0);
+                        else {
+                            diff = 700;
+                            previousGroup = -1;
                         }
+
+                        expandableListView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (expandableListView.isGroupExpanded(groupPosition)) {
+                                    expandableListView.collapseGroupWithAnimation(groupPosition);
+                                } else {
+                                    expandableListView.expandGroupWithAnimation(groupPosition);
+                                }
+                            }
+                        }, 700-diff);
+
                         previousGroup = groupPosition;
 
-                        expandableListView.setSelection(groupPosition);
+                        expandableListView.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                expandableListView.smoothScrollToPositionFromTop(groupPosition, 0);
+                            }
+                        }, 1000-diff);
+
+                        return true;
                     }
                 });
             }

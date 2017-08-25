@@ -82,7 +82,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
-                    <ExpandableListView
+                    <pl.janpogocki.agh.wirtualnydziekanat.javas.AnimatedExpandableListView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:id="@+id/expandableListView"

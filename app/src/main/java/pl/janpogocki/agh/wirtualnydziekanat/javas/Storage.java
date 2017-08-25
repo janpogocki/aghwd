@@ -25,7 +25,6 @@ public class Storage {
     public static int currentSemesterListPointerPartialMarks = 0;
     public static long timeOfLastConnection = 0;
     public static Bitmap photoUser = null;
-    public static Boolean oneMoreBackPressedButtonMeansExit = false;
     public static Boolean openedBrowser = false;
     public static Boolean multiKierunek = false;
     public static Boolean firstRunMarksExplorer = true;
@@ -59,7 +58,6 @@ public class Storage {
         currentSemesterListPointerPartialMarks = 0;
         timeOfLastConnection = 0;
         photoUser = null;
-        oneMoreBackPressedButtonMeansExit = false;
         openedBrowser = false;
         multiKierunek = false;
         firstRunMarksExplorer = true;

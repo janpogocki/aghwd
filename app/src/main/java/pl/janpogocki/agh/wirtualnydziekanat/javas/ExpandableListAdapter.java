@@ -15,7 +15,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.R;
  * Class generating viewing marks
  */
 
-public class ExpandableListAdapter extends BaseExpandableListAdapter {
+public class ExpandableListAdapter extends AnimatedExpandableListView.AnimatedExpandableListAdapter {
 
     private Context _context;
     // header titles
@@ -44,8 +44,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getChildView(int groupPosition, final int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
-
+    public View getRealChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
         String childLecture = (String) getChild(groupPosition, childPosition, 0);
         String childType = (String) getChild(groupPosition, childPosition, 1);
         String childMark1 = (String) getChild(groupPosition, childPosition, 2);
@@ -74,7 +73,7 @@ public class ExpandableListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public int getChildrenCount(int groupPosition) {
+    public int getRealChildrenCount(int groupPosition) {
         return this._listDataChild.get(this._listDataHeader.get(groupPosition).get(0)).size();
     }
 
