@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.SwitchCompat;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -20,7 +21,6 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -43,7 +43,7 @@ public class LogIn extends AppCompatActivity {
 
     RelativeLayout relativeLayout2, relativeLayout3, relativeLayout4;
     EditText editText, editText2;
-    Button button;
+    AppCompatButton button;
     SwitchCompat switch1;
     TextView textView3, textView3bis, textView12;
     Logging logging = null;
@@ -51,6 +51,7 @@ public class LogIn extends AppCompatActivity {
     AsyncTaskRunner runner;
     AsyncTaskRunner2 runner2;
     Activity activity;
+    String nightModePreference;
 
     private void hideKeyboard(View view) {
         InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -147,7 +148,7 @@ public class LogIn extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         // Load startup preferences and get user's night mode
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String nightModePreference = sharedPreferences.getString("night_mode", "false");
+        nightModePreference = sharedPreferences.getString("night_mode", "false");
 
         if (nightModePreference.equals("true")
                 || (nightModePreference.equals("auto") && !SunriseAndSunsetCalculator.isDaylight())){
@@ -171,6 +172,7 @@ public class LogIn extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         mFirebaseAnalytics.setCurrentScreen(this, getString(R.string.logging), this.getClass().getSimpleName());
+        mFirebaseAnalytics.setUserProperty("night_mode", nightModePreference);
     }
 
     private void loadActivity(){
@@ -200,7 +202,7 @@ public class LogIn extends AppCompatActivity {
             relativeLayout4 = (RelativeLayout) findViewById(R.id.relativeLayout4);
             editText = (EditText) findViewById(R.id.editText);
             editText2 = (EditText) findViewById(R.id.editText2);
-            button = (Button) findViewById(R.id.button);
+            button = (AppCompatButton) findViewById(R.id.button);
             switch1 = (SwitchCompat) findViewById(R.id.switch1);
             textView3 = (TextView) findViewById(R.id.textView3);
             textView3bis = (TextView) findViewById(R.id.textView3bis);
