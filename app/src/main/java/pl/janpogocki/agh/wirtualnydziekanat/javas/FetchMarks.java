@@ -44,8 +44,8 @@ public class FetchMarks {
                 }
 
                 // Gather data about marks, ECTSes etc.
-                LabelAndList<String> marks = new LabelAndList<>(current.select("td").get(1).ownText());
-                for (int i = 0; i <= 9; i++) {
+                LabelAndList<String> marks = new LabelAndList<>(current.select("td").get(2).ownText());
+                for (int i = 0; i <= 10; i++) {
                     if (current.select("td").get(i).select("span.ocena").size() > 0) {
                         marks.add(current.select("td").get(i).select(".ocena").get(0).ownText()
                                 + " " + current.select("td").get(i).select(".ocena").get(1).ownText());
@@ -104,13 +104,13 @@ public class FetchMarks {
             db2.add(current.getLabel());
             for (LabelAndList<String> current2 : current.getList()) {
                 // If ECTS != 0 then get ECTS and get FinalMark
-                if (!current2.getList().get(9).equals("0")) {
-                    db2.add(current2.getList().get(9));
+                if (!current2.getList().get(10).equals("0")) {
+                    db2.add(current2.getList().get(10));
                     // If mark exists...
-                    if (current2.getList().get(2).length() > 1 && current2.getList().get(2).contains(" "))
-                        db2.add(current2.getList().get(2).split(" ")[0]);
-                    else if (current2.getList().get(2).length() > 1 && !current2.getList().get(2).contains(" "))
-                        db2.add(current2.getList().get(2));
+                    if (current2.getList().get(3).length() > 1 && current2.getList().get(3).contains(" "))
+                        db2.add(current2.getList().get(3).split(" ")[0]);
+                    else if (current2.getList().get(3).length() > 1 && !current2.getList().get(3).contains(" "))
+                        db2.add(current2.getList().get(3));
                     else
                         db2.add("");
                     break;
@@ -123,7 +123,7 @@ public class FetchMarks {
             String examStatus = "no";
             for (LabelAndList<String> current2 : current.getList()) {
                 // If isset "Egzamin" set yes and break loop
-                if (current2.getList().get(1).equals("Egzamin")) {
+                if (current2.getList().get(2).equals("Egzamin")) {
                     examStatus = "yes";
                     break;
                 }
@@ -147,8 +147,8 @@ public class FetchMarks {
             for (LabelAndList<String> current2 : current.getList()) {
                 db3 = new ArrayList<>();
                 db3.add(current2.getLabel());
-                db3.add(current2.getList().get(8));
-                for (int i=3; i<=5; i++){
+                db3.add(current2.getList().get(9));
+                for (int i=4; i<=6; i++){
                     if (current2.getList().get(i).length() > 1 && current2.getList().get(i).contains(" "))
                         db3.add(current2.getList().get(i).split(" ")[0] + "\n" + current2.getList().get(i).split(" ")[1]);
                     else if (current2.getList().get(i).length() > 1 && !current2.getList().get(i).contains(" "))
@@ -156,7 +156,7 @@ public class FetchMarks {
                     else
                         db3.add(" ");
                 }
-                db3.add(current2.getList().get(6));
+                db3.add(current2.getList().get(7));
 
                 db2.add(db3);
                 db.put(subjectTitle, db2);
