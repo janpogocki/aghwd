@@ -3,6 +3,7 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -35,11 +36,6 @@ public class SkosActivity extends Fragment {
     FetchSkos fs;
     ListView listViewGroups;
     ListAdapter listAdapter;
-
-    public Fragment newInstance(Context context) {
-        SkosActivity f = new SkosActivity();
-        return f;
-    }
 
     public void searchTyping(String val){
         if (listAdapter != null && listViewGroups != null) {
@@ -97,7 +93,7 @@ public class SkosActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute(root);
+            runner.execute();
         }
         else {
             // Have it, show it.
@@ -227,6 +223,12 @@ public class SkosActivity extends Fragment {
             textView3rdLine.setText(personURL);
             textView3rdLine.setVisibility(View.GONE);
 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                textView2ndLine.setTextAppearance(R.style.TextAppearance_AppCompat_Small);
+            }
+            else
+                textView2ndLine.setTextAppearance(root.getContext(), R.style.TextAppearance_AppCompat_Small);
+
             rlDataItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -239,19 +241,17 @@ public class SkosActivity extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
-
                 fs = new FetchSkos(activityContext);
 
                 return root;
             } catch (Exception e) {
-                Log.i("aghwd", "FetchSkos error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

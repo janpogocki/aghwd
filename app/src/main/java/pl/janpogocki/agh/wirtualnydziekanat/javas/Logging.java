@@ -210,7 +210,7 @@ public class Logging {
 
         // Send POST to KierunkiStudiow.aspx
         FetchWebsite fw = new FetchWebsite(URLdomain + "/KierunkiStudiow.aspx");
-        String fww = fw.getWebsite(true, true, data);
+        fw.getWebsite(true, true, data);
 
         // Get Wynik2.aspx and get another required info
         getUserInfos();

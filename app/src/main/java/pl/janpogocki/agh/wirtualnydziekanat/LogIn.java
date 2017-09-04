@@ -219,7 +219,8 @@ public class LogIn extends AppCompatActivity {
                             RememberPassword rp = new RememberPassword(LogIn.this);
                             doLogging(rp.getLogin(), rp.getPassword(), "true");
                         } catch (IOException e) {
-                            Log.i("aghwd", "No login or password saved", e);
+                            Log.i("aghwd", "aghwd", e);
+                            Storage.appendCrash(e);
                         }
                     }
                 });
@@ -228,7 +229,8 @@ public class LogIn extends AppCompatActivity {
                 try {
                     doLogging(rp.getLogin(), rp.getPassword(), "true");
                 } catch (IOException e) {
-                    Log.i("aghwd", "No login or password saved", e);
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
                 }
 
             } else {
@@ -277,7 +279,8 @@ public class LogIn extends AppCompatActivity {
                 logging = new Logging(login, password, Boolean.parseBoolean(isSave), LogIn.this);
                 return logging;
             } catch (Exception e) {
-                Log.i("aghwd", "Internet error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 return null;
             }
         }
@@ -377,7 +380,8 @@ public class LogIn extends AppCompatActivity {
                         builder.create().show();
                 }
             } catch(NullPointerException e){
-                Log.i("aghwd", "Internet error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 relativeLayout3.setVisibility(View.GONE);
                 Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
@@ -397,7 +401,8 @@ public class LogIn extends AppCompatActivity {
                 logging.loggingAfterKierunekChoice();
                 return logging;
             } catch (Exception e) {
-                Log.i("aghwd", "Logging afterKierunekChoice", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 return null;
             }
         }

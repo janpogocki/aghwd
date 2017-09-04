@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity
     SearchView searchView = null;
     SkosActivity skosactivity = null;
     ScheduleActivity scheduleactivity = null;
+    FeedbackActivity feedbackactivity = null;
     FirebaseAnalytics mFirebaseAnalytics;
     String currentFragmentScreen, notificationsStatusFirebase;
 
@@ -74,6 +75,13 @@ public class MainActivity extends AppCompatActivity
             restartApp();
 
         MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
+    }
+
+    public void showSendButton(Boolean val){
+        if (MenuWithActionBar == null)
+            restartApp();
+
+        MenuWithActionBar.findItem(R.id.action_send).setVisible(val);
     }
 
     public void showScheduleButtons(Boolean val){
@@ -195,7 +203,8 @@ public class MainActivity extends AppCompatActivity
                 navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
                 setTitle(getString(R.string.summary));
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
+                Fragment summaryactivity_ = new SummaryActivity();
+                tx.replace(R.id.frameLayoutMain, summaryactivity_);
                 tx.commit();
 
                 currentFragmentScreen = "summary";
@@ -214,7 +223,8 @@ public class MainActivity extends AppCompatActivity
                 setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
                 navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
                 FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+                Fragment marksexplorer_ = new MarksExplorer();
+                tx.replace(R.id.frameLayoutMain, marksexplorer_);
                 tx.commit();
 
                 currentFragmentScreen = "semester";
@@ -253,6 +263,7 @@ public class MainActivity extends AppCompatActivity
         MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
         showSearchButton(false);
+        showSendButton(false);
         showScheduleButtons(false);
         resetMainLayoutVisibility(true);
 
@@ -262,7 +273,8 @@ public class MainActivity extends AppCompatActivity
             navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
             setTitle(getString(R.string.summary));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
+            Fragment summaryactivity_ = new SummaryActivity();
+            tx.replace(R.id.frameLayoutMain, summaryactivity_);
             tx.commit();
 
             currentFragmentScreen = "summary";
@@ -284,7 +296,8 @@ public class MainActivity extends AppCompatActivity
             setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
             navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+            Fragment marksexplorer_ = new MarksExplorer();
+            tx.replace(R.id.frameLayoutMain, marksexplorer_);
             tx.commit();
 
             currentFragmentScreen = "semester";
@@ -311,6 +324,7 @@ public class MainActivity extends AppCompatActivity
                 MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
                 showSearchButton(false);
+                showSendButton(false);
                 showScheduleButtons(false);
                 resetMainLayoutVisibility(true);
 
@@ -320,7 +334,8 @@ public class MainActivity extends AppCompatActivity
                     navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
                     setTitle(getString(R.string.summary));
                     FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                    tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
+                    Fragment summaryactivity_ = new SummaryActivity();
+                    tx.replace(R.id.frameLayoutMain, summaryactivity_);
                     tx.commit();
 
                     currentFragmentScreen = "summary";
@@ -342,7 +357,8 @@ public class MainActivity extends AppCompatActivity
                     setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
                     navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
                     FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                    tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+                    Fragment marksexplorer_ = new MarksExplorer();
+                    tx.replace(R.id.frameLayoutMain, marksexplorer_);
                     tx.commit();
 
                     currentFragmentScreen = "semester";
@@ -384,11 +400,13 @@ public class MainActivity extends AppCompatActivity
 
             if (item.getTitle().equals(getString(R.string.menu_marks))) {
                 item.setTitle(R.string.menu_partial_marks);
-                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.PartialMarksExplorer"));
+                Fragment partialmarksexplorer_ = new PartialMarksExplorer();
+                tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
                 currentFragmentScreen = "semester_partial";
             } else {
                 item.setTitle(R.string.menu_marks);
-                tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+                Fragment marksexplorer_ = new MarksExplorer();
+                tx.replace(R.id.frameLayoutMain, marksexplorer_);
                 currentFragmentScreen = "semester";
             }
 
@@ -402,6 +420,11 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.action_next_week) {
             scheduleactivity.changeWeek(getString(R.string.next));
+        }
+        else if (id == R.id.action_send) {
+            hideKeyboard(getWindow().getDecorView().getRootView());
+            showSendButton(false);
+            feedbackactivity.sendFeedback();
         }
 
         return super.onOptionsItemSelected(item);
@@ -417,13 +440,15 @@ public class MainActivity extends AppCompatActivity
         MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
         showSearchButton(false);
+        showSendButton(false);
         showScheduleButtons(false);
         resetMainLayoutVisibility(true);
 
         if (id == R.id.nav_about) {
             setTitle(getString(R.string.about_app));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.AboutActivity"));
+            Fragment aboutactivity_ = new AboutActivity();
+            tx.replace(R.id.frameLayoutMain, aboutactivity_);
             tx.commit();
             currentFragmentScreen = "about";
         } else if (id == R.id.nav_settings) {
@@ -437,19 +462,22 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_summary) {
             setTitle(getString(R.string.summary));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SummaryActivity"));
+            Fragment summaryactivity_ = new SummaryActivity();
+            tx.replace(R.id.frameLayoutMain, summaryactivity_);
             tx.commit();
             currentFragmentScreen = "summary";
         } else if (id == R.id.nav_groups) {
             setTitle(getString(R.string.groups));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.GroupsActivity"));
+            Fragment groupsactivity_ = new GroupsActivity();
+            tx.replace(R.id.frameLayoutMain, groupsactivity_);
             tx.commit();
             currentFragmentScreen = "groups";
         } else if (id == R.id.nav_diploma) {
             setTitle(getString(R.string.diploma));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.DiplomaActivity"));
+            Fragment diplomaactivity_ = new DiplomaActivity();
+            tx.replace(R.id.frameLayoutMain, diplomaactivity_);
             tx.commit();
             currentFragmentScreen = "diploma";
         } else if (id == R.id.nav_schedule) {
@@ -463,7 +491,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_syllabus) {
             setTitle(getString(R.string.syllabus));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.SyllabusActivity"));
+            Fragment syllabusactivity = new SyllabusActivity();
+            tx.replace(R.id.frameLayoutMain, syllabusactivity);
             tx.commit();
             currentFragmentScreen = "syllabus";
         } else if (id == R.id.nav_skos) {
@@ -479,6 +508,14 @@ public class MainActivity extends AppCompatActivity
             searchView.setIconified(true);
 
             currentFragmentScreen = "skos";
+        } else if (id == R.id.nav_feedback) {
+            setTitle(getString(R.string.send_feedback));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment feedbackactivity_ = new FeedbackActivity();
+            tx.replace(R.id.frameLayoutMain, feedbackactivity_);
+            tx.commit();
+            feedbackactivity = (FeedbackActivity) feedbackactivity_;
+            currentFragmentScreen = "feedback";
         } else if (id == R.id.nav_logout) {
             RememberPassword rp = new RememberPassword(this);
 
@@ -509,7 +546,8 @@ public class MainActivity extends AppCompatActivity
             Storage.currentSemester = id;
             setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(id));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            tx.replace(R.id.frameLayoutMain, Fragment.instantiate(MainActivity.this, "pl.janpogocki.agh.wirtualnydziekanat.MarksExplorer"));
+            Fragment marksexplorer_ = new MarksExplorer();
+            tx.replace(R.id.frameLayoutMain, marksexplorer_);
             tx.commit();
             currentFragmentScreen = "semester";
         }

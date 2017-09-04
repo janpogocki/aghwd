@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:windowBackground">@color/colorWhiteBackground</item>
+        <item name="android:statusBarColor">@color/statusBarTransparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+
+        <item name="aghMainLogo">@drawable/agh_kolor</item>
+        <item name="aghLogoBackground">@color/colorWhiteBackground</item>
+        <item name="blackTextMedium">@color/colorBlackText</item>
+        <item name="blackTextSmall">@color/colorBlackText</item>
+        <item name="blackTint">@color/colorBlackText</item>
+        <item name="lightGray2">@color/colorLightGray2</item>
+        <item name="lightGray3">@color/colorLightGray3</item>
+        <item name="whiteBackground">@color/colorWhiteBackground</item>
+    </style>
+
+    <style name="AppThemeNight" parent="Theme.AppCompat">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/statusBarTransparent</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="autoCompleteTextViewStyle">@style/cursorColor</item>
+
+        <item name="aghMainLogo">@drawable/agh_biale</item>
+        <item name="aghLogoBackground">@drawable/agh_logo_dark_gradient</item>
+        <item name="blackTextMedium">@color/colorWhiteBackground</item>
+        <item name="blackTextSmall">@color/colorWhiteBackground</item>
+        <item name="blackTint">@color/colorLightGray3</item>
+        <item name="lightGray2">@color/colorLightGray2Dark</item>
+        <item name="lightGray3">@color/colorLightGray3Dark</item>
+        <item name="whiteBackground">@color/colorPrimaryDarkNight</item>
+
+        <item name="android:windowBackground">@color/colorBlackText</item>
+    </style>
+</resources>

@@ -40,6 +40,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class MarksExplorer extends Fragment {
 
+    View root;
     FirebaseAnalytics mFirebaseAnalytics;
     ExpandableListAdapter listAdapter;
     List<List<String>> listDataHeader;
@@ -56,11 +57,6 @@ public class MarksExplorer extends Fragment {
     String eventValidationName = "__EVENTVALIDATION";
     String buttonBackName = "ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$butPop";
     String buttonForwardName = "ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$butNas";
-
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
 
     private void setProgressAnimate(ProgressBar pb, int progressTo) {
         ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo * 100);
@@ -189,7 +185,7 @@ public class MarksExplorer extends Fragment {
 
         Storage.currentSemesterListPointer = Storage.summarySemesters.size()-1;
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -233,7 +229,8 @@ public class MarksExplorer extends Fragment {
                         POSTgenerator.add(buttonForwardName, buttonForwardValue);
                     }
                 } catch (UnsupportedEncodingException e) {
-                    Log.i("aghwd", "POSTgenerator error", e);
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
                 }
 
                 String data = POSTgenerator.getGeneratedPOST();
@@ -256,7 +253,7 @@ public class MarksExplorer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        View root = inflater.inflate(R.layout.activity_marks_explorer, container, false);
+        root = inflater.inflate(R.layout.activity_marks_explorer, container, false);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         textView3 = (TextView) root.findViewById(R.id.textView3);
@@ -273,7 +270,7 @@ public class MarksExplorer extends Fragment {
         }
 
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -289,13 +286,11 @@ public class MarksExplorer extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
                 goThroughSemester();
                 fm = new FetchMarks(Storage.currentSemesterHTML.get(Storage.currentSemester));
 
@@ -304,12 +299,14 @@ public class MarksExplorer extends Fragment {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    Log.i("aghwd", "Sleep error", e);
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
                 }
 
                 return root;
             } catch (Exception e) {
-                Log.i("aghwd", "FetchMarks error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

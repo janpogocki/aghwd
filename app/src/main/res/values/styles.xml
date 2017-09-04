@@ -112,4 +112,8 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
+    <style name="ToolbarTheme" parent="Widget.AppCompat.DrawerArrowToggle">
+        <item name="colorControlNormal">@color/colorPrimaryDarkToolbar</item>
+    </style>
+
 </resources>

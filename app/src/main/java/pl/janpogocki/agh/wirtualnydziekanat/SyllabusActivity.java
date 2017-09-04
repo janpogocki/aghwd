@@ -27,14 +27,10 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SyllabusActivity extends Fragment {
 
+    View root;
     FetchUniversityStatus fus;
     TextView textView3, textView3bis;
     Context activityContext;
-
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
 
     private void animateFadeIn(TextView tv, View view, int offset){
         Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadein);
@@ -135,7 +131,7 @@ public class SyllabusActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute(root);
+            runner.execute();
 
             // wait for change loading subtitle
             animateFadeOut(textView3, root, 3000);
@@ -160,7 +156,7 @@ public class SyllabusActivity extends Fragment {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.syllabus), null);
 
-        View root = inflater.inflate(R.layout.activity_syllabus, container, false);
+        root = inflater.inflate(R.layout.activity_syllabus, container, false);
         textView3 = (TextView) root.findViewById(R.id.textView3);
         textView3bis = (TextView) root.findViewById(R.id.textView3bis);
 
@@ -170,19 +166,17 @@ public class SyllabusActivity extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
-
                 fus = new FetchUniversityStatus(true);
 
                 return root;
             } catch (Exception e) {
-                Log.i("aghwd", "FetchUniversityStatus error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

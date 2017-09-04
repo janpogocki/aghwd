@@ -45,7 +45,8 @@ public class RememberPassword {
             if (getPeselNumber() != null && getNameAndSurname() != null)
                 return true;
         } catch (IOException | IllegalArgumentException e) {
-            Log.i("aghwd", "No AGHWD account", e);
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
         }
 
         return false;

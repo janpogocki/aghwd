@@ -16,15 +16,12 @@ import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
+
 public class AboutActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
     Context activityContext;
-
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
 
     @Override
     public void onAttach(Context context) {
@@ -77,6 +74,7 @@ public class AboutActivity extends Fragment {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
                 } catch (ActivityNotFoundException anfe) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                    Storage.appendCrash(anfe);
                 }
             }
         });

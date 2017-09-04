@@ -22,11 +22,6 @@ public class SummaryActivity extends Fragment {
     FirebaseAnalytics mFirebaseAnalytics;
     Context activityContext;
 
-    public static Fragment newInstance(Context context) {
-        SummaryActivity f = new SummaryActivity();
-        return f;
-    }
-
     @Override
     public void onResume() {
         super.onResume();

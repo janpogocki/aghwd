@@ -2,6 +2,8 @@ package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
 import android.graphics.Bitmap;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,6 +22,7 @@ public class Storage {
     public static String syllabusURLlinkDepartment = "";
     public static String sharedPreferencesStartScreen = "";
     public static String scheduleDates = "";
+    public static String feedbackCrashList = "";
     public static int currentSemester = 0;
     public static int currentSemesterListPointer = 0;
     public static int currentSemesterListPointerPartialMarks = 0;
@@ -42,6 +45,13 @@ public class Storage {
 
     public static String getSemesterNumberById(int id) {
         return Storage.summarySemesters.get(id).get(2);
+    }
+
+    public static void appendCrash(Throwable e){
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        Storage.feedbackCrashList += sw.toString() + "\n\n==========\n\n";
     }
 
     public static void clearStorage(){

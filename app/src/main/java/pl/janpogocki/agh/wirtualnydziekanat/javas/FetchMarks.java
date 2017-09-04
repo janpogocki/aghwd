@@ -46,9 +46,11 @@ public class FetchMarks {
                 // Gather data about marks, ECTSes etc.
                 LabelAndList<String> marks = new LabelAndList<>(current.select("td").get(2).ownText());
                 for (int i = 0; i <= 10; i++) {
-                    if (current.select("td").get(i).select("span.ocena").size() > 0) {
+                    if (current.select("td").get(i).select("span.ocena").size() == 2) {
                         marks.add(current.select("td").get(i).select(".ocena").get(0).ownText()
                                 + " " + current.select("td").get(i).select(".ocena").get(1).ownText());
+                    } else if (current.select("td").get(i).select("span.ocena").size() == 1) {
+                        marks.add(current.select("td").get(i).select(".ocena").get(0).ownText());
                     } else
                         marks.add(current.select("td").get(i).ownText());
                 }
@@ -152,7 +154,7 @@ public class FetchMarks {
                     if (current2.getList().get(i).length() > 1 && current2.getList().get(i).contains(" "))
                         db3.add(current2.getList().get(i).split(" ")[0] + "\n" + current2.getList().get(i).split(" ")[1]);
                     else if (current2.getList().get(i).length() > 1 && !current2.getList().get(i).contains(" "))
-                        db3.add(current2.getList().get(i) + "\n");
+                        db3.add(current2.getList().get(i));
                     else
                         db3.add(" ");
                 }

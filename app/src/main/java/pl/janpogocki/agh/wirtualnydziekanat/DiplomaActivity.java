@@ -21,14 +21,10 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class DiplomaActivity extends Fragment {
 
+    View root;
     FirebaseAnalytics mFirebaseAnalytics;
     FetchDiploma fd;
     Context activityContext;
-
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
 
     private void refreshDiploma(View root) {
         if (Storage.diploma == null || Storage.diploma.size() == 0){
@@ -37,7 +33,7 @@ public class DiplomaActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute(root);
+            runner.execute();
         }
         else {
             // Have it, show it.
@@ -104,7 +100,7 @@ public class DiplomaActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        View root = inflater.inflate(R.layout.activity_groups, container, false);
+        root = inflater.inflate(R.layout.activity_groups, container, false);
 
         refreshDiploma(root);
 
@@ -118,18 +114,16 @@ public class DiplomaActivity extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
-
                 fd = new FetchDiploma();
 
                 return root;
             } catch (Exception e) {
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

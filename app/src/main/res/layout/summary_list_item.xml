@@ -36,9 +36,8 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/BlackTextMedium"
                 android:text="2014/2015 - rok: 1, semestr: 1 (Z)"
-                android:textStyle="bold"
                 android:id="@+id/textViewHeader"
-                android:layout_marginTop="10dp" />
+                android:layout_marginTop="10sp" />
 
             <TextView
                 android:layout_width="wrap_content"

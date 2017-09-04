@@ -58,6 +58,11 @@
                     android:title="@string/action_settings" />
 
                 <item
+                    android:id="@+id/nav_feedback"
+                    android:icon="@drawable/ic_menu_feedback"
+                    android:title="@string/send_feedback" />
+
+                <item
                     android:id="@+id/nav_about"
                     android:icon="@drawable/ic_menu_about"
                     android:title="@string/about_app" />

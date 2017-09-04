@@ -21,14 +21,10 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class GroupsActivity extends Fragment {
 
+    View root;
     FirebaseAnalytics mFirebaseAnalytics;
     FetchGroups fg;
     Context activityContext;
-
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
 
     private void refreshGroups(View root) {
         if (Storage.groupsAndModules == null || Storage.groupsAndModules.size() == 0){
@@ -37,7 +33,7 @@ public class GroupsActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute(root);
+            runner.execute();
         }
         else {
             // Have it, show it.
@@ -105,7 +101,7 @@ public class GroupsActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        View root = inflater.inflate(R.layout.activity_groups, container, false);
+        root = inflater.inflate(R.layout.activity_groups, container, false);
 
         refreshGroups(root);
 
@@ -119,18 +115,16 @@ public class GroupsActivity extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
-
                 fg = new FetchGroups();
 
                 return root;
             } catch (Exception e) {
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

@@ -31,7 +31,7 @@ public class FetchPartialMarks {
 
                 // Go over every entry
                 for (int i = 0; i < htmlParsedTableTbodyTR.size(); i = i+2){
-                    LabelAndList<List<String>> db2 = null;
+                    LabelAndList<List<String>> db2;
 
                     // tr with subject and lesson name
                     Elements subjectAndLessons = htmlParsedTableTbodyTR.get(i).getElementsByTag("td");

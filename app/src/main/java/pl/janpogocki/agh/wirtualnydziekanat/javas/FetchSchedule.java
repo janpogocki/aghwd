@@ -58,7 +58,7 @@ public class FetchSchedule {
             status = -1;
 
             if (Storage.universityStatus == null || Storage.universityStatus.size() == 0){
-                FetchUniversityStatus fus = new FetchUniversityStatus(false);
+                new FetchUniversityStatus(false);
             }
 
             if (Storage.universityStatus != null && Storage.universityStatus.size() > 6 && Storage.universityStatus.get(1).contains("Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej")){
@@ -83,6 +83,7 @@ public class FetchSchedule {
                         statusStr = statusStr + fwParsed.select("select#view-select > option:matches(" + kierunek + " - " + specjalnosc + " - " + formaStudiow + " - Studia II stopnia - [a-zA-Z]{0,} [0-9]{4}\\/[0-9]{4}\\/S" + Storage.getSemesterNumberById(Storage.summarySemesters.size() - 1) + ")").get(0).attr("value");
                 } catch (IndexOutOfBoundsException e){
                     statusStr = "2000";
+                    Storage.appendCrash(e);
                 }
 
                 status = Integer.parseInt(statusStr);

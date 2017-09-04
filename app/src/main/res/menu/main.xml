@@ -30,4 +30,12 @@
         android:title="@string/next_week"
         android:visible="false"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_send"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_send"
+        android:title="@string/send"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

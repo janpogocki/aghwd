@@ -44,11 +44,6 @@ public class ScheduleActivity extends Fragment {
     String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
     String eventValidationName = "__EVENTVALIDATION";
 
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
-
     public void changeWeek(String direction) {
         ((MainActivity) activityContext).showScheduleButtons(false);
         RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
@@ -98,14 +93,15 @@ public class ScheduleActivity extends Fragment {
             POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_radDataDo_calendar_SD", "[]");
             POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_radDataDo_calendar_AD", "[[1980,1,1],[2099,12,30],[" + todayYear + "," + todayMonth + "," + todayDay + "]]");
         } catch (UnsupportedEncodingException e) {
-            Log.i("aghwd", "POSTgenerator error", e);
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
         }
 
         postValue = POSTgenerator.getGeneratedPOST();
 
         rlLoader.setVisibility(View.VISIBLE);
         AsyncTaskRunner runner = new AsyncTaskRunner();
-        runner.execute(root);
+        runner.execute();
     }
 
     private void refreshSchedule(View root) {
@@ -236,7 +232,8 @@ public class ScheduleActivity extends Fragment {
                 try {
                     dateLesson = df.parse(dateAndTimeOfEndOfLesson);
                 } catch (ParseException e) {
-                    Log.i("aghwd", "Date parse error", e);
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
                 }
 
                 Date nowDate = new Date();
@@ -277,19 +274,17 @@ public class ScheduleActivity extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
-
                 fs = new FetchSchedule(postValue);
 
                 return root;
             } catch (Exception e) {
-                Log.i("aghwd", "FetchSchedule error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

@@ -42,7 +42,8 @@ public class FetchSkos {
                 outputStream.write(fww.getBytes());
                 outputStream.close();
             } catch (Exception e) {
-                Log.i("aghwd", "Can't open stream", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
             }
         }
 
@@ -65,7 +66,8 @@ public class FetchSkos {
             r.close();
             inputStream.close();
         } catch (Exception e) {
-            Log.i("aghwd", "Can't open stream", e);
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
         }
 
         if (list1.size() > 0 && list1.size() == list2.size() && list2.size() == list3.size()){

@@ -5,7 +5,7 @@
     style="@style/LightGray2">
 
     <RelativeLayout
-        android:layout_width="40dp"
+        android:layout_width="35dp"
         android:layout_height="match_parent"
         android:visibility="visible"></RelativeLayout>
 
@@ -59,9 +59,8 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
                     android:text="Data"
-                    android:textStyle="bold"
+                    style="@style/BlackTextSmall"
                     android:layout_marginTop="5dp"
                     android:id="@+id/textViewData"
                     android:layout_below="@+id/textViewCategory"

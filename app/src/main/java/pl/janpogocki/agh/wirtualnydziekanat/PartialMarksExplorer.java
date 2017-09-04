@@ -37,6 +37,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class PartialMarksExplorer extends Fragment {
 
+    View root;
     FirebaseAnalytics mFirebaseAnalytics;
     ExpandableListAdapterPartialMarks listAdapter;
     List<List<String>> listDataHeader;
@@ -58,11 +59,6 @@ public class PartialMarksExplorer extends Fragment {
     String scriptManager1Name = "ctl00$ctl00$ScriptManager1";
     String scriptManager1Pattern = "ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$Panel2Panel|";
     String expandAllName = "ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$chb_ExpColAll";
-
-    public static Fragment newInstance(Context context) {
-        AboutActivity f = new AboutActivity();
-        return f;
-    }
 
     private void animateFadeIn(RelativeLayout layout, View view, int offset){
         Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadein);
@@ -138,7 +134,7 @@ public class PartialMarksExplorer extends Fragment {
 
         Storage.currentSemesterListPointerPartialMarks = Storage.summarySemesters.size()-1;
         PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
-        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -173,7 +169,8 @@ public class PartialMarksExplorer extends Fragment {
                 POSTgenerator.add(eventTargetName, expandAllName);
                 POSTgenerator.add(expandAllName, "on");
             } catch (UnsupportedEncodingException e) {
-                Log.i("aghwd", "POSTgenerator error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
             }
             String data = POSTgenerator.getGeneratedPOST();
             FetchWebsite fw = new FetchWebsite(Logging.URLdomain + "/OcenyCzast.aspx");
@@ -203,7 +200,8 @@ public class PartialMarksExplorer extends Fragment {
                     POSTgenerator.add(eventTargetName, nextPageBtnName);
                     POSTgenerator.add(expandAllName, "on");
                 } catch (UnsupportedEncodingException e) {
-                    Log.i("aghwd", "POSTgenerator error", e);
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
                 }
                 data = POSTgenerator.getGeneratedPOST();
                 fw = new FetchWebsite(Logging.URLdomain + "/OcenyCzast.aspx");
@@ -277,7 +275,8 @@ public class PartialMarksExplorer extends Fragment {
                         }
 
                     } catch (UnsupportedEncodingException e) {
-                        Log.i("aghwd", "POSTgenerator error", e);
+                        Log.i("aghwd", "aghwd", e);
+                        Storage.appendCrash(e);
                     }
 
                     String data = POSTgenerator.getGeneratedPOST();
@@ -306,7 +305,7 @@ public class PartialMarksExplorer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        View root = inflater.inflate(R.layout.activity_partial_marks_explorer, container, false);
+        root = inflater.inflate(R.layout.activity_partial_marks_explorer, container, false);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         textView3 = (TextView) root.findViewById(R.id.textView3);
@@ -315,7 +314,7 @@ public class PartialMarksExplorer extends Fragment {
         // do in background
         rlLoader.setVisibility(View.VISIBLE);
         PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
-        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -331,14 +330,11 @@ public class PartialMarksExplorer extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        View root;
         Boolean isError = false;
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                root = params[0];
-
                 goThroughSemester();
                 fpm = new FetchPartialMarks(Storage.currentSemesterPartialMarksHTML.get(Storage.currentSemester));
 
@@ -347,12 +343,14 @@ public class PartialMarksExplorer extends Fragment {
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException e) {
-                    Log.i("aghwd", "Sleep error", e);
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
                 }
 
                 return root;
             } catch (Exception e) {
-                Log.i("aghwd", "FetchPartialMarks error", e);
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
                 isError = true;
                 return null;
             }

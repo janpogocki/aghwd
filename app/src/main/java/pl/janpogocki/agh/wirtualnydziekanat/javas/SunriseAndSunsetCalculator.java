@@ -49,7 +49,8 @@ public class SunriseAndSunsetCalculator {
             long timeTlong = timeT.getTime();
             timeT = new Date(timeTlong);
         } catch (ParseException e) {
-            Log.i("aghwd", "Problem with date parsing", e);
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
         }
 
         return !(timeT.before(sunriseT) || timeT.after(sunsetT));
