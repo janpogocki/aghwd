@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimaryDark">#8e1528</color>
-    <color name="colorPrimaryDarkToolbar">#5e0e1b</color>
     <color name="colorPrimary">#A71930</color>
     <color name="colorAccent">#A71930</color>
     <color name="colorLightGray">#F5F5F5</color>
@@ -11,7 +10,6 @@
     <color name="colorBlackText">#1E1E1E</color>
 
     <color name="statusBarTransparent">#0f000000</color>
-    <color name="colorGreen">#00693C</color>
 
     <color name="colorPrimaryDarkNight">#1E1E1E</color>
     <color name="colorLightGray2Dark">#2A2A2A</color>

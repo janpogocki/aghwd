@@ -385,10 +385,10 @@ public class MarksExplorer extends Fragment {
                                 public void run() {
                                     expandableListView.setSelection(groupPosition);
                                 }
-                            }, 400);
+                            }, 50);
                         }
                         else {
-                            diff = 700;
+                            diff = 350;
                             previousGroup = -1;
                         }
 
@@ -401,7 +401,7 @@ public class MarksExplorer extends Fragment {
                                     expandableListView.expandGroupWithAnimation(groupPosition);
                                 }
                             }
-                        }, 700-diff);
+                        }, 350-diff);
 
                         previousGroup = groupPosition;
 
@@ -410,7 +410,7 @@ public class MarksExplorer extends Fragment {
                             public void run() {
                                 expandableListView.smoothScrollToPositionFromTop(groupPosition, 0);
                             }
-                        }, 1000-diff);
+                        }, 650-diff);
 
                         return true;
                     }
