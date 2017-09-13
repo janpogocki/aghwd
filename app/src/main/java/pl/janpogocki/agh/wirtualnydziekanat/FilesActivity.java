@@ -140,6 +140,11 @@ public class FilesActivity extends Fragment {
     }
 
     private void goThroughSemester() throws Exception {
+        for (int i=0; i<Storage.summarySemesters.size()-1; i++){
+            Storage.currentFilesHTML.remove(i);
+            Storage.currentFilesDocsHTML.remove(i);
+        }
+
         Storage.currentSemesterListPointerFiles = Storage.summarySemesters.size()-1;
         FetchWebsite fw = new FetchWebsite(Logging.URLdomain + "/Prowadzacy.aspx");
         String fww = fw.getWebsite(true, true, "");

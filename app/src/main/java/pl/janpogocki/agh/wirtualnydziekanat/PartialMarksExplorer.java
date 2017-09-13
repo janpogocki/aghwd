@@ -220,6 +220,10 @@ public class PartialMarksExplorer extends Fragment {
     }
 
     private void goThroughSemester() throws Exception {
+        for (int i=0; i<Storage.summarySemesters.size()-1; i++){
+            Storage.currentSemesterPartialMarksHTML.remove(i);
+        }
+
         Storage.currentSemesterListPointerPartialMarks = Storage.summarySemesters.size()-1;
         FetchWebsite fw = new FetchWebsite(Logging.URLdomain + "/OcenyCzast.aspx");
         String fww = fw.getWebsite(true, true, "");

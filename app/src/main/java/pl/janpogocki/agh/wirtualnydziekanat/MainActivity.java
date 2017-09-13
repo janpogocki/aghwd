@@ -3,6 +3,7 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -163,7 +164,7 @@ public class MainActivity extends AppCompatActivity
         ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getSupportActionBar().getThemedContext(),
                 android.R.layout.simple_spinner_item, listOfSemesters);
 
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAdapter.setDropDownViewResource(R.layout.toolbar_spinner_dropdown_item);
         toolbarSpinner.setAdapter(spinnerAdapter);
         toolbarSpinner.setSelection(listOfSemesters.size()-1);
 
