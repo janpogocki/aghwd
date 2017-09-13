@@ -48,22 +48,29 @@
                 android:layout_alignParentStart="true"
                 android:contentDescription="photoUser" />
 
-            <TextView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="Imię DrugieImię Nazwisko"
-                android:gravity="bottom"
-                android:foregroundGravity="bottom"
-                android:textAlignment="gravity"
-                android:textSize="28dp"
+                android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/activity_vertical_margin"
-                android:id="@+id/textViewNameAndSurname"
                 android:layout_alignBottom="@+id/imageViewPhotoUser"
                 android:layout_toRightOf="@+id/imageViewPhotoUser"
                 android:layout_alignRight="@+id/imageView5"
-                android:layout_alignEnd="@+id/imageView5"
-                android:layout_alignParentTop="true" />
+                android:layout_alignEnd="@+id/imageView5">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:text="Imię DrugieImię Nazwisko"
+                    android:gravity="bottom"
+                    android:foregroundGravity="bottom"
+                    android:textAlignment="gravity"
+                    android:textSize="28dp"
+                    android:id="@+id/textViewNameAndSurname"
+
+                    android:layout_alignParentTop="true" />
+
+            </RelativeLayout>
 
             <RelativeLayout
                 android:layout_width="wrap_content"

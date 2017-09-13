@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">AGH WD</string>
-    <string name="app_version">1.3.12 beta</string>
 
     <string name="navigation_drawer_open">Otwórz menu nawigacyjne</string>
     <string name="navigation_drawer_close">Zamknij menu nawigacyjne</string>
@@ -26,8 +25,7 @@
     <string name="no_data_to_show">Brak danych do wyświetlenia</string>
     <string name="no_data_skos">Brak wyników</string>
 
-    <string name="menu_marks">Oceny końcowe</string>
-    <string name="menu_partial_marks">Oceny cząstkowe</string>
+    <string name="partial_marks">Oceny cząstkowe</string>
     <string name="menu_search">Szukaj</string>
 
     <string name="next_week">Następny tydzień</string>
@@ -72,5 +70,10 @@
     <string name="feedback_annotation">Wysyłając zgłoszenie jednocześnie zgadzasz się na przesłanie informacji systemowych pozwalających na ewentualne zdiagnozowanie problemu. Żadne dane osobiste (oprócz opcjonalnie wpisanego powyżej adresu e-mail) nie zostaną wysłane. Zgłoszenie najlepiej jest wysyłać po zaistnieniu problemu w aplikacji.</string>
     <string name="sending">Trwa wysyłanie…</string>
     <string name="feedback_was_sent">Opinia została wysłana, dzięki! :)</string>
+    <string name="final_marks">Oceny końcowe</string>
+    <string name="files">Pliki</string>
+    <string name="download_error">Błąd pobierania pliku</string>
+    <string name="download_ok">Plik został pobrany</string>
+    <string name="download_permission_info">Aby pobierać pliki z AGH WD, zezwól aplikacji na dostęp do plików na Twoim urządzeniu</string>
 
 </resources>

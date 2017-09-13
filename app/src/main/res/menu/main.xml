@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_change_marks"
+        android:id="@+id/toolbarSpinner"
         android:orderInCategory="100"
-        android:title="@string/menu_marks"
         android:visible="false"
-        app:showAsAction="ifRoom" />
+        app:actionViewClass="android.widget.Spinner"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_search"

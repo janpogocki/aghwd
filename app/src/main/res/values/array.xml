@@ -25,14 +25,16 @@
     </string-array>
 
     <string-array name="start_screen_entries">
-        <item>Najnowszy semestr</item>
         <item>Podsumowanie</item>
+        <item>Oceny końcowe</item>
+        <item>Oceny cząstkowe</item>
         <item>Podział godzin</item>
     </string-array>
 
     <string-array name="start_screen_values">
-        <item>semester</item>
         <item>summary</item>
+        <item>semester</item>
+        <item>semester_partial</item>
         <item>schedule</item>
     </string-array>
 

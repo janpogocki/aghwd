@@ -1,12 +1,13 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
-import android.animation.ObjectAnimator;
-import android.animation.ValueAnimator;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.animation.DecelerateInterpolator;
 import android.widget.ExpandableListView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -31,21 +30,21 @@ import java.util.HashMap;
 import java.util.List;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.AnimatedExpandableListView;
-import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapter;
-import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchMarks;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapterFiles;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchFiles;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchWebsite;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Logging;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.POSTgenerator;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
-public class MarksExplorer extends Fragment {
+public class FilesActivity extends Fragment {
 
     View root;
     FirebaseAnalytics mFirebaseAnalytics;
-    ExpandableListAdapter listAdapter;
+    ExpandableListAdapterFiles listAdapter;
     List<List<String>> listDataHeader;
     HashMap<String, List<List<String>>> listDataChild;
-    FetchMarks fm;
+    FetchFiles ff = null;
     Context activityContext;
 
     RelativeLayout rlLoader, rlData;
@@ -57,32 +56,6 @@ public class MarksExplorer extends Fragment {
     String eventValidationName = "__EVENTVALIDATION";
     String buttonBackName = "ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$butPop";
     String buttonForwardName = "ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$butNas";
-
-    private void setProgressAnimate(ProgressBar pb, int progressTo) {
-        ObjectAnimator animation = ObjectAnimator.ofInt(pb, "progress", 0, progressTo * 100);
-        animation.setDuration(1500);
-        animation.setInterpolator(new DecelerateInterpolator());
-        animation.setStartDelay(900);
-        animation.start();
-    }
-
-    private void animateTextView(final TextView textview, int initialValue, int finalValue, final Boolean isDouble) {
-        ValueAnimator valueAnimator = ValueAnimator.ofInt(initialValue, finalValue);
-        valueAnimator.setDuration(1500);
-
-        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if (isDouble)
-                    textview.setText(String.valueOf(Double.parseDouble(valueAnimator.getAnimatedValue().toString())/100));
-                else
-                    textview.setText(valueAnimator.getAnimatedValue().toString());
-            }
-        });
-
-        valueAnimator.setStartDelay(900);
-        valueAnimator.start();
-    }
 
     private void animateFadeIn(RelativeLayout layout, View view, int offset){
         Animation afi = AnimationUtils.loadAnimation(view.getContext(), R.anim.fadein);
@@ -128,43 +101,16 @@ public class MarksExplorer extends Fragment {
     public void exploreMarks(View view) {
         prepareListData();
 
-        listAdapter = new ExpandableListAdapter(activityContext, listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapterFiles(activityContext, listDataHeader, listDataChild, view);
 
         AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
     }
 
     private void showResults(View view){
-        TextView textViewAvgSemester, textViewAvgYear, textViewECTS;
-        ProgressBar progressBarAvgSemester, progressBarAvgYear, progressBarECTS;
-        RelativeLayout relativeLayoutProgressBars, relativeLayoutExpListView;
-
-        textViewAvgSemester = (TextView) view.findViewById(R.id.textViewAvgSemester);
-        textViewAvgYear = (TextView) view.findViewById(R.id.textViewAvgYear);
-        textViewECTS = (TextView) view.findViewById(R.id.textViewECTS);
-        progressBarAvgSemester = (ProgressBar) view.findViewById(R.id.progressBarAvgSemester);
-        progressBarAvgYear = (ProgressBar) view.findViewById(R.id.progressBarAvgYear);
-        progressBarECTS = (ProgressBar) view.findViewById(R.id.progressBarECTS);
-        relativeLayoutProgressBars = (RelativeLayout) view.findViewById(R.id.relativeLayoutProgressBars);
+        RelativeLayout relativeLayoutExpListView;
         relativeLayoutExpListView = (RelativeLayout) view.findViewById(R.id.relativeLayoutExpListView);
-
-        textViewAvgSemester.setText("0.0");
-        textViewAvgYear.setText("0.0");
-        textViewECTS.setText("0");
-        progressBarAvgSemester.setProgress(0);
-        progressBarAvgYear.setProgress(0);
-        progressBarECTS.setProgress(0);
-
-        animateFadeIn(relativeLayoutProgressBars, view, 500);
-        animateFadeIn(relativeLayoutExpListView, view, 1200);
-
-        animateTextView(textViewAvgSemester, 0, (int) (fm.amountAvgSemester*100), true);
-        animateTextView(textViewAvgYear, 0, (int) (fm.amountAvgYear*100), true);
-        animateTextView(textViewECTS, 0, fm.amountECTS, false);
-
-        setProgressAnimate(progressBarAvgSemester, (int) ((fm.amountAvgSemester*100)-200));
-        setProgressAnimate(progressBarAvgYear, (int) ((fm.amountAvgYear*100)-200));
-        setProgressAnimate(progressBarECTS, fm.amountECTS*10);
+        animateFadeIn(relativeLayoutExpListView, view, 500);
     }
 
     private void prepareListData() {
@@ -172,19 +118,20 @@ public class MarksExplorer extends Fragment {
         listDataChild = new HashMap<>();
 
         // Adding headers data
-        listDataHeader = fm.getHeaders();
+        listDataHeader = ff.getHeaders();
 
         // Adding child data (header, child)
-        listDataChild = fm.getChildren();
+        listDataChild = ff.getChildren();
     }
 
     private void refreshMarks(View root) {
         for (int i=0; i<Storage.summarySemesters.size()-1; i++){
-            Storage.currentSemesterHTML.remove(i);
+            Storage.currentFilesHTML.remove(i);
+            Storage.currentFilesDocsHTML.remove(i);
         }
 
-        Storage.currentSemesterListPointer = Storage.summarySemesters.size()-1;
-        AsyncTaskRunner runner = new AsyncTaskRunner();
+        Storage.currentSemesterListPointerFiles = Storage.summarySemesters.size()-1;
+        FilesActivity.AsyncTaskRunner runner = new FilesActivity.AsyncTaskRunner();
         runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // wait for change loading subtitle
@@ -193,23 +140,25 @@ public class MarksExplorer extends Fragment {
     }
 
     private void goThroughSemester() throws Exception {
-        if (Storage.currentSemester < Storage.currentSemesterListPointer) {
+        Storage.currentSemesterListPointerFiles = Storage.summarySemesters.size()-1;
+        FetchWebsite fw = new FetchWebsite(Logging.URLdomain + "/Prowadzacy.aspx");
+        String fww = fw.getWebsite(true, true, "");
+
+        if (Storage.currentSemester < Storage.currentSemesterListPointerFiles) {
             // go back
             goBack = true;
         }
 
-        while (Storage.currentSemester != Storage.currentSemesterListPointer){
-            String tempCurrentSemesterHTML = Storage.currentSemesterHTML.get(Storage.currentSemesterListPointer);
-
+        while (Storage.currentSemester != Storage.currentSemesterListPointerFiles){
             if (goBack)
-                Storage.currentSemesterListPointer--;
+                Storage.currentSemesterListPointerFiles--;
             else
-                Storage.currentSemesterListPointer++;
+                Storage.currentSemesterListPointerFiles++;
 
             // step +/- 1 semester
-            if (Storage.currentSemesterHTML.get(Storage.currentSemesterListPointer) == null){
+            if (Storage.currentFilesHTML.get(Storage.currentSemesterListPointerFiles) == null){
                 // get and save semester HTML
-                Document fwParsed = Jsoup.parse(tempCurrentSemesterHTML);
+                Document fwParsed = Jsoup.parse(fww);
                 String viewstateValue = fwParsed.getElementById(viewstateName).attr("value");
                 String viewstateGeneratorValue = fwParsed.getElementById(viewstateGeneratorName).attr("value");
                 String eventValidationValue = fwParsed.getElementById(eventValidationName).attr("value");
@@ -235,11 +184,12 @@ public class MarksExplorer extends Fragment {
 
                 String data = POSTgenerator.getGeneratedPOST();
 
-                FetchWebsite fw = new FetchWebsite(Logging.URLdomain + "/OcenyP.aspx");
-                String fww = fw.getWebsite(true, true, data);
-                Storage.currentSemesterHTML.put(Storage.currentSemesterListPointer, fww);
+                fw = new FetchWebsite(Logging.URLdomain + "/Prowadzacy.aspx");
+                fww = fw.getWebsite(true, true, data);
             }
         }
+
+        Storage.currentFilesHTML.put(Storage.currentSemester, fww);
     }
 
     @Override
@@ -253,23 +203,23 @@ public class MarksExplorer extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        root = inflater.inflate(R.layout.activity_marks_explorer, container, false);
+        root = inflater.inflate(R.layout.activity_files, container, false);
         rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
         rlData = (RelativeLayout) root.findViewById(R.id.rlData);
         textView3 = (TextView) root.findViewById(R.id.textView3);
         textView3bis = (TextView) root.findViewById(R.id.textView3bis);
 
+        // Permisions for writing
+        if (ContextCompat.checkSelfPermission(activityContext, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions((MainActivity) activityContext,
+                    new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    0);
+        }
+
         // do in background
-
-        if ("semester".equals(Storage.sharedPreferencesStartScreen) && Storage.firstRunMarksExplorer) {
-            Storage.firstRunMarksExplorer = false;
-        }
-        else {
-            rlLoader.setVisibility(View.VISIBLE);
-            Storage.firstRunMarksExplorer = false;
-        }
-
-        AsyncTaskRunner runner = new AsyncTaskRunner();
+        rlLoader.setVisibility(View.VISIBLE);
+        FilesActivity.AsyncTaskRunner runner = new FilesActivity.AsyncTaskRunner();
         runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
         // wait for change loading subtitle
@@ -282,7 +232,7 @@ public class MarksExplorer extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.final_marks), null);
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.files), null);
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
@@ -292,7 +242,7 @@ public class MarksExplorer extends Fragment {
         protected View doInBackground(View... params) {
             try {
                 goThroughSemester();
-                fm = new FetchMarks(Storage.currentSemesterHTML.get(Storage.currentSemester));
+                ff = new FetchFiles(Storage.currentFilesHTML.get(Storage.currentSemester), Storage.currentSemester);
 
                 publishProgress();
 
@@ -316,6 +266,7 @@ public class MarksExplorer extends Fragment {
         protected void onProgressUpdate(View... params){
             exploreMarks(root);
             rlLoader.setVisibility(View.GONE);
+
         }
 
         @Override
@@ -329,7 +280,7 @@ public class MarksExplorer extends Fragment {
                 @Override
                 public void onRefresh() {
                     Bundle bundle = new Bundle();
-                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "marks");
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "files");
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "swipe_refresh");
                     mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
@@ -342,7 +293,7 @@ public class MarksExplorer extends Fragment {
                 }
             });
 
-            if (fm == null || isError){
+            if (ff == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
                 Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
@@ -360,7 +311,7 @@ public class MarksExplorer extends Fragment {
                     }
                 });
             }
-            else if (fm.status == -1) {
+            else if (ff.status == -1) {
                 rlNoData.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
             }

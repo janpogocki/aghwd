@@ -30,7 +30,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_column="0"
-                    android:layout_weight="0.20">
+                    android:layout_weight="1">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -44,11 +44,22 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        style="@style/BlackTextSmall"
+                        android:text="Prowadzący"
+                        android:id="@+id/textViewSubTitle1"
+                        android:layout_below="@+id/textViewTitle"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_marginTop="8dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceSmall"
                         android:text="Punkty ECTS"
                         android:textAllCaps="true"
-                        android:id="@+id/textViewSubTitle"
-                        android:layout_below="@+id/textViewTitle"
+                        android:id="@+id/textViewSubTitle2"
+                        android:layout_below="@+id/textViewSubTitle1"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
                         android:layout_marginTop="8dp" />
@@ -56,26 +67,22 @@
                     <Space
                         android:layout_width="match_parent"
                         android:layout_height="15dp"
-                        android:layout_below="@+id/textViewSubTitle"
+                        android:layout_below="@+id/textViewSubTitle2"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true" />
 
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="10dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="0.90"
                     android:layout_column="1"
                     android:gravity="center_vertical">
 
-                    <TextView
+                    <Space
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:gravity="center"
-                        android:id="@+id/textViewFinalMark"
-                        android:textStyle="bold" />
+                        android:layout_height="wrap_content" />
+
                 </RelativeLayout>
             </TableRow>
         </TableLayout>

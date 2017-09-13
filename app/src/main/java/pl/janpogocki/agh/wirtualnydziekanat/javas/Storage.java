@@ -26,6 +26,7 @@ public class Storage {
     public static int currentSemester = 0;
     public static int currentSemesterListPointer = 0;
     public static int currentSemesterListPointerPartialMarks = 0;
+    public static int currentSemesterListPointerFiles = 0;
     public static long timeOfLastConnection = 0;
     public static Bitmap photoUser = null;
     public static Boolean openedBrowser = false;
@@ -34,6 +35,8 @@ public class Storage {
     public static boolean nightMode = false;
     public static HashMap<Integer, String> currentSemesterHTML = new HashMap<>();
     public static HashMap<Integer, List<String>> currentSemesterPartialMarksHTML = new HashMap<>();
+    public static HashMap<Integer, String> currentFilesHTML = new HashMap<>();
+    public static HashMap<Integer, List<List<String>>> currentFilesDocsHTML = new HashMap<>();
     public static List<List<String>> summarySemesters = new ArrayList<>();
     public static List<List<String>> groupsAndModules = new ArrayList<>();
     public static List<List<String>> schedule = new ArrayList<>();
@@ -66,6 +69,7 @@ public class Storage {
         currentSemester = 0;
         currentSemesterListPointer = 0;
         currentSemesterListPointerPartialMarks = 0;
+        currentSemesterListPointerFiles = 0;
         timeOfLastConnection = 0;
         photoUser = null;
         openedBrowser = false;
@@ -73,6 +77,8 @@ public class Storage {
         firstRunMarksExplorer = true;
         currentSemesterHTML = new HashMap<>();
         currentSemesterPartialMarksHTML = new HashMap<>();
+        currentFilesHTML = new HashMap<>();
+        currentFilesDocsHTML = new HashMap<>();
         summarySemesters = new ArrayList<>();
         groupsAndModules = new ArrayList<>();
         schedule = new ArrayList<>();

@@ -76,7 +76,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textAppearance="?android:attr/textAppearanceMedium"
-                        android:text="@string/app_version"
+                        android:text="APP_VERSION"
                         android:id="@+id/textView6"
                         android:layout_marginTop="50dp"
                         android:layout_alignParentLeft="true"

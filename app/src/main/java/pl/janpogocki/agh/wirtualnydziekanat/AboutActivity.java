@@ -5,9 +5,12 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,8 +38,14 @@ public class AboutActivity extends Fragment {
 
         View root = inflater.inflate(R.layout.activity_about, container, false);
 
-        TextView textView6 = (TextView) root.findViewById(R.id.textView6);
-        textView6.setText("v. " + textView6.getText());
+        try {
+            PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
+            TextView textView6 = (TextView) root.findViewById(R.id.textView6);
+            textView6.setText("v. " + pInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
+        }
 
         ImageView imageView2 = (ImageView) root.findViewById(R.id.imageView2);
         imageView2.setOnClickListener(new View.OnClickListener() {

@@ -8,6 +8,16 @@
             android:title="@string/summary" />
 
         <item
+            android:id="@+id/nav_marks"
+            android:icon="@drawable/ic_menu_marks"
+            android:title="@string/final_marks" />
+
+        <item
+            android:id="@+id/nav_partial_marks"
+            android:icon="@drawable/ic_menu_partial_marks"
+            android:title="@string/partial_marks" />
+
+        <item
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_menu_groups"
             android:title="@string/groups" />
@@ -23,6 +33,11 @@
             android:title="@string/schedule" />
 
         <item
+            android:id="@+id/nav_files"
+            android:icon="@drawable/ic_menu_files"
+            android:title="@string/files" />
+
+        <item
             android:id="@+id/nav_syllabus"
             android:icon="@drawable/ic_menu_syllabus"
             android:title="@string/syllabus" />
@@ -32,18 +47,6 @@
             android:icon="@drawable/ic_menu_skos"
             android:title="@string/skos" />
     </group>
-
-
-
-
-    <item android:title="@string/marks" android:id="@+id/semester">
-        <menu>
-            <group android:id="@+id/semesterItems" android:checkableBehavior="single">
-
-            </group>
-        </menu>
-    </item>
-
 
     <item
         android:id="@+id/settings"

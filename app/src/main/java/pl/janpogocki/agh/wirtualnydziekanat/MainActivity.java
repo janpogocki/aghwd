@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
-import android.view.SubMenu;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -20,12 +19,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity
     NavigationView navigationView = null;
     Menu MenuWithActionBar = null;
     SearchView searchView = null;
+    Spinner toolbarSpinner = null;
     SkosActivity skosactivity = null;
     ScheduleActivity scheduleactivity = null;
     FeedbackActivity feedbackactivity = null;
@@ -73,23 +79,127 @@ public class MainActivity extends AppCompatActivity
     public void showSearchButton(Boolean val){
         if (MenuWithActionBar == null)
             restartApp();
-
-        MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
+        else
+            MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
     }
 
     public void showSendButton(Boolean val){
         if (MenuWithActionBar == null)
             restartApp();
-
-        MenuWithActionBar.findItem(R.id.action_send).setVisible(val);
+        else
+            MenuWithActionBar.findItem(R.id.action_send).setVisible(val);
     }
 
     public void showScheduleButtons(Boolean val){
         if (MenuWithActionBar == null)
             restartApp();
+        else {
+            MenuWithActionBar.findItem(R.id.action_previous_week).setVisible(val);
+            MenuWithActionBar.findItem(R.id.action_next_week).setVisible(val);
+        }
+    }
 
-        MenuWithActionBar.findItem(R.id.action_previous_week).setVisible(val);
-        MenuWithActionBar.findItem(R.id.action_next_week).setVisible(val);
+    public void showSemesterSpinner(Boolean val){
+        if (MenuWithActionBar == null)
+            restartApp();
+        else
+            MenuWithActionBar.findItem(R.id.toolbarSpinner).setVisible(val);
+    }
+
+    private void showDefaultScreen(Boolean showSpinner){
+        if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
+            navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
+            setTitle(getString(R.string.summary));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment summaryactivity_ = new SummaryActivity();
+            tx.replace(R.id.frameLayoutMain, summaryactivity_);
+            tx.commit();
+
+            currentFragmentScreen = "summary";
+        } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
+            navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
+            setTitle(getString(R.string.schedule));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment scheduleactivity_ = new ScheduleActivity();
+            tx.replace(R.id.frameLayoutMain, scheduleactivity_);
+            tx.commit();
+            scheduleactivity = (ScheduleActivity) scheduleactivity_;
+
+            currentFragmentScreen = "schedule";
+        } else if ("semester_partial".equals(Storage.sharedPreferencesStartScreen)) {
+            if (showSpinner)
+                showSemesterSpinner(true);
+
+            navigationView.getMenu().findItem(R.id.nav_partial_marks).setChecked(true);
+            setTitle(getString(R.string.partial_marks));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment partialmarksexplorer_ = new PartialMarksExplorer();
+            tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
+            tx.commit();
+
+            currentFragmentScreen = "semester_partial";
+        } else {
+            if (showSpinner)
+                showSemesterSpinner(true);
+
+            navigationView.getMenu().findItem(R.id.nav_marks).setChecked(true);
+            setTitle(getString(R.string.final_marks));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment marksexplorer_ = new MarksExplorer();
+            tx.replace(R.id.frameLayoutMain, marksexplorer_);
+            tx.commit();
+
+            currentFragmentScreen = "semester";
+        }
+    }
+
+    public void prepareSemesterSpinner(Spinner toolbarSpinner){
+        List<String> listOfSemesters = new ArrayList<>();
+
+        for (int i = 0; i < Storage.summarySemesters.size(); i++) {
+            listOfSemesters.add(getString(R.string.semester) + " " + Storage.getSemesterNumberById(i));
+        }
+
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(getSupportActionBar().getThemedContext(),
+                android.R.layout.simple_spinner_item, listOfSemesters);
+
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        toolbarSpinner.setAdapter(spinnerAdapter);
+        toolbarSpinner.setSelection(listOfSemesters.size()-1);
+
+        toolbarSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                if (Storage.currentSemester != i) {
+                    Storage.currentSemester = i;
+
+                    if (currentFragmentScreen.equals("semester")){
+                        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                        Fragment marksexplorer_ = new MarksExplorer();
+                        tx.replace(R.id.frameLayoutMain, marksexplorer_);
+                        tx.commit();
+                    } else if (currentFragmentScreen.equals("semester_partial")){
+                        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                        Fragment partialmarksexplorer_ = new PartialMarksExplorer();
+                        tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
+                        tx.commit();
+                    } else if (currentFragmentScreen.equals("files")){
+                        FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+                        Fragment filesactivity_ = new FilesActivity();
+                        tx.replace(R.id.frameLayoutMain, filesactivity_);
+                        tx.commit();
+                    }
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
+
+        if ("semester".contains(Storage.sharedPreferencesStartScreen))
+            showSemesterSpinner(true);
     }
 
     private void setupSearchView(){
@@ -183,14 +293,6 @@ public class MainActivity extends AppCompatActivity
             if (Storage.photoUser != null)
                 imageView.setImageBitmap(Storage.photoUser);
 
-            // Generate semesters entries
-            MenuItem menuNV = navigationView.getMenu().findItem(R.id.semester);
-            SubMenu subMenuMenuMV = menuNV.getSubMenu();
-            for (int i = 0; i < Storage.summarySemesters.size(); i++) {
-                subMenuMenuMV.add(R.id.semesterItems, i, i, getString(R.string.semester) + " " + Storage.getSemesterNumberById(i)).setIcon(R.drawable.ic_menu_semester);
-            }
-            navigationView.getMenu().findItem(R.id.semester).getSubMenu().setGroupCheckable(R.id.semesterItems, true, true);
-
             // If multidirectionars enable switch dir
             if (Storage.multiKierunek)
                 navigationView.getMenu().findItem(R.id.nav_relogging).setVisible(true);
@@ -199,36 +301,7 @@ public class MainActivity extends AppCompatActivity
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
             Storage.sharedPreferencesStartScreen = sharedPreferences.getString("default_start_screen", "semester");
 
-            if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
-                navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
-                setTitle(getString(R.string.summary));
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                Fragment summaryactivity_ = new SummaryActivity();
-                tx.replace(R.id.frameLayoutMain, summaryactivity_);
-                tx.commit();
-
-                currentFragmentScreen = "summary";
-            } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
-                navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
-                setTitle(getString(R.string.schedule));
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                Fragment scheduleactivity_ = new ScheduleActivity();
-                tx.replace(R.id.frameLayoutMain, scheduleactivity_);
-                tx.commit();
-                scheduleactivity = (ScheduleActivity) scheduleactivity_;
-
-                currentFragmentScreen = "schedule";
-            } else {
-                // Load newest semester and check it on sidebar
-                setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
-                navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
-                FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                Fragment marksexplorer_ = new MarksExplorer();
-                tx.replace(R.id.frameLayoutMain, marksexplorer_);
-                tx.commit();
-
-                currentFragmentScreen = "semester";
-            }
+            showDefaultScreen(false);
 
             // Subscribe to notifications or not
             RememberPassword rememberPassword = new RememberPassword(this);
@@ -260,7 +333,6 @@ public class MainActivity extends AppCompatActivity
         // current screen is different from default => return to default
 
         Storage.openedBrowser = false;
-        MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
         showSearchButton(false);
         showSendButton(false);
@@ -268,40 +340,7 @@ public class MainActivity extends AppCompatActivity
         resetMainLayoutVisibility(true);
 
         uncheckCheckedItem(navigationView.getMenu());
-
-        if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
-            navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
-            setTitle(getString(R.string.summary));
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            Fragment summaryactivity_ = new SummaryActivity();
-            tx.replace(R.id.frameLayoutMain, summaryactivity_);
-            tx.commit();
-
-            currentFragmentScreen = "summary";
-        } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
-            navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
-            setTitle(getString(R.string.schedule));
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            Fragment scheduleactivity_ = new ScheduleActivity();
-            tx.replace(R.id.frameLayoutMain, scheduleactivity_);
-            tx.commit();
-            scheduleactivity = (ScheduleActivity) scheduleactivity_;
-
-            currentFragmentScreen = "schedule";
-        } else {
-            MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
-            Storage.currentSemester = Storage.summarySemesters.size() - 1;
-
-            // Load newest semester and check it on sidebar
-            setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
-            navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-            Fragment marksexplorer_ = new MarksExplorer();
-            tx.replace(R.id.frameLayoutMain, marksexplorer_);
-            tx.commit();
-
-            currentFragmentScreen = "semester";
-        }
+        showDefaultScreen(true);
     }
 
     @Override
@@ -321,48 +360,16 @@ public class MainActivity extends AppCompatActivity
                 // current screen is different from default => return to default
 
                 Storage.openedBrowser = false;
-                MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
                 showSearchButton(false);
                 showSendButton(false);
                 showScheduleButtons(false);
+                showSemesterSpinner(false);
                 resetMainLayoutVisibility(true);
 
                 uncheckCheckedItem(navigationView.getMenu());
 
-                if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
-                    navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
-                    setTitle(getString(R.string.summary));
-                    FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                    Fragment summaryactivity_ = new SummaryActivity();
-                    tx.replace(R.id.frameLayoutMain, summaryactivity_);
-                    tx.commit();
-
-                    currentFragmentScreen = "summary";
-                } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
-                    navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
-                    setTitle(getString(R.string.schedule));
-                    FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                    Fragment scheduleactivity_ = new ScheduleActivity();
-                    tx.replace(R.id.frameLayoutMain, scheduleactivity_);
-                    tx.commit();
-                    scheduleactivity = (ScheduleActivity) scheduleactivity_;
-
-                    currentFragmentScreen = "schedule";
-                } else {
-                    MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
-                    Storage.currentSemester = Storage.summarySemesters.size() - 1;
-
-                    // Load newest semester and check it on sidebar
-                    setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(Storage.currentSemester));
-                    navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(true);
-                    FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-                    Fragment marksexplorer_ = new MarksExplorer();
-                    tx.replace(R.id.frameLayoutMain, marksexplorer_);
-                    tx.commit();
-
-                    currentFragmentScreen = "semester";
-                }
+                showDefaultScreen(true);
             }
             else {
                 super.onBackPressed();
@@ -380,8 +387,8 @@ public class MainActivity extends AppCompatActivity
         searchView = (SearchView) menu.findItem(R.id.action_search).getActionView();
         setupSearchView();
 
-        if ("semester".equals(Storage.sharedPreferencesStartScreen))
-            MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
+        toolbarSpinner = (Spinner) menu.findItem(R.id.toolbarSpinner).getActionView();
+        prepareSemesterSpinner(toolbarSpinner);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -394,25 +401,7 @@ public class MainActivity extends AppCompatActivity
 
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_change_marks) {
-            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
-
-            if (item.getTitle().equals(getString(R.string.menu_marks))) {
-                item.setTitle(R.string.menu_partial_marks);
-                Fragment partialmarksexplorer_ = new PartialMarksExplorer();
-                tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
-                currentFragmentScreen = "semester_partial";
-            } else {
-                item.setTitle(R.string.menu_marks);
-                Fragment marksexplorer_ = new MarksExplorer();
-                tx.replace(R.id.frameLayoutMain, marksexplorer_);
-                currentFragmentScreen = "semester";
-            }
-
-            tx.commit();
-        }
-        else if (id == R.id.action_search) {
+        if (id == R.id.action_search) {
             setupSearchView();
         }
         else if (id == R.id.action_previous_week) {
@@ -436,12 +425,11 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         Storage.openedBrowser = false;
-        navigationView.getMenu().findItem(R.id.semester).getSubMenu().getItem(Storage.currentSemester).setChecked(false);
-        MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(false);
 
         showSearchButton(false);
         showSendButton(false);
         showScheduleButtons(false);
+        showSemesterSpinner(false);
         resetMainLayoutVisibility(true);
 
         if (id == R.id.nav_about) {
@@ -540,16 +528,30 @@ public class MainActivity extends AppCompatActivity
             mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
             restartApp();
-        } else if (id >= 0 && id <= 40){
-            // Marks
-            MenuWithActionBar.findItem(R.id.action_change_marks).setVisible(true).setTitle(R.string.menu_marks);
-            Storage.currentSemester = id;
-            setTitle(getString(R.string.semester) + " " + Storage.getSemesterNumberById(id));
+        } else if (id == R.id.nav_marks) {
+            showSemesterSpinner(true);
+            setTitle(getString(R.string.final_marks));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment marksexplorer_ = new MarksExplorer();
             tx.replace(R.id.frameLayoutMain, marksexplorer_);
             tx.commit();
             currentFragmentScreen = "semester";
+        } else if (id == R.id.nav_partial_marks) {
+            showSemesterSpinner(true);
+            setTitle(getString(R.string.partial_marks));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment partialmarksexplorer_ = new PartialMarksExplorer();
+            tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
+            tx.commit();
+            currentFragmentScreen = "semester_partial";
+        } else if (id == R.id.nav_files) {
+            showSemesterSpinner(true);
+            setTitle(getString(R.string.files));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment filesactivity = new FilesActivity();
+            tx.replace(R.id.frameLayoutMain, filesactivity);
+            tx.commit();
+            currentFragmentScreen = "files";
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

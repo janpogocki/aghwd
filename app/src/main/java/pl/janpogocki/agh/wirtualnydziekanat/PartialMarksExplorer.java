@@ -326,7 +326,7 @@ public class PartialMarksExplorer extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.menu_partial_marks), null);
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.partial_marks), null);
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {

@@ -4,6 +4,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -29,6 +31,8 @@ public class FetchWebsite {
     private String URL = "";
     private String locationHTTP;
     private Integer responseCode;
+    private String contentDisposition;
+    private Integer contentLenght;
 
     private class TrivialTrustManager implements X509TrustManager {
         @Override
@@ -122,6 +126,78 @@ public class FetchWebsite {
         conn.disconnect();
 
         return ret;
+    }
+
+    public String getAndSaveFile(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata, String filenamePrefixWithSlash) throws Exception {
+        Storage.timeOfLastConnection = System.currentTimeMillis();
+
+        // Send data
+        // Defined URL  where to send data
+        URL url = new URL(URL);
+
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        SSLContext sc;
+        sc = SSLContext.getInstance("TLS");
+        sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
+        conn.setSSLSocketFactory(sc.getSocketFactory());
+
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setDoOutput(true);
+        conn.setInstanceFollowRedirects(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
+
+        // Sending cookies if _sendCookies is true and List with cookies is set
+        if (Cookies.setList) {
+            if (_sendCookies && !(Cookies.getCookies().equals("")))
+                conn.addRequestProperty("Cookie", Cookies.getCookies());
+        }
+
+        // Sending POST data if exists
+        if (!(_POSTdata.equals(""))){
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(_POSTdata);
+            wr.flush();
+        }
+
+        // conn.setDoInput(true);
+        conn.connect();
+
+        // Getting cookies form server if _receiveCookies
+        if (_receiveCookies && !Cookies.setList) {
+            Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else if (_receiveCookies && Cookies.setList)
+            Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+        // Getting Location if redirect
+        locationHTTP = conn.getHeaderField("Location");
+        contentDisposition = conn.getHeaderField("Content-Disposition");
+        contentLenght = Integer.parseInt(conn.getHeaderField("Content-Length"));
+        responseCode = conn.getResponseCode();
+
+        new File(filenamePrefixWithSlash).mkdir();
+        String finalFilename = filenamePrefixWithSlash + getDownloadFilename();
+
+        // Get the server response
+        InputStream is = conn.getInputStream();
+        FileOutputStream os = new FileOutputStream(finalFilename);
+
+        int bytesRead = -1;
+        byte[] buffer = new byte[4096];
+        while ((bytesRead = is.read(buffer)) != -1) {
+            os.write(buffer, 0, bytesRead);
+        }
+
+        os.close();
+        is.close();
+
+        conn.disconnect();
+
+        return finalFilename;
     }
 
     public String getWebsiteSyllabus(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
@@ -262,6 +338,18 @@ public class FetchWebsite {
             return "";
         else
             return locationHTTP;
+    }
+
+    public String getDownloadFilename() {
+        if (contentDisposition == null || !contentDisposition.contains("=\""))
+            return "";
+        else {
+            return contentDisposition.split("=\"")[1].replace("\"", "");
+        }
+    }
+
+    public Integer getContentLenght() {
+        return contentLenght;
     }
 
     public Integer getResponseCode(){

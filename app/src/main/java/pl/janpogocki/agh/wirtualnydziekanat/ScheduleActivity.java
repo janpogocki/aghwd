@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchSchedule;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.POSTgenerator;
@@ -236,7 +237,8 @@ public class ScheduleActivity extends Fragment {
                     Storage.appendCrash(e);
                 }
 
-                Date nowDate = new Date();
+                Long currentTime = (System.currentTimeMillis() - TimeZone.getDefault().getOffset(System.currentTimeMillis())) / 1000;
+                Date nowDate = new Date(((currentTime*1000) + TimeZone.getDefault().getOffset(currentTime*1000)));
 
                 if (nowDate.before(dateLesson))
                     checkBox.setChecked(false);
