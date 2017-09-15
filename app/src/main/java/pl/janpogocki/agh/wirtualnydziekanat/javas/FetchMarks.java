@@ -17,7 +17,7 @@ import java.util.List;
 public class FetchMarks {
     private List<LabelAndList<LabelAndList<String>>> database = new ArrayList<>();
     public int amountECTS, status;
-    public double amountAvgSemester, amountAvgYear;
+    public float amountAvgSemester, amountAvgYear;
 
     public FetchMarks(String HTML2interprete){
         Document htmlParsed = Jsoup.parse(HTML2interprete);
@@ -76,12 +76,12 @@ public class FetchMarks {
                 List<String> amountECTSStr = Arrays.asList(htmlParsedAvgECTS[2].split(": "));
 
                 if (amountAvgSemesterStr.size() == 2)
-                    amountAvgSemester = Double.parseDouble(htmlParsedAvgECTS[0].split(": ")[1]);
+                    amountAvgSemester = Float.parseFloat(htmlParsedAvgECTS[0].split(": ")[1]);
                 else
                     amountAvgSemester = 0;
 
                 if (amountAvgYearStr.size() == 2)
-                    amountAvgYear = Double.parseDouble(htmlParsedAvgECTS[1].split(": ")[1]);
+                    amountAvgYear = Float.parseFloat(htmlParsedAvgECTS[1].split(": ")[1]);
                 else
                     amountAvgYear = 0;
 

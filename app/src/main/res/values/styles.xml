@@ -111,6 +111,8 @@
 
     <style name="ToolbarStyle">
         <item name="colorControlNormal">@color/colorWhiteBackground</item>
+        <item name="android:editTextColor">@color/colorWhiteBackground</item>
+        <item name="android:textColorHint">@color/colorWhiteHint</item>
         <item name="android:spinnerItemStyle">@style/ToolbarStyle.SpinnerItemStyle</item>
     </style>
 

@@ -29,6 +29,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.AnimatedExpandableListView;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapter;
@@ -66,17 +67,29 @@ public class MarksExplorer extends Fragment {
         animation.start();
     }
 
-    private void animateTextView(final TextView textview, int initialValue, int finalValue, final Boolean isDouble) {
+    private void animateTextView(final TextView textview, int initialValue, int finalValue) {
         ValueAnimator valueAnimator = ValueAnimator.ofInt(initialValue, finalValue);
         valueAnimator.setDuration(1500);
 
         valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                if (isDouble)
-                    textview.setText(String.valueOf(Double.parseDouble(valueAnimator.getAnimatedValue().toString())/100));
-                else
-                    textview.setText(valueAnimator.getAnimatedValue().toString());
+                textview.setText(valueAnimator.getAnimatedValue().toString());
+            }
+        });
+
+        valueAnimator.setStartDelay(900);
+        valueAnimator.start();
+    }
+
+    private void animateTextView(final TextView textview, float initialValue, float finalValue) {
+        ValueAnimator valueAnimator = ValueAnimator.ofFloat(initialValue, finalValue);
+        valueAnimator.setDuration(1500);
+
+        valueAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator valueAnimator) {
+                textview.setText(String.format(Locale.US, "%.2f", (float) valueAnimator.getAnimatedValue()));
             }
         });
 
@@ -148,8 +161,8 @@ public class MarksExplorer extends Fragment {
         relativeLayoutProgressBars = (RelativeLayout) view.findViewById(R.id.relativeLayoutProgressBars);
         relativeLayoutExpListView = (RelativeLayout) view.findViewById(R.id.relativeLayoutExpListView);
 
-        textViewAvgSemester.setText("0.0");
-        textViewAvgYear.setText("0.0");
+        textViewAvgSemester.setText("0.00");
+        textViewAvgYear.setText("0.00");
         textViewECTS.setText("0");
         progressBarAvgSemester.setProgress(0);
         progressBarAvgYear.setProgress(0);
@@ -158,9 +171,9 @@ public class MarksExplorer extends Fragment {
         animateFadeIn(relativeLayoutProgressBars, view, 500);
         animateFadeIn(relativeLayoutExpListView, view, 1200);
 
-        animateTextView(textViewAvgSemester, 0, (int) (fm.amountAvgSemester*100), true);
-        animateTextView(textViewAvgYear, 0, (int) (fm.amountAvgYear*100), true);
-        animateTextView(textViewECTS, 0, fm.amountECTS, false);
+        animateTextView(textViewAvgSemester, 0f, fm.amountAvgSemester);
+        animateTextView(textViewAvgYear, 0f, fm.amountAvgYear);
+        animateTextView(textViewECTS, 0, fm.amountECTS);
 
         setProgressAnimate(progressBarAvgSemester, (int) ((fm.amountAvgSemester*100)-200));
         setProgressAnimate(progressBarAvgYear, (int) ((fm.amountAvgYear*100)-200));

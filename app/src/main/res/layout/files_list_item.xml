@@ -87,6 +87,7 @@
                     android:layout_height="36dp"
                     style="@style/BlackTint"
                     android:layout_marginRight="10dp"
+                    android:layout_marginLeft="10dp"
                     android:src="@drawable/ic_file_download" />
             </RelativeLayout>
 

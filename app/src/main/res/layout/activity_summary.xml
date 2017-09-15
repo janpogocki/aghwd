@@ -55,7 +55,8 @@
                 android:layout_alignBottom="@+id/imageViewPhotoUser"
                 android:layout_toRightOf="@+id/imageViewPhotoUser"
                 android:layout_alignRight="@+id/imageView5"
-                android:layout_alignEnd="@+id/imageView5">
+                android:layout_alignEnd="@+id/imageView5"
+                android:layout_alignParentTop="true">
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -67,8 +68,8 @@
                     android:textAlignment="gravity"
                     android:textSize="28dp"
                     android:id="@+id/textViewNameAndSurname"
-
-                    android:layout_alignParentTop="true" />
+                    android:layout_alignParentBottom="true"
+                    android:layout_alignParentLeft="true" />
 
             </RelativeLayout>
 

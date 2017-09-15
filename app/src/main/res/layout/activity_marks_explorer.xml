@@ -100,7 +100,7 @@
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
                             android:gravity="center"
-                            android:text="0.0"
+                            android:text="0.00"
                             style="@style/BlackTextMedium" />
 
                         <ProgressBar
@@ -147,7 +147,7 @@
                             android:layout_alignParentTop="true"
                             android:layout_centerHorizontal="true"
                             android:gravity="center"
-                            android:text="0.0"
+                            android:text="0.00"
                             style="@style/BlackTextMedium" />
 
                         <ProgressBar
