@@ -197,16 +197,16 @@ public class LogIn extends AppCompatActivity {
         else {
             setContentView(R.layout.activity_log_in);
 
-            relativeLayout2 = (RelativeLayout) findViewById(R.id.relativeLayout2);
-            relativeLayout3 = (RelativeLayout) findViewById(R.id.relativeLayout3);
-            relativeLayout4 = (RelativeLayout) findViewById(R.id.relativeLayout4);
-            editText = (EditText) findViewById(R.id.editText);
-            editText2 = (EditText) findViewById(R.id.editText2);
-            button = (AppCompatButton) findViewById(R.id.button);
-            switch1 = (SwitchCompat) findViewById(R.id.switch1);
-            textView3 = (TextView) findViewById(R.id.textView3);
-            textView3bis = (TextView) findViewById(R.id.textView3bis);
-            textView12 = (TextView) findViewById(R.id.textView12);
+            relativeLayout2 = findViewById(R.id.relativeLayout2);
+            relativeLayout3 = findViewById(R.id.relativeLayout3);
+            relativeLayout4 = findViewById(R.id.relativeLayout4);
+            editText = findViewById(R.id.editText);
+            editText2 = findViewById(R.id.editText2);
+            button = findViewById(R.id.button);
+            switch1 = findViewById(R.id.switch1);
+            textView3 = findViewById(R.id.textView3);
+            textView3bis = findViewById(R.id.textView3bis);
+            textView12 = findViewById(R.id.textView12);
             RememberPassword rp = new RememberPassword(this);
 
             if (rp.isRemembered()) {

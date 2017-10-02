@@ -40,8 +40,8 @@ public class SkosActivity extends Fragment {
     public void searchTyping(String val){
         if (listAdapter != null && listViewGroups != null) {
             List<List<String>> list = filterList(val);
-            RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-            RelativeLayout rlNoRecords = (RelativeLayout) root.findViewById(R.id.rlNoRecords);
+            RelativeLayout rlData = root.findViewById(R.id.rlData);
+            RelativeLayout rlNoRecords = root.findViewById(R.id.rlNoRecords);
 
             if (list != null) {
                 rlData.setVisibility(View.VISIBLE);
@@ -89,7 +89,7 @@ public class SkosActivity extends Fragment {
     private void refreshSkos(View root) {
         if (Storage.skosList == null || Storage.skosList.size() == 0){
             // There's no downloaded data. Do that.
-            RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+            RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
@@ -97,7 +97,7 @@ public class SkosActivity extends Fragment {
         }
         else {
             // Have it, show it.
-            RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+            RelativeLayout rlData = root.findViewById(R.id.rlData);
 
             rlData.setVisibility(View.VISIBLE);
 
@@ -106,8 +106,8 @@ public class SkosActivity extends Fragment {
     }
 
     public void backButtonPressedWhenBrowserOpened(){
-        RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-        RelativeLayout rlBrowser = (RelativeLayout) root.findViewById(R.id.rlBrowser);
+        RelativeLayout rlData = root.findViewById(R.id.rlData);
+        RelativeLayout rlBrowser = root.findViewById(R.id.rlBrowser);
         rlBrowser.setVisibility(View.GONE);
         rlData.setVisibility(View.VISIBLE);
         ((MainActivity) activityContext).showSearchButton(true);
@@ -122,10 +122,10 @@ public class SkosActivity extends Fragment {
 
         ((MainActivity) activityContext).hideKeyboard(getView());
 
-        final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-        final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-        final RelativeLayout rlBrowser = (RelativeLayout) root.findViewById(R.id.rlBrowser);
-        WebView webView = (WebView) root.findViewById(R.id.webView);
+        final RelativeLayout rlData = root.findViewById(R.id.rlData);
+        final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+        final RelativeLayout rlBrowser = root.findViewById(R.id.rlBrowser);
+        WebView webView = root.findViewById(R.id.webView);
 
         rlData.setVisibility(View.GONE);
         rlLoader.setVisibility(View.VISIBLE);
@@ -151,7 +151,7 @@ public class SkosActivity extends Fragment {
 
     private void showSkos(final View root){
         ((MainActivity) activityContext).showSearchButton(true);
-        listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
+        listViewGroups = root.findViewById(R.id.listViewGroups);
 
         listAdapter = new SearchAdapter(Storage.skosList);
         listViewGroups.setAdapter(listAdapter);
@@ -213,10 +213,10 @@ public class SkosActivity extends Fragment {
                 convertView = infalInflater.inflate(R.layout.summary_list_item, parent, false);
             }
 
-            TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);
-            TextView textView2ndLine = (TextView) convertView.findViewById(R.id.textView2ndLine);
-            TextView textView3rdLine = (TextView) convertView.findViewById(R.id.textView3rdLine);
-            LinearLayout rlDataItem = (LinearLayout) convertView.findViewById(R.id.rlDataItem);
+            TextView textViewHeader = convertView.findViewById(R.id.textViewHeader);
+            TextView textView2ndLine = convertView.findViewById(R.id.textView2ndLine);
+            TextView textView3rdLine = convertView.findViewById(R.id.textView3rdLine);
+            LinearLayout rlDataItem = convertView.findViewById(R.id.rlDataItem);
 
             textViewHeader.setText(nameAndSurname);
             textView2ndLine.setText(functions);
@@ -259,9 +259,9 @@ public class SkosActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-            final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlData = root.findViewById(R.id.rlData);
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
 
             rlLoader.setVisibility(View.GONE);
 

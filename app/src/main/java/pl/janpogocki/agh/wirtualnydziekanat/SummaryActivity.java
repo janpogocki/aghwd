@@ -75,9 +75,9 @@ public class SummaryActivity extends Fragment {
                     convertView = infalInflater.inflate(R.layout.summary_list_item, parent, false);
                 }
 
-                TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);
-                TextView textView2ndLine = (TextView) convertView.findViewById(R.id.textView2ndLine);
-                TextView textView3rdLine = (TextView) convertView.findViewById(R.id.textView3rdLine);
+                TextView textViewHeader = convertView.findViewById(R.id.textViewHeader);
+                TextView textView2ndLine = convertView.findViewById(R.id.textView2ndLine);
+                TextView textView3rdLine = convertView.findViewById(R.id.textView3rdLine);
 
                 textViewHeader.setText(academicYear + " - rok: " + year + ", semestr: " + semester + " (" + type + ")");
                 textView2ndLine.setText("Data decyzji: " + dateDecision);
@@ -87,11 +87,11 @@ public class SummaryActivity extends Fragment {
             }
         };
 
-        imageViewPhotoUser = (ImageView) root.findViewById(R.id.imageViewPhotoUser);
-        textViewNameAndSurname = (TextView) root.findViewById(R.id.textViewNameAndSurname);
-        textViewAlbumNumber = (TextView) root.findViewById(R.id.textViewAlbumNumber);
-        textViewPeselNumber = (TextView) root.findViewById(R.id.textViewPeselNumber);
-        listView = (ListView) root.findViewById(R.id.listView);
+        imageViewPhotoUser = root.findViewById(R.id.imageViewPhotoUser);
+        textViewNameAndSurname = root.findViewById(R.id.textViewNameAndSurname);
+        textViewAlbumNumber = root.findViewById(R.id.textViewAlbumNumber);
+        textViewPeselNumber = root.findViewById(R.id.textViewPeselNumber);
+        listView = root.findViewById(R.id.listView);
 
         if (Storage.photoUser != null)
             imageViewPhotoUser.setImageBitmap(Storage.photoUser);
@@ -101,7 +101,7 @@ public class SummaryActivity extends Fragment {
         textViewPeselNumber.setText(Storage.peselNumber);
         listView.setAdapter(listAdapter);
 
-        final ScrollView scrollView = (ScrollView) root.findViewById(R.id.scrollView);
+        final ScrollView scrollView = root.findViewById(R.id.scrollView);
         scrollView.post(new Runnable()
         {
             public void run()

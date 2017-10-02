@@ -143,7 +143,7 @@ public class MarksExplorer extends Fragment {
 
         listAdapter = new ExpandableListAdapter(activityContext, listDataHeader, listDataChild);
 
-        AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) view.findViewById(R.id.expandableListView);
+        AnimatedExpandableListView expandableListView = view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
     }
 
@@ -152,14 +152,14 @@ public class MarksExplorer extends Fragment {
         ProgressBar progressBarAvgSemester, progressBarAvgYear, progressBarECTS;
         RelativeLayout relativeLayoutProgressBars, relativeLayoutExpListView;
 
-        textViewAvgSemester = (TextView) view.findViewById(R.id.textViewAvgSemester);
-        textViewAvgYear = (TextView) view.findViewById(R.id.textViewAvgYear);
-        textViewECTS = (TextView) view.findViewById(R.id.textViewECTS);
-        progressBarAvgSemester = (ProgressBar) view.findViewById(R.id.progressBarAvgSemester);
-        progressBarAvgYear = (ProgressBar) view.findViewById(R.id.progressBarAvgYear);
-        progressBarECTS = (ProgressBar) view.findViewById(R.id.progressBarECTS);
-        relativeLayoutProgressBars = (RelativeLayout) view.findViewById(R.id.relativeLayoutProgressBars);
-        relativeLayoutExpListView = (RelativeLayout) view.findViewById(R.id.relativeLayoutExpListView);
+        textViewAvgSemester = view.findViewById(R.id.textViewAvgSemester);
+        textViewAvgYear = view.findViewById(R.id.textViewAvgYear);
+        textViewECTS = view.findViewById(R.id.textViewECTS);
+        progressBarAvgSemester = view.findViewById(R.id.progressBarAvgSemester);
+        progressBarAvgYear = view.findViewById(R.id.progressBarAvgYear);
+        progressBarECTS = view.findViewById(R.id.progressBarECTS);
+        relativeLayoutProgressBars = view.findViewById(R.id.relativeLayoutProgressBars);
+        relativeLayoutExpListView = view.findViewById(R.id.relativeLayoutExpListView);
 
         textViewAvgSemester.setText("0.00");
         textViewAvgYear.setText("0.00");
@@ -267,10 +267,10 @@ public class MarksExplorer extends Fragment {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
         root = inflater.inflate(R.layout.activity_marks_explorer, container, false);
-        rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-        rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-        textView3 = (TextView) root.findViewById(R.id.textView3);
-        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
+        rlLoader = root.findViewById(R.id.rlLoader);
+        rlData = root.findViewById(R.id.rlData);
+        textView3 = root.findViewById(R.id.textView3);
+        textView3bis = root.findViewById(R.id.textView3bis);
 
         // do in background
 
@@ -333,9 +333,9 @@ public class MarksExplorer extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
-            final SwipeRefreshLayout srl = (SwipeRefreshLayout) root.findViewById(R.id.swiperefresh);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+            final SwipeRefreshLayout srl = root.findViewById(R.id.swiperefresh);
 
             srl.setColorSchemeResources(R.color.colorPrimary);
             srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -364,7 +364,7 @@ public class MarksExplorer extends Fragment {
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+                        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
@@ -378,7 +378,7 @@ public class MarksExplorer extends Fragment {
                 rlLoader.setVisibility(View.GONE);
             }
             else {
-                final AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) root.findViewById(R.id.expandableListView);
+                final AnimatedExpandableListView expandableListView = root.findViewById(R.id.expandableListView);
                 rlData.setVisibility(View.VISIBLE);
                 showResults(root);
 

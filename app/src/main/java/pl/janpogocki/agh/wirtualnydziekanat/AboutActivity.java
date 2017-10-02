@@ -40,14 +40,14 @@ public class AboutActivity extends Fragment {
 
         try {
             PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
-            TextView textView6 = (TextView) root.findViewById(R.id.textView6);
+            TextView textView6 = root.findViewById(R.id.textView6);
             textView6.setText("v. " + pInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             Log.i("aghwd", "aghwd", e);
             Storage.appendCrash(e);
         }
 
-        ImageView imageView2 = (ImageView) root.findViewById(R.id.imageView2);
+        ImageView imageView2 = root.findViewById(R.id.imageView2);
         imageView2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +69,7 @@ public class AboutActivity extends Fragment {
             }
         });
 
-        TextView googlePlayLink = (TextView) root.findViewById(R.id.googlePlayLink);
+        TextView googlePlayLink = root.findViewById(R.id.googlePlayLink);
         googlePlayLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

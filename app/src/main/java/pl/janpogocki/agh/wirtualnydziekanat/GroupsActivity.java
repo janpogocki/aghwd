@@ -29,7 +29,7 @@ public class GroupsActivity extends Fragment {
     private void refreshGroups(View root) {
         if (Storage.groupsAndModules == null || Storage.groupsAndModules.size() == 0){
             // There's no downloaded data. Do that.
-            RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+            RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
@@ -37,7 +37,7 @@ public class GroupsActivity extends Fragment {
         }
         else {
             // Have it, show it.
-            RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+            RelativeLayout rlData = root.findViewById(R.id.rlData);
 
             rlData.setVisibility(View.VISIBLE);
 
@@ -46,7 +46,7 @@ public class GroupsActivity extends Fragment {
     }
 
     private void showGroups(final View root){
-        ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
+        ListView listViewGroups = root.findViewById(R.id.listViewGroups);
 
         ListAdapter listAdapter = new BaseAdapter() {
             @Override
@@ -76,9 +76,9 @@ public class GroupsActivity extends Fragment {
                     convertView = infalInflater.inflate(R.layout.summary_list_item, null);
                 }
 
-                TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);
-                TextView textView2ndLine = (TextView) convertView.findViewById(R.id.textView2ndLine);
-                TextView textView3rdLine = (TextView) convertView.findViewById(R.id.textView3rdLine);
+                TextView textViewHeader = convertView.findViewById(R.id.textViewHeader);
+                TextView textView2ndLine = convertView.findViewById(R.id.textView2ndLine);
+                TextView textView3rdLine = convertView.findViewById(R.id.textView3rdLine);
 
                 textViewHeader.setText(nameGroup);
                 textView2ndLine.setText(formGroup);
@@ -132,10 +132,10 @@ public class GroupsActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-            final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
+            final RelativeLayout rlData = root.findViewById(R.id.rlData);
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
 
             rlLoader.setVisibility(View.GONE);
 

@@ -73,15 +73,15 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
             convertView = infalInflater.inflate(R.layout.files_list_item, null);
         }
 
-        TextView txtListChildCategory = (TextView) convertView.findViewById(R.id.textViewCategory);
-        TextView txtListChildData = (TextView) convertView.findViewById(R.id.textViewData);
-        TextView txtListChildUwagi = (TextView) convertView.findViewById(R.id.textViewUwagi);
+        TextView txtListChildCategory = convertView.findViewById(R.id.textViewCategory);
+        TextView txtListChildData = convertView.findViewById(R.id.textViewData);
+        TextView txtListChildUwagi = convertView.findViewById(R.id.textViewUwagi);
 
         txtListChildCategory.setText(childFilename);
         txtListChildData.setText(childDesc);
         txtListChildUwagi.setText(childData);
 
-        RelativeLayout rlDataItem = (RelativeLayout) convertView.findViewById(R.id.rlDataItem);
+        RelativeLayout rlDataItem = convertView.findViewById(R.id.rlDataItem);
         rlDataItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -141,9 +141,9 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
             convertView = infalInflater.inflate(R.layout.files_list_group, null);
         }
 
-        TextView textViewTitle = (TextView) convertView.findViewById(R.id.textViewTitle);
-        TextView textViewSubTitle1 = (TextView) convertView.findViewById(R.id.textViewSubTitle1);
-        TextView textViewSubTitle2 = (TextView) convertView.findViewById(R.id.textViewSubTitle2);
+        TextView textViewTitle = convertView.findViewById(R.id.textViewTitle);
+        TextView textViewSubTitle1 = convertView.findViewById(R.id.textViewSubTitle1);
+        TextView textViewSubTitle2 = convertView.findViewById(R.id.textViewSubTitle2);
         textViewTitle.setText(headerSubject);
         textViewSubTitle1.setText(headerTeacher);
         textViewSubTitle2.setText(headerLessonType);

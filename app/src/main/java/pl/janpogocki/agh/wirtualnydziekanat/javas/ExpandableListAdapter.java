@@ -57,11 +57,11 @@ public class ExpandableListAdapter extends AnimatedExpandableListView.AnimatedEx
             convertView = infalInflater.inflate(R.layout.marks_list_item, null);
         }
 
-        TextView txtListChildLecture = (TextView) convertView.findViewById(R.id.textViewLecture);
-        TextView txtListChildMark1 = (TextView) convertView.findViewById(R.id.textViewMark1);
-        TextView txtListChildMark2 = (TextView) convertView.findViewById(R.id.textViewMark2);
-        TextView txtListChildMark3 = (TextView) convertView.findViewById(R.id.textViewMark3);
-        TextView txtListChildTeacher = (TextView) convertView.findViewById(R.id.textViewTeacher);
+        TextView txtListChildLecture = convertView.findViewById(R.id.textViewLecture);
+        TextView txtListChildMark1 = convertView.findViewById(R.id.textViewMark1);
+        TextView txtListChildMark2 = convertView.findViewById(R.id.textViewMark2);
+        TextView txtListChildMark3 = convertView.findViewById(R.id.textViewMark3);
+        TextView txtListChildTeacher = convertView.findViewById(R.id.textViewTeacher);
         txtListChildLecture.setText(childLecture + " (" + childType + ")");
         txtListChildMark1.setText(childMark1);
         txtListChildMark2.setText(childMark2);
@@ -107,9 +107,9 @@ public class ExpandableListAdapter extends AnimatedExpandableListView.AnimatedEx
             convertView = infalInflater.inflate(R.layout.marks_list_group, null);
         }
 
-        TextView textViewTitle = (TextView) convertView.findViewById(R.id.textViewTitle);
-        TextView textViewSubTitle = (TextView) convertView.findViewById(R.id.textViewSubTitle);
-        TextView textViewFinalMark = (TextView) convertView.findViewById(R.id.textViewFinalMark);
+        TextView textViewTitle = convertView.findViewById(R.id.textViewTitle);
+        TextView textViewSubTitle = convertView.findViewById(R.id.textViewSubTitle);
+        TextView textViewFinalMark = convertView.findViewById(R.id.textViewFinalMark);
         textViewTitle.setText(headerTitle);
 
         if (headerExamStatus.equals("yes"))

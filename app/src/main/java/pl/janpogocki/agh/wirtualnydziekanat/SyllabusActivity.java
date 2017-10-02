@@ -66,11 +66,11 @@ public class SyllabusActivity extends Fragment {
     }
 
     private void refreshSyllabusWebView(View root){
-        final RelativeLayout rlWebViewLoader = (RelativeLayout) root.findViewById(R.id.rlWebViewLoader);
-        ProgressBar progressBar = (ProgressBar) root.findViewById(R.id.progressBarWebView);
+        final RelativeLayout rlWebViewLoader = root.findViewById(R.id.rlWebViewLoader);
+        ProgressBar progressBar = root.findViewById(R.id.progressBarWebView);
         progressBar.setScaleY(2f);
 
-        WebView webView = (WebView) root.findViewById(R.id.webView);
+        WebView webView = root.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
 
         if (!"".equals(Storage.syllabusURL) && !"".equals(Storage.syllabusURLlinkDepartment))
@@ -127,7 +127,7 @@ public class SyllabusActivity extends Fragment {
     private void refreshSyllabus(View root){
         if (Storage.universityStatus == null || Storage.universityStatus.size() == 0 || "".equals(Storage.syllabusURL)){
             // There's no downloaded data. Do that.
-            RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+            RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
@@ -139,7 +139,7 @@ public class SyllabusActivity extends Fragment {
         }
         else {
             // Have it, show it.
-            RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+            RelativeLayout rlData = root.findViewById(R.id.rlData);
             rlData.setVisibility(View.VISIBLE);
             refreshSyllabusWebView(root);
         }
@@ -157,8 +157,8 @@ public class SyllabusActivity extends Fragment {
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.syllabus), null);
 
         root = inflater.inflate(R.layout.activity_syllabus, container, false);
-        textView3 = (TextView) root.findViewById(R.id.textView3);
-        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
+        textView3 = root.findViewById(R.id.textView3);
+        textView3bis = root.findViewById(R.id.textView3bis);
 
         refreshSyllabus(root);
 
@@ -184,10 +184,10 @@ public class SyllabusActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-            final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
+            final RelativeLayout rlData = root.findViewById(R.id.rlData);
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
 
             rlLoader.setVisibility(View.GONE);
 

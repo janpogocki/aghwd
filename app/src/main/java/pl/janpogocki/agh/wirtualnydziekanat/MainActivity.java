@@ -3,7 +3,6 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -28,6 +27,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
@@ -58,8 +58,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void resetMainLayoutVisibility(Boolean value) {
-        FrameLayout frameLayoutMain = (FrameLayout) findViewById(R.id.frameLayoutMain);
-        FrameLayout frameLayoutMainV7 = (FrameLayout) findViewById(R.id.frameLayoutMainV7);
+        FrameLayout frameLayoutMain = findViewById(R.id.frameLayoutMain);
+        FrameLayout frameLayoutMainV7 = findViewById(R.id.frameLayoutMainV7);
 
         // true for frameLayoutMain, false for V7
         if (value){
@@ -269,25 +269,25 @@ public class MainActivity extends AppCompatActivity
             mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
 
             setContentView(R.layout.activity_main);
-            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
 
-            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            DrawerLayout drawer = findViewById(R.id.drawer_layout);
             ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                     this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
             drawer.setDrawerListener(toggle);
             toggle.syncState();
 
-            navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView = findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
 
             // Setting up personal data in drawer header
             TextView textView, textView2;
             ImageView imageView;
             View headerNV = navigationView.getHeaderView(0);
-            textView = (TextView) headerNV.findViewById(R.id.textView);
-            textView2 = (TextView) headerNV.findViewById(R.id.textView2);
-            imageView = (ImageView) headerNV.findViewById(R.id.imageView);
+            textView = headerNV.findViewById(R.id.textView);
+            textView2 = headerNV.findViewById(R.id.textView2);
+            imageView = headerNV.findViewById(R.id.imageView);
             textView.setText(Storage.nameAndSurname);
             textView2.setText(Storage.albumNumber);
 
@@ -346,7 +346,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         }
@@ -555,7 +555,7 @@ public class MainActivity extends AppCompatActivity
             currentFragmentScreen = "files";
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

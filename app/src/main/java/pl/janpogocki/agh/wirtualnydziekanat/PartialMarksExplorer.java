@@ -106,13 +106,13 @@ public class PartialMarksExplorer extends Fragment {
 
         listAdapter = new ExpandableListAdapterPartialMarks(activityContext, listDataHeader, listDataChild);
 
-        AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) view.findViewById(R.id.expandableListView);
+        AnimatedExpandableListView expandableListView = view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
     }
 
     private void showResults(View view){
         RelativeLayout relativeLayoutExpListView;
-        relativeLayoutExpListView = (RelativeLayout) view.findViewById(R.id.relativeLayoutExpListView);
+        relativeLayoutExpListView = view.findViewById(R.id.relativeLayoutExpListView);
         animateFadeIn(relativeLayoutExpListView, view, 500);
     }
 
@@ -310,10 +310,10 @@ public class PartialMarksExplorer extends Fragment {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
         root = inflater.inflate(R.layout.activity_partial_marks_explorer, container, false);
-        rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-        rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-        textView3 = (TextView) root.findViewById(R.id.textView3);
-        textView3bis = (TextView) root.findViewById(R.id.textView3bis);
+        rlLoader = root.findViewById(R.id.rlLoader);
+        rlData = root.findViewById(R.id.rlData);
+        textView3 = root.findViewById(R.id.textView3);
+        textView3bis = root.findViewById(R.id.textView3bis);
 
         // do in background
         rlLoader.setVisibility(View.VISIBLE);
@@ -369,9 +369,9 @@ public class PartialMarksExplorer extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
-            final SwipeRefreshLayout srl = (SwipeRefreshLayout) root.findViewById(R.id.swiperefresh);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+            final SwipeRefreshLayout srl = root.findViewById(R.id.swiperefresh);
 
             srl.setColorSchemeResources(R.color.colorPrimary);
             srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -400,7 +400,7 @@ public class PartialMarksExplorer extends Fragment {
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+                        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
@@ -414,7 +414,7 @@ public class PartialMarksExplorer extends Fragment {
                 rlLoader.setVisibility(View.GONE);
             }
             else {
-                final AnimatedExpandableListView expandableListView = (AnimatedExpandableListView) root.findViewById(R.id.expandableListView);
+                final AnimatedExpandableListView expandableListView = root.findViewById(R.id.expandableListView);
                 rlData.setVisibility(View.VISIBLE);
                 showResults(root);
 

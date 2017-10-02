@@ -1,7 +1,7 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,7 +19,7 @@ public class BigViewMessageNotification {
 
         final String title = res.getString(R.string.app_full_name);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "normal")
 
                 // Set appropriate defaults for the notification light, sound,
                 // and vibration.
@@ -56,14 +56,20 @@ public class BigViewMessageNotification {
         notify(context, builder.build());
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     private static void notify(final Context context, final Notification notification) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel nc = new NotificationChannel("normal", "Zwykłe powiadomienia", NotificationManager.IMPORTANCE_DEFAULT);
+            nc.setVibrationPattern(new long[]{200, 200, 200, 200, 200, 200});
+            nc.enableLights(false);
+            nm.createNotificationChannel(nc);
+        }
+
         nm.notify(NOTIFICATION_TAG, 1, notification);
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void cancel(final Context context) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);

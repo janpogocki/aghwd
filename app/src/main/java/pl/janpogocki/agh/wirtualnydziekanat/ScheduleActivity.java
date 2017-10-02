@@ -47,10 +47,10 @@ public class ScheduleActivity extends Fragment {
 
     public void changeWeek(String direction) {
         ((MainActivity) activityContext).showScheduleButtons(false);
-        RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-        RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-        RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
-        RelativeLayout rlDates = (RelativeLayout) root.findViewById(R.id.rlDates);
+        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+        RelativeLayout rlData = root.findViewById(R.id.rlData);
+        RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+        RelativeLayout rlDates = root.findViewById(R.id.rlDates);
 
         rlDates.setVisibility(View.GONE);
         rlLoader.setVisibility(View.VISIBLE);
@@ -108,7 +108,7 @@ public class ScheduleActivity extends Fragment {
     private void refreshSchedule(View root) {
         if (Storage.schedule == null || Storage.schedule.size() == 0){
             // There's no downloaded data. Do that.
-            RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+            RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
@@ -116,7 +116,7 @@ public class ScheduleActivity extends Fragment {
         }
         else {
             // Have it, show it.
-            RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
+            RelativeLayout rlData = root.findViewById(R.id.rlData);
 
             rlData.setVisibility(View.VISIBLE);
 
@@ -125,11 +125,11 @@ public class ScheduleActivity extends Fragment {
     }
 
     private void showEaiibSchedule(View root, int status){
-        final RelativeLayout rlWebViewLoader = (RelativeLayout) root.findViewById(R.id.rlWebViewLoader);
-        ProgressBar progressBar = (ProgressBar) root.findViewById(R.id.progressBarWebView);
+        final RelativeLayout rlWebViewLoader = root.findViewById(R.id.rlWebViewLoader);
+        ProgressBar progressBar = root.findViewById(R.id.progressBarWebView);
         progressBar.setScaleY(2f);
 
-        WebView webView = (WebView) root.findViewById(R.id.webView);
+        WebView webView = root.findViewById(R.id.webView);
         webView.getSettings().setJavaScriptEnabled(true);
 
         if (status-2000 > 0)
@@ -179,11 +179,11 @@ public class ScheduleActivity extends Fragment {
     }
 
     private void showSchedule(final View root){
-        TextView textDates = (TextView) root.findViewById(R.id.textDates);
+        TextView textDates = root.findViewById(R.id.textDates);
         textDates.setText(Storage.scheduleDates);
 
         ((MainActivity) activityContext).showScheduleButtons(true);
-        ListView listViewGroups = (ListView) root.findViewById(R.id.listViewGroups);
+        ListView listViewGroups = root.findViewById(R.id.listViewGroups);
 
         ListAdapter listAdapter = new BaseAdapter() {
             @Override
@@ -217,15 +217,15 @@ public class ScheduleActivity extends Fragment {
                     convertView = infalInflater.inflate(R.layout.summary_list_item, parent, false);
                 }
 
-                TextView textViewHeader = (TextView) convertView.findViewById(R.id.textViewHeader);
-                TextView textView2ndLine = (TextView) convertView.findViewById(R.id.textView2ndLine);
-                TextView textView3rdLine = (TextView) convertView.findViewById(R.id.textView3rdLine);
+                TextView textViewHeader = convertView.findViewById(R.id.textViewHeader);
+                TextView textView2ndLine = convertView.findViewById(R.id.textView2ndLine);
+                TextView textView3rdLine = convertView.findViewById(R.id.textView3rdLine);
 
                 textViewHeader.setText(dateSchedule + "\n" + hourFromSchedule + " - " + hourToSchedule);
                 textView2ndLine.setText(subjectSchedule + " (" + formSubjectSchedule + ")\n" + teacherSchedule);
                 textView3rdLine.setText(roomSchedule);
 
-                CheckBox checkBox = (CheckBox) convertView.findViewById(R.id.checkBox);
+                CheckBox checkBox = convertView.findViewById(R.id.checkBox);
                 String dateAndTimeOfEndOfLesson = dateSchedule.split(" ")[0] + " " + hourToSchedule;
                 java.text.DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm");
                 Date dateLesson = null;
@@ -294,12 +294,12 @@ public class ScheduleActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlData = (RelativeLayout) root.findViewById(R.id.rlData);
-            final RelativeLayout rlDataWebView = (RelativeLayout) root.findViewById(R.id.rlDataWebView);
-            final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = (RelativeLayout) root.findViewById(R.id.rlNoData);
-            final RelativeLayout rlDates = (RelativeLayout) root.findViewById(R.id.rlDates);
+            final RelativeLayout rlData = root.findViewById(R.id.rlData);
+            final RelativeLayout rlDataWebView = root.findViewById(R.id.rlDataWebView);
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+            final RelativeLayout rlDates = root.findViewById(R.id.rlDates);
 
             rlLoader.setVisibility(View.GONE);
 
@@ -322,7 +322,7 @@ public class ScheduleActivity extends Fragment {
             }
             else if (fs.status == -1){
                 ((MainActivity) activityContext).showScheduleButtons(true);
-                TextView textDates = (TextView) root.findViewById(R.id.textDates);
+                TextView textDates = root.findViewById(R.id.textDates);
                 textDates.setText(Storage.scheduleDates);
 
                 rlDates.setVisibility(View.VISIBLE);

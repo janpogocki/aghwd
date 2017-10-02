@@ -56,8 +56,8 @@ public class FeedbackActivity extends Fragment {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
         root = inflater.inflate(R.layout.activity_feedback, container, false);
-        editTextEmail = (EditText) root.findViewById(R.id.editTextEmail);
-        editTextFeedback = (EditText) root.findViewById(R.id.editTextFeedback);
+        editTextEmail = root.findViewById(R.id.editTextEmail);
+        editTextFeedback = root.findViewById(R.id.editTextFeedback);
 
         editTextEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,7 +95,7 @@ public class FeedbackActivity extends Fragment {
             }
         });
 
-        TextView googlePlayLink = (TextView) root.findViewById(R.id.googlePlayLink);
+        TextView googlePlayLink = root.findViewById(R.id.googlePlayLink);
         googlePlayLink.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,14 +161,14 @@ public class FeedbackActivity extends Fragment {
         String key = "";
         while (keys.hasMoreElements()) {
             key = (String) keys.nextElement();
-            s += "\n> " + key + " = " + (String) p.get(key);
+            s += "\n> " + key + " = " + p.get(key);
         }
 
         s += "\n\n==========\n\n";
         s += Storage.feedbackCrashList;
 
-        LinearLayout rlData = (LinearLayout) root.findViewById(R.id.rlData);
-        RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
+        LinearLayout rlData = root.findViewById(R.id.rlData);
+        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
         rlData.setVisibility(View.GONE);
         rlLoader.setVisibility(View.VISIBLE);
 
@@ -211,9 +211,9 @@ public class FeedbackActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlLoader = (RelativeLayout) root.findViewById(R.id.rlLoader);
-            final RelativeLayout rlOffline = (RelativeLayout) root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlSent = (RelativeLayout) root.findViewById(R.id.rlSent);
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlSent = root.findViewById(R.id.rlSent);
 
             rlLoader.setVisibility(View.GONE);
 

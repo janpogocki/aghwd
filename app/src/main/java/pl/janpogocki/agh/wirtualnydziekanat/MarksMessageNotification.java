@@ -1,7 +1,7 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
-import android.annotation.TargetApi;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -20,7 +20,7 @@ public class MarksMessageNotification {
         final String title = res.getString(R.string.notification_new_mark_title);
         final String text = res.getString(R.string.notification_new_mark_text);
 
-        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context)
+        final NotificationCompat.Builder builder = new NotificationCompat.Builder(context, "urgent")
 
                 // Set appropriate defaults for the notification light, sound,
                 // and vibration.
@@ -57,14 +57,20 @@ public class MarksMessageNotification {
         notify(context, builder.build());
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     private static void notify(final Context context, final Notification notification) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel nc = new NotificationChannel("urgent", "Pilne", NotificationManager.IMPORTANCE_HIGH);
+            nc.setVibrationPattern(new long[]{200, 200, 200, 200, 200, 200});
+            nc.setLightColor(context.getResources().getColor(R.color.colorPrimary));
+            nm.createNotificationChannel(nc);
+        }
+
         nm.notify(NOTIFICATION_TAG, 0, notification);
     }
 
-    @TargetApi(Build.VERSION_CODES.ECLAIR)
     public static void cancel(final Context context) {
         final NotificationManager nm = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);

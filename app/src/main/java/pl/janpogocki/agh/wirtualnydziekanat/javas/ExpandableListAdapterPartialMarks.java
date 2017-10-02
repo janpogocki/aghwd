@@ -58,10 +58,10 @@ public class ExpandableListAdapterPartialMarks extends AnimatedExpandableListVie
             convertView = infalInflater.inflate(R.layout.partial_marks_list_item, null);
         }
 
-        TextView txtListChildCategory = (TextView) convertView.findViewById(R.id.textViewCategory);
-        TextView txtListChildData = (TextView) convertView.findViewById(R.id.textViewData);
-        TextView txtListChildUwagi = (TextView) convertView.findViewById(R.id.textViewUwagi);
-        TextView txtListChildMark = (TextView) convertView.findViewById(R.id.textViewMark);
+        TextView txtListChildCategory = convertView.findViewById(R.id.textViewCategory);
+        TextView txtListChildData = convertView.findViewById(R.id.textViewData);
+        TextView txtListChildUwagi = convertView.findViewById(R.id.textViewUwagi);
+        TextView txtListChildMark = convertView.findViewById(R.id.textViewMark);
         txtListChildCategory.setText(childCategory);
         txtListChildData.setText(childData + "\n" + childProwadzacy);
         txtListChildUwagi.setText(childUwagi);
@@ -109,8 +109,8 @@ public class ExpandableListAdapterPartialMarks extends AnimatedExpandableListVie
             convertView = infalInflater.inflate(R.layout.marks_list_group, null);
         }
 
-        TextView textViewTitle = (TextView) convertView.findViewById(R.id.textViewTitle);
-        TextView textViewSubTitle = (TextView) convertView.findViewById(R.id.textViewSubTitle);
+        TextView textViewTitle = convertView.findViewById(R.id.textViewTitle);
+        TextView textViewSubTitle = convertView.findViewById(R.id.textViewSubTitle);
         textViewTitle.setText(headerTitle);
         textViewSubTitle.setText(headerLabType);
 
