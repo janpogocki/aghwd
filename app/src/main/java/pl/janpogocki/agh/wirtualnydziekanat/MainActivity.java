@@ -45,6 +45,7 @@ public class MainActivity extends AppCompatActivity
     Spinner toolbarSpinner = null;
     SkosActivity skosactivity = null;
     ScheduleActivity scheduleactivity = null;
+    ScholarshipsActivity scholarshipsactivity = null;
     FeedbackActivity feedbackactivity = null;
     FirebaseAnalytics mFirebaseAnalytics;
     String currentFragmentScreen, notificationsStatusFirebase;
@@ -194,9 +195,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
+            public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
         if ("semester".contains(Storage.sharedPreferencesStartScreen))
@@ -396,10 +395,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
         int id = item.getItemId();
 
         if (id == R.id.action_search) {
@@ -477,6 +472,14 @@ public class MainActivity extends AppCompatActivity
             tx.commit();
             scheduleactivity = (ScheduleActivity) scheduleactivity_;
             currentFragmentScreen = "schedule";
+        } else if (id == R.id.nav_scholarships) {
+            setTitle(getString(R.string.scholarships));
+            FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
+            Fragment scholarshipsactivity_ = new ScholarshipsActivity();
+            tx.replace(R.id.frameLayoutMain, scholarshipsactivity_);
+            tx.commit();
+            scholarshipsactivity = (ScholarshipsActivity) scholarshipsactivity_;
+            currentFragmentScreen = "scholarships";
         } else if (id == R.id.nav_syllabus) {
             setTitle(getString(R.string.syllabus));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();

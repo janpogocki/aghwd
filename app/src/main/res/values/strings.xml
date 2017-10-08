@@ -75,5 +75,6 @@
     <string name="download_error">Błąd pobierania pliku</string>
     <string name="download_ok">Plik został pobrany</string>
     <string name="download_permission_info">Aby pobierać pliki z AGH WD, zezwól aplikacji na dostęp do plików na Twoim urządzeniu</string>
+    <string name="scholarships">Stypendia</string>
 
 </resources>

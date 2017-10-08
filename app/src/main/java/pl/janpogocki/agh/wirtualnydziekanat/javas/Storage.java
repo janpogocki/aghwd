@@ -45,6 +45,7 @@ public class Storage {
     public static List<String> universityStatus = new ArrayList<>();
     public static List<String> multiKierunekValues = new ArrayList<>();
     public static List<String> multiKierunekLabelNames = new ArrayList<>();
+    public static List<LabelListAndList<String>> scholarships = new ArrayList();
 
     public static String getSemesterNumberById(int id) {
         return Storage.summarySemesters.get(id).get(2);
@@ -87,5 +88,6 @@ public class Storage {
         universityStatus = new ArrayList<>();
         multiKierunekValues = new ArrayList<>();
         multiKierunekLabelNames = new ArrayList<>();
+        scholarships = new ArrayList();
     }
 }
