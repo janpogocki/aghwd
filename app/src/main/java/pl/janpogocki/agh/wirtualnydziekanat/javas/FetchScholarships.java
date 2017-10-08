@@ -72,10 +72,6 @@ public class FetchScholarships {
                 String fww2 = fw2.getWebsite(true, true, data);
                 Document fw2Parsed = Jsoup.parse(fww2);
 
-                viewstateValue = fw2Parsed.getElementById(viewstateName).attr("value");
-                viewstateGeneratorValue = fw2Parsed.getElementById(viewstateGeneratorName).attr("value");
-                eventValidationValue = fw2Parsed.getElementById(eventValidationName).attr("value");
-
                 Elements htmlParsedGridDane2 = fw2Parsed.getAllElements().select(".gridDane");
 
                 // Go over every entry if exists
