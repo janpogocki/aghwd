@@ -47,8 +47,6 @@
     <string name="push_notifications">Powiadomienia push</string>
     <string name="new_marks">Nowe oceny</string>
     <string name="new_marks_summary">Wysyłane każdorazowo po wpisaniu nowej oceny</string>
-    <string name="agh_urgent_info">Ważne informacje od AGH</string>
-    <string name="agh_urgent_info_summary">Tylko pilne wiadomości, bez spamu</string>
     <string name="only_with_remember_password">Opcja dostępna tylko przy zalogowaniu z zapamiętaniem hasła</string>
 
     <string name="summary">Podsumowanie</string>

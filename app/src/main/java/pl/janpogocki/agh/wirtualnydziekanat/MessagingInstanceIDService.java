@@ -18,7 +18,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 public class MessagingInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
-        try {
+        /*try {
             RememberPassword rp = new RememberPassword(this);
 
             if (rp.isRemembered()) {
@@ -28,14 +28,10 @@ public class MessagingInstanceIDService extends FirebaseInstanceIdService {
                 if (sharedPreferences.getBoolean("marks_notifications", true)) {
                     FirebaseMessaging.getInstance().subscribeToTopic(rp.getLogin());
                 }
-
-                if (sharedPreferences.getBoolean("news_notifications", true)) {
-                    FirebaseMessaging.getInstance().subscribeToTopic("news");
-                }
             }
         } catch (Exception e) {
             Log.i("aghwd", "aghwd", e);
             Storage.appendCrash(e);
-        }
+        }*/
     }
 }

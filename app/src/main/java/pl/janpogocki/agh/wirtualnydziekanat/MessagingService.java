@@ -15,11 +15,6 @@ public class MessagingService extends FirebaseMessagingService {
             if (typeKey.equals("new_mark")){
                 MarksMessageNotification.notify(this);
             }
-            else if (typeKey.equals("news")){
-                String text = data.get("text");
-                String URL = data.get("url");
-                BigViewMessageNotification.notify(this, text, URL);
-            }
         }
     }
 }

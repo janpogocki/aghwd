@@ -21,8 +21,8 @@
         <item>Będziesz sprawdzać nową ocenę?\nTrzymam kciuki! :)</item>
         <item>Zrelaksuj się, to tylko oceny… ;D</item>
         <item>A legitymacja podbita? ;)</item>
-        <item>Włącz powiadomienia\ni bądź na bieżąco z AGH WD! ;)</item>
-        <item>Znajdź AGH WD\nw Chrome Web Store\ni otrzymuj powiadomienia\nna komputerze!</item>
+        <!--<item>Włącz powiadomienia\ni bądź na bieżąco z AGH WD! ;)</item>-->
+        <!--<item>Znajdź AGH WD\nw Chrome Web Store\ni otrzymuj powiadomienia\nna komputerze!</item>-->
     </string-array>
 
     <string-array name="start_screen_entries">
