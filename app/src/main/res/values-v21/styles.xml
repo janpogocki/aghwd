@@ -19,6 +19,7 @@
         <item name="lightGray2">@color/colorLightGray2</item>
         <item name="lightGray3">@color/colorLightGray3</item>
         <item name="whiteBackground">@color/colorWhiteBackground</item>
+        <item name="navigationViewTextColorSelected">@color/colorPrimary</item>
     </style>
 
     <style name="AppThemeNight" parent="Theme.AppCompat">
@@ -38,6 +39,7 @@
         <item name="lightGray2">@color/colorLightGray2Dark</item>
         <item name="lightGray3">@color/colorLightGray3Dark</item>
         <item name="whiteBackground">@color/colorPrimaryDarkNight</item>
+        <item name="navigationViewTextColorSelected">@color/colorWhiteBackground</item>
 
         <item name="android:windowBackground">@color/colorBlackText</item>
     </style>

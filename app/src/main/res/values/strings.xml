@@ -74,5 +74,7 @@
     <string name="download_ok">Plik został pobrany</string>
     <string name="download_permission_info">Aby pobierać pliki z AGH WD, zezwól aplikacji na dostęp do plików na Twoim urządzeniu</string>
     <string name="scholarships">Stypendia</string>
+    <string name="whats_new_text">Cześć! 😊\n\n--whatsnew--\n\nWasz Janek</string>
+    <string name="what_new_title">Co nowego?</string>
 
 </resources>

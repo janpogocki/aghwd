@@ -88,6 +88,22 @@ public class AboutActivity extends Fragment {
             }
         });
 
+        TextView wwwjanpogockiplLink = root.findViewById(R.id.textView8);
+        wwwjanpogockiplLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "clicked");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "wwwjanpogockipl_link");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.janpogocki.pl"));
+                startActivity(browserIntent);
+
+                Log.e("link", "clicked");
+            }
+        });
+
         return root;
     }
 

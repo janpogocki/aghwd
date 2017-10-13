@@ -3,12 +3,14 @@ package pl.janpogocki.agh.wirtualnydziekanat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -318,6 +320,22 @@ public class MainActivity extends AppCompatActivity
 
                 notificationsStatusFirebase = stringBuilder.toString();
             }
+
+            // what's new acivity todo
+            /*try {
+                int lastWhatsNew = sharedPreferences.getInt("last_whats_new", 0);
+                int currentAppVersionCode = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionCode;
+
+                if (currentAppVersionCode > lastWhatsNew){
+                    sharedPreferences.edit().putInt("last_whats_new", currentAppVersionCode).apply();
+
+                    Intent openWhatsNew = new Intent(this, WhatsNewActivity.class);
+                    startActivity(openWhatsNew);
+                }
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+            }*/
         }
     }
 
