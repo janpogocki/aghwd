@@ -18,18 +18,34 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_previous_week"
-        android:icon="@drawable/ic_left"
-        android:title="@string/previous_week"
+        android:id="@+id/action_schedule_now"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_menu_schedule_white"
+        android:title="@string/schedule_nearest_event"
         android:visible="false"
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_next_week"
-        android:icon="@drawable/ic_right"
-        android:title="@string/next_week"
+        android:id="@+id/action_schedule_teacher"
+        android:orderInCategory="101"
+        android:icon="@drawable/ic_menu_skos_white"
+        android:title="@string/schedule_teachers"
         android:visible="false"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_schedule_change_group"
+        android:orderInCategory="102"
+        android:title="@string/schedule_change_group"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/action_schedule_view_settings"
+        android:orderInCategory="103"
+        android:title="@string/schedule_view_preferences"
+        android:visible="false"
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/action_send"

@@ -50,4 +50,39 @@
         <item>auto</item>
         <item>false</item>
     </string-array>
+
+    <string-array name="schedule_tag_names">
+        <item>Ukryte</item>
+        <item>Ważne</item>
+        <item>Kolokwium</item>
+        <item>Egzamin</item>
+    </string-array>
+
+    <string-array name="schedule_view_settings_values">
+        <item>Nie pokazuj kalendarza AGH</item>
+        <item>Nie pokazuj moich wydarzeń</item>
+        <item>Nie pokazuj wykładów</item>
+        <item>Nie pokazuj z tagiem \"Ukryte\"</item>
+        <item>Nie pokazuj z tagiem \"Ważne\"</item>
+        <item>Nie pokazuj z tagiem \"Kolokwium\"</item>
+        <item>Nie pokazuj z tagiem \"Egzamin\"</item>
+    </string-array>
+
+    <string-array name="schedule_agh_event_options">
+        <item>Utwórz kopię w moim kalendarzu</item>
+        <item>Utwórz kopię wszystkich podobnych do tego w moim kalendarzu</item>
+        <item>Oznacz/odznacz tagiem \"Ukryte\"</item>
+        <item>Oznacz/odznacz tagiem \"Ukryte\" wszystkie podobne do tego</item>
+        <item>Oznacz/odznacz tagiem \"Ważne\"</item>
+        <item>Oznacz/odznacz tagiem \"Kolokwium\"</item>
+        <item>Oznacz/odznacz tagiem \"Egzamin\"</item>
+    </string-array>
+
+    <string-array name="schedule_non_agh_event_options">
+        <item>Oznacz/odznacz tagiem \"Ważne\"</item>
+        <item>Oznacz/odznacz tagiem \"Kolokwium\"</item>
+        <item>Oznacz/odznacz tagiem \"Egzamin\"</item>
+        <item>Edytuj</item>
+        <item>Usuń</item>
+    </string-array>
 </resources>

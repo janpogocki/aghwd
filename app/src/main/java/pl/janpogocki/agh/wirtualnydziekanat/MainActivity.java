@@ -34,6 +34,7 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
@@ -94,12 +95,37 @@ public class MainActivity extends AppCompatActivity
             MenuWithActionBar.findItem(R.id.action_send).setVisible(val);
     }
 
-    public void showScheduleButtons(Boolean val){
+    public void showScheduleButtons(Boolean val, int status){
         if (MenuWithActionBar == null)
             restartApp();
         else {
-            MenuWithActionBar.findItem(R.id.action_previous_week).setVisible(val);
-            MenuWithActionBar.findItem(R.id.action_next_week).setVisible(val);
+            if (!val){
+                MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(false);
+                MenuWithActionBar.findItem(R.id.action_schedule_teacher).setVisible(false);
+                MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(false);
+                MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(false);
+            }
+            else {
+                // todo
+                // no data from AGH
+                if (status == -1){
+                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
+                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                }
+                // WD.XP
+                else if (status == 0) {
+                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
+                    MenuWithActionBar.findItem(R.id.action_schedule_teacher).setVisible(true);
+                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                }
+                // EAIIB
+                else if (status == 1){
+                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
+                    MenuWithActionBar.findItem(R.id.action_schedule_teacher).setVisible(true);
+                    MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(true);
+                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                }
+            }
         }
     }
 
@@ -349,7 +375,7 @@ public class MainActivity extends AppCompatActivity
 
         showSearchButton(false);
         showSendButton(false);
-        showScheduleButtons(false);
+        showScheduleButtons(false, 0);
         resetMainLayoutVisibility(true);
 
         uncheckCheckedItem(navigationView.getMenu());
@@ -376,7 +402,7 @@ public class MainActivity extends AppCompatActivity
 
                 showSearchButton(false);
                 showSendButton(false);
-                showScheduleButtons(false);
+                showScheduleButtons(false, 0);
                 showSemesterSpinner(false);
                 resetMainLayoutVisibility(true);
 
@@ -413,11 +439,15 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.action_search) {
             setupSearchView();
         }
-        else if (id == R.id.action_previous_week) {
-            scheduleactivity.changeWeek(getString(R.string.previous));
+        //todo
+        else if (id == R.id.action_schedule_now){
+            scheduleactivity.scrollToNowPosition();
         }
-        else if (id == R.id.action_next_week) {
-            scheduleactivity.changeWeek(getString(R.string.next));
+        else if (id == R.id.action_schedule_change_group){
+            scheduleactivity.changeGroup();
+        }
+        else if (id == R.id.action_schedule_view_settings){
+            scheduleactivity.showViewSettings();
         }
         else if (id == R.id.action_send) {
             hideKeyboard(getWindow().getDecorView().getRootView());
@@ -437,7 +467,7 @@ public class MainActivity extends AppCompatActivity
 
         showSearchButton(false);
         showSendButton(false);
-        showScheduleButtons(false);
+        showScheduleButtons(false, 0);
         showSemesterSpinner(false);
         resetMainLayoutVisibility(true);
 
@@ -534,8 +564,7 @@ public class MainActivity extends AppCompatActivity
 
             FirebaseMessaging.getInstance().unsubscribeFromTopic(Storage.albumNumber);
             FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
-            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("marks_notifications").apply();
-            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("news_notifications").apply();
+            PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply();
 
             restartApp();
         } else if (id == R.id.nav_relogging) {

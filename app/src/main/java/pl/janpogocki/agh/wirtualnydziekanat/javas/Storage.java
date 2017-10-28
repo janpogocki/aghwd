@@ -1,10 +1,14 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -21,7 +25,6 @@ public class Storage {
     public static String syllabusURL = "";
     public static String syllabusURLlinkDepartment = "";
     public static String sharedPreferencesStartScreen = "";
-    public static String scheduleDates = "";
     public static String feedbackCrashList = "";
     public static int currentSemester = 0;
     public static int currentSemesterListPointer = 0;
@@ -39,13 +42,14 @@ public class Storage {
     public static HashMap<Integer, List<List<String>>> currentFilesDocsHTML = new HashMap<>();
     public static List<List<String>> summarySemesters = new ArrayList<>();
     public static List<List<String>> groupsAndModules = new ArrayList<>();
-    public static List<List<String>> schedule = new ArrayList<>();
+    public static List<Appointment> schedule = new ArrayList<>();
     public static List<List<String>> diploma = new ArrayList<>();
     public static List<List<String>> skosList = new ArrayList<>();
     public static List<String> universityStatus = new ArrayList<>();
     public static List<String> multiKierunekValues = new ArrayList<>();
     public static List<String> multiKierunekLabelNames = new ArrayList<>();
     public static List<LabelListAndList<String>> scholarships = new ArrayList();
+    public static int scheduleStatus;
 
     public static String getSemesterNumberById(int id) {
         return Storage.summarySemesters.get(id).get(2);
@@ -58,6 +62,17 @@ public class Storage {
         Storage.feedbackCrashList += sw.toString() + "\n\n==========\n\n";
     }
 
+    public static String getUniversityStatusHash(){
+        try {
+            return Arrays.toString(MessageDigest.getInstance("MD5").digest((universityStatus.get(0)+universityStatus.get(1)+universityStatus.get(2)+universityStatus.get(4)+universityStatus.get(5)+universityStatus.get(9)).getBytes()));
+        } catch (NoSuchAlgorithmException e) {
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
+        }
+
+        return "";
+    }
+
     public static void clearStorage(){
         albumNumber = "";
         nameAndSurname = "";
@@ -66,7 +81,6 @@ public class Storage {
         syllabusURL = "";
         syllabusURLlinkDepartment = "";
         sharedPreferencesStartScreen = "";
-        scheduleDates = "";
         currentSemester = 0;
         currentSemesterListPointer = 0;
         currentSemesterListPointerPartialMarks = 0;
@@ -89,5 +103,6 @@ public class Storage {
         multiKierunekValues = new ArrayList<>();
         multiKierunekLabelNames = new ArrayList<>();
         scholarships = new ArrayList();
+        scheduleStatus = -1;
     }
 }

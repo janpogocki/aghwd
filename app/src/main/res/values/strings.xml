@@ -76,5 +76,11 @@
     <string name="scholarships">Stypendia</string>
     <string name="whats_new_text">Cześć! 😊\n\n--whatsnew--\n\nWasz Janek</string>
     <string name="what_new_title">Co nowego?</string>
+    <string name="schedule_nearest_event">Przejdź do najbliższego wydarzenia</string>
+    <string name="schedule_change_group">Zmień grupę</string>
+    <string name="schedule_teachers">Podział Godzin prowadzących</string>
+    <string name="schedule_view_preferences">Preferencje widoku</string>
+    <string name="choose_group">Wybierz grupę:</string>
+    <string name="action_save">Zapisz</string>
 
 </resources>

@@ -6,9 +6,12 @@
     <color name="colorLightGray">#F5F5F5</color>
     <color name="colorLightGray2">#fafafa</color>
     <color name="colorLightGray3">#e0e0e0</color>
+    <color name="colorGrayText">#949494</color>
     <color name="colorWhiteBackground">#FFFFFF</color>
     <color name="colorWhiteHint">#80ffffff</color>
     <color name="colorBlackText">#1E1E1E</color>
+    <color name="colorOrange">#FF6F00</color>
+    <color name="colorGreen">#00693C</color>
 
     <color name="statusBarTransparent">#0f000000</color>
 

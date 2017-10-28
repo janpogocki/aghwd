@@ -38,10 +38,8 @@
 
         <activity
             android:name=".LogIn"
-            android:configChanges="orientation|screenSize"
             android:noHistory="true"
             android:resizeableActivity="true"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBarrNight"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>

@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/LightGray2"
+        android:visibility="gone"
+        android:id="@+id/rlBigDate">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/textViewDate"
+            android:fontFamily="sans-serif-condensed"
+            android:paddingLeft="10sp"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:paddingRight="15dp"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textAllCaps="true"
+            android:text="poniedziałek, 23 października" />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_below="@id/textViewDate"
+            style="@style/LightGray3" />
+
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:id="@+id/scheduleClickableLayout"
+        style="@style/WhiteBackground">
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10sp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewHourStart"
+                android:fontFamily="sans-serif-condensed"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:text="12:00" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewHourStop"
+                android:fontFamily="sans-serif-condensed"
+                style="@style/BlackTextMedium"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/textViewHourStart"
+                android:text="12:00" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="10sp"
+            android:layout_weight="1">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/BlackTextMedium"
+                android:text="Nazwa przedmiotu"
+                android:id="@+id/textViewHeader" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/BlackTextSmall"
+                android:text="Prowadzący\nTyp zajęć"
+                android:lineSpacingExtra="10dp"
+                android:id="@+id/textView2ndLine"
+                android:layout_below="@+id/textViewHeader"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Lokalizacja"
+                android:id="@+id/textView3rdLine"
+                android:layout_below="@+id/textView2ndLine"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:background="@color/colorAccent"
+                android:padding="5sp"
+                android:textColor="@color/colorWhiteBackground"
+                android:text="Tag wydarzenia"
+                android:visibility="gone"
+                android:textAllCaps="true"
+                android:fontFamily="sans-serif-condensed"
+                android:id="@+id/textViewTag"
+                android:layout_below="@+id/textView3rdLine"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="10dp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="10sp"
+            android:gravity="center_horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textViewHourCountdown"
+                android:fontFamily="sans-serif-condensed"
+                android:lineSpacingExtra="10dp"
+                style="@style/BlackTextMedium"
+                android:gravity="end"
+                android:textAllCaps="true"
+                android:text="trwa\njeszcze\n5 min" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        style="@style/LightGray3" />
+
+</LinearLayout>
