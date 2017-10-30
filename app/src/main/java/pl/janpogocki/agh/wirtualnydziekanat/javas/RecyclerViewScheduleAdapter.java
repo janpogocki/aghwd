@@ -2,6 +2,7 @@ package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
 import android.content.Context;
 import android.preference.PreferenceManager;
+import android.support.v7.widget.AppCompatImageView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,12 +18,11 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -33,6 +33,7 @@ import pl.janpogocki.agh.wirtualnydziekanat.ScheduleActivity;
 
 /**
  * Created by Jan on 22.10.2017.
+ * Adapter displaying events
  */
 
 public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerViewScheduleAdapter.ViewHolder> {
@@ -55,6 +56,10 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
         return lastPastAppointement;
     }
 
+    public List<Appointment> getListOfAppointments() {
+        return listOfAppointments;
+    }
+
     public CharSequence [] getListOfGroupIds() {
         CharSequence [] returned = new CharSequence[listOfGroupIds.size()];
 
@@ -67,7 +72,7 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private boolean isToDeleteEvent(Appointment currentAppointment){
         for (int i=0; i<c.getResources().getStringArray(R.array.schedule_view_settings_values).length; i++){
-            boolean defaultValue = i == 3;
+            boolean defaultValue = i == 4;
             boolean currentViewSetting = PreferenceManager.getDefaultSharedPreferences(c)
                     .getBoolean(Storage.getUniversityStatusHash() + "_schedule_view_settings_" + i, defaultValue);
 
@@ -77,13 +82,15 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
                 return true;
             else if (i == 2 && currentViewSetting && currentAppointment.lecture)
                 return true;
-            else if (i == 3 && currentViewSetting && currentAppointment.tag == 0)
+            else if (i == 3 && currentViewSetting && currentAppointment.tag == -1)
                 return true;
-            else if (i == 4 && currentViewSetting && currentAppointment.tag == 1)
+            else if (i == 4 && currentViewSetting && currentAppointment.tag == 0)
                 return true;
-            else if (i == 5 && currentViewSetting && currentAppointment.tag == 2)
+            else if (i == 5 && currentViewSetting && currentAppointment.tag == 1)
                 return true;
-            else if (i == 6 && currentViewSetting && currentAppointment.tag == 3)
+            else if (i == 6 && currentViewSetting && currentAppointment.tag == 2)
+                return true;
+            else if (i == 7 && currentViewSetting && currentAppointment.tag == 3)
                 return true;
         }
 
@@ -122,6 +129,61 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
             }
         }
 
+        // insert events from mycal.json
+        String filenameMyCal = Storage.getUniversityStatusHash() + "_mycal.json";
+        File fileMyCal = new File(c.getFilesDir() + "/" + filenameMyCal);
+
+        if (fileMyCal.exists()){
+            try {
+                StringBuilder jsonFromMyCal = new StringBuilder();
+                FileInputStream inputStream = c.openFileInput(filenameMyCal);
+                BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+                String line;
+                while ((line = r.readLine()) != null) {
+                    jsonFromMyCal.append(line);
+                }
+                r.close();
+                inputStream.close();
+
+                JSONArray jsonArrayMyCal = new JSONArray(jsonFromMyCal.toString());
+
+                // iterate and add events
+                for (int i=0; i<jsonArrayMyCal.length(); i++){
+                    long startTimestamp = jsonArrayMyCal.getJSONObject(i).getLong("startTimestamp");
+                    long stopTimestamp = jsonArrayMyCal.getJSONObject(i).getLong("stopTimestamp");
+                    String name = jsonArrayMyCal.getJSONObject(i).getString("name");
+                    String description = jsonArrayMyCal.getJSONObject(i).getString("description");
+                    String location = jsonArrayMyCal.getJSONObject(i).getString("location");
+                    boolean lecture = jsonArrayMyCal.getJSONObject(i).getBoolean("lecture");
+                    boolean aghEvent = jsonArrayMyCal.getJSONObject(i).getBoolean("aghEvent");
+                    int tag = jsonArrayMyCal.getJSONObject(i).getInt("tag");
+                    double group = jsonArrayMyCal.getJSONObject(i).getDouble("group");
+                    boolean showDateBar = jsonArrayMyCal.getJSONObject(i).getBoolean("showDateBar");
+
+                    Appointment currentAppointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, lecture, aghEvent, tag, group, showDateBar);
+
+                    // check for tag
+                    try {
+                        String currentTagName = currentAppointment.startTimestamp + currentAppointment.stopTimestamp + currentAppointment.name + currentAppointment.description + currentAppointment.aghEvent;
+                        if (jsonObject != null && jsonObject.has(currentTagName) && jsonObject.getInt(currentTagName) != -1) {
+                            currentAppointment.tag = jsonObject.getInt(currentTagName);
+                        }
+                        else
+                            currentAppointment.tag = -1;
+                    } catch (Exception e){
+                        Log.i("aghwd", "aghwd", e);
+                        Storage.appendCrash(e);
+                    }
+
+                    listOfAppointments.add(currentAppointment);
+                }
+            } catch (Exception e){
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+            }
+        }
+
+        // insert events from AGH calendar
         for (int i=0; i<Storage.schedule.size(); i++){
             Appointment currentAppointment = Storage.schedule.get(i);
 
@@ -131,10 +193,12 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
 
             // check for tag
             try {
-                String currentTagName = currentAppointment.startTimestamp + currentAppointment.stopTimestamp + currentAppointment.name + currentAppointment.description;
-                if (jsonObject != null && jsonObject.getInt(currentTagName) != -1) {
+                String currentTagName = currentAppointment.startTimestamp + currentAppointment.stopTimestamp + currentAppointment.name + currentAppointment.description + currentAppointment.aghEvent;
+                if (jsonObject != null && jsonObject.has(currentTagName) && jsonObject.getInt(currentTagName) != -1) {
                     currentAppointment.tag = jsonObject.getInt(currentTagName);
                 }
+                else
+                    currentAppointment.tag = -1;
             } catch (Exception e){
                 Log.i("aghwd", "aghwd", e);
                 Storage.appendCrash(e);
@@ -143,25 +207,40 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
             listOfAppointments.add(currentAppointment);
         }
 
+        // sort all appointments by startTime
+        Collections.sort(listOfAppointments, new Comparator<Appointment>() {
+            @Override
+            public int compare(final Appointment object1, final Appointment object2) {
+                return Long.valueOf(object1.startTimestamp).compareTo(object2.startTimestamp);
+            }
+        });
+
+        // sort group ids
         Collections.sort(listOfGroupIds);
 
         // remove unnecessary events (groups) if eaiib
         if (Storage.universityStatus.get(1).contains("Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej")) {
             double selectedGroup = Double.parseDouble(String.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getFloat(Storage.getUniversityStatusHash() + "_choosen_eaiib_group", -1)));
 
-            if (selectedGroup == 0) {
+            if (selectedGroup == -1) {
+                // only delete which isToDeleteEvent()
+                for (Appointment current : new ArrayList<>(listOfAppointments)) {
+                    if (isToDeleteEvent(current))
+                        listOfAppointments.remove(current);
+                }
+            } else if (selectedGroup == 0) {
                 // only lectures save
                 for (Appointment current : new ArrayList<>(listOfAppointments)) {
                     if (current.group != 0 || isToDeleteEvent(current))
                         listOfAppointments.remove(current);
                 }
-            } else if (selectedGroup % 1 == 0 && selectedGroup != -1) {
+            } else if (selectedGroup % 1 == 0) {
                 // only group X.0 and X.1, X.2, ... save and lectures ofc
                 for (Appointment current : new ArrayList<>(listOfAppointments)) {
                     if (((int) current.group != selectedGroup && current.group != 0) || isToDeleteEvent(current))
                         listOfAppointments.remove(current);
                 }
-            } else if (selectedGroup % 1 > 0 && selectedGroup != -1) {
+            } else if (selectedGroup % 1 > 0) {
                 // only X.1 save and lectures ofc
                 for (Appointment current : new ArrayList<>(listOfAppointments)) {
                     if ((current.group != selectedGroup && current.group != 0) || isToDeleteEvent(current))
@@ -263,6 +342,10 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
             viewHolder.textViewTag.setText(c.getResources().getStringArray(R.array.schedule_tag_names)[listOfAppointments.get(i).tag]);
         }
 
+        // show or not myCalIcon
+        if (!listOfAppointments.get(i).aghEvent)
+            viewHolder.imageViewMyCal.setVisibility(View.VISIBLE);
+
         // count and show countdown
         long currentTime = System.currentTimeMillis();
         Date currentDate = new Date(currentTime);
@@ -318,6 +401,7 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
         private TextView textViewHeader, textView2ndLine, textView3rdLine, textViewTag, textViewHourStart, textViewHourStop, textViewHourCountdown, textViewDate;
         private RelativeLayout rlBigDate;
         private LinearLayout scheduleClickableLayout;
+        private AppCompatImageView imageViewMyCal;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -332,8 +416,8 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
             textViewDate = itemView.findViewById(R.id.textViewDate);
 
             rlBigDate = itemView.findViewById(R.id.rlBigDate);
-
             scheduleClickableLayout = itemView.findViewById(R.id.scheduleClickableLayout);
+            imageViewMyCal = itemView.findViewById(R.id.imageViewMyCal);
         }
     }
 }

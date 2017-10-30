@@ -16,6 +16,19 @@ public class Appointment {
     public double group;
     public boolean showDateBar;
 
+    public Appointment(Appointment appointment){
+        this.startTimestamp = appointment.startTimestamp;
+        this.stopTimestamp = appointment.stopTimestamp;
+        this.name = appointment.name;
+        this.description = appointment.description;
+        this.location = appointment.location;
+        this.lecture = appointment.lecture;
+        this.aghEvent = appointment.aghEvent;
+        this.tag = appointment.tag;
+        this.group = appointment.group;
+        this.showDateBar = appointment.showDateBar;
+    }
+
     public Appointment(long startTimestamp, long stopTimestamp, String name, String description, String location, boolean lecture, boolean aghEvent, int tag, double group, boolean showDateBar) {
         this.startTimestamp = startTimestamp;
         this.stopTimestamp = stopTimestamp;

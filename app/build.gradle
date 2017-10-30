@@ -28,6 +28,7 @@ dependencies {
     compile 'com.android.support:design:26.1.0'
     compile 'com.android.support:support-v4:26.1.0'
     compile 'com.android.support:recyclerview-v7:26.1.0'
+    compile 'commons-codec:commons-codec:1.11'
     compile 'com.maksim88:PasswordEditText:v0.9'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'

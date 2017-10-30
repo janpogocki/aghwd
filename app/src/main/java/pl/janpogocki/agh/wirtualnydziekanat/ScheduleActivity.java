@@ -17,29 +17,30 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Appointment;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchSchedule;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RecyclerViewScheduleAdapter;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.ScheduleUtils;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class ScheduleActivity extends Fragment {
@@ -98,6 +99,49 @@ public class ScheduleActivity extends Fragment {
         }
     }
 
+    public void goToDate(){
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH);
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                Calendar cal = Calendar.getInstance();
+                cal.set(selectedYear, selectedMonth, selectedDay);
+                Date selectedDate =  cal.getTime();
+
+                for (int i=0; i<recyclerViewScheduleAdapter.getListOfAppointments().size()-1; i++){
+                    Date currentDate = new Date(recyclerViewScheduleAdapter.getListOfAppointments().get(i+1).startTimestamp);
+
+                    if (currentDate.after(selectedDate)){
+                        if (recyclerViewSchedule != null) {
+                            final int finalI = i;
+                            recyclerViewSchedule.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    layoutManager.scrollToPositionWithOffset(finalI+1, 0);
+                                }
+                            });
+                        }
+                        return;
+                    }
+                }
+
+                if (recyclerViewSchedule != null && recyclerViewScheduleAdapter.getListOfAppointments().size() != 0) {
+                    recyclerViewSchedule.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            layoutManager.scrollToPositionWithOffset(recyclerViewScheduleAdapter.getListOfAppointments().size()-1, 0);
+                        }
+                    });
+                }
+            }
+        }, year, month, dayOfMonth);
+        mDatePicker.setTitle(R.string.schedule_go_to_date);
+        mDatePicker.show();
+    }
+
     public void changeGroup(){
         int checkedItem = findPositionInArray(recyclerViewScheduleAdapter.getListOfGroupIds(),
                 PreferenceManager.getDefaultSharedPreferences(activityContext).getFloat(Storage.getUniversityStatusHash() + "_choosen_eaiib_group", -1));
@@ -124,7 +168,7 @@ public class ScheduleActivity extends Fragment {
         boolean [] usersCheckedItems = new boolean[valuesCount];
 
         for (int i=0; i<valuesCount; i++){
-            boolean defaultValue = i == 3;
+            boolean defaultValue = i == 4;
 
             usersCheckedItems[i] = PreferenceManager.getDefaultSharedPreferences(activityContext).getBoolean(Storage.getUniversityStatusHash() + "_schedule_view_settings_" + i, defaultValue);
         }
@@ -150,7 +194,7 @@ public class ScheduleActivity extends Fragment {
         builder.show();
     }
 
-    public void showEventSettings(Appointment currentAppointment){
+    public void showEventSettings(final Appointment currentAppointment){
         AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
         builder.setTitle(currentAppointment.name);
 
@@ -158,6 +202,35 @@ public class ScheduleActivity extends Fragment {
             builder.setItems(R.array.schedule_agh_event_options, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    if (i == 0){
+                        // copy to mycal
+                        ScheduleUtils.copyAppointment(activityContext, currentAppointment, null);
+                    }
+                    else if (i == 1){
+                        // copy all like this one to mycal
+                        ScheduleUtils.copyAppointment(activityContext, currentAppointment, recyclerViewScheduleAdapter.getListOfAppointments());
+                    }
+                    else if (i == 2){
+                        // tag "hide"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 0, null);
+                    }
+                    else if (i == 3){
+                        // tag "hide" to all like this one
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 0, recyclerViewScheduleAdapter.getListOfAppointments());
+                    }
+                    else if (i == 4){
+                        // tag "wazne"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 1, null);
+                    }
+                    else if (i == 5){
+                        // tag "kolokwium"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 2, null);
+                    }
+                    else if (i == 6){
+                        // tag "egzamin"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 3, null);
+                    }
+
                     dialogInterface.dismiss();
                     onDestroyView();
                     onResume();
@@ -168,9 +241,34 @@ public class ScheduleActivity extends Fragment {
             builder.setItems(R.array.schedule_non_agh_event_options, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
+                    if (i == 0){
+                        // tag "wazne"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 1, null);
+                    }
+                    else if (i == 1){
+                        // tag "kolokwium"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 2, null);
+                    }
+                    else if (i == 2){
+                        // tag "egzamin"
+                        ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 3, null);
+                    }
+                    else if (i == 3){
+                        // edit event
+                        editEvent(currentAppointment);
+                    }
+                    else if (i == 4){
+                        // delete event
+                        ScheduleUtils.removeAppointment(activityContext, currentAppointment);
+                    }
+
                     dialogInterface.dismiss();
-                    onDestroyView();
-                    onResume();
+
+                    // if not edit event => refresh
+                    if (i != 3) {
+                        onDestroyView();
+                        onResume();
+                    }
                 }
             });
         }
@@ -185,22 +283,18 @@ public class ScheduleActivity extends Fragment {
         View dialogView = layoutInflater.inflate(R.layout.schedule_create_new_event_layout, null);
         builder.setView(dialogView);
 
-        EditText editTextName = dialogView.findViewById(R.id.editTextName);
+        final EditText editTextName = dialogView.findViewById(R.id.editTextName);
         final EditText editTextTimeFrom = dialogView.findViewById(R.id.editTextTimeFrom);
         final EditText editTextTimeTo = dialogView.findViewById(R.id.editTextTimeTo);
         final EditText editTextDate = dialogView.findViewById(R.id.editTextDate);
-        EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
-        EditText editTextLocation = dialogView.findViewById(R.id.editTextLocation);
-        final EditText editTextRepeat = dialogView.findViewById(R.id.editTextRepeat);
-        final CheckBox checkBoxRepeat = dialogView.findViewById(R.id.checkBoxRepeat);
-        TextView textViewRepeat1 = dialogView.findViewById(R.id.textViewRepeat1);
-        TextView textViewRepeat2 = dialogView.findViewById(R.id.textViewRepeat2);
+        final EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
+        final EditText editTextLocation = dialogView.findViewById(R.id.editTextLocation);
 
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
         int minute = cal.get(Calendar.MINUTE);
         int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
+        int month = cal.get(Calendar.MONTH) + 1;
         int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
         editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", dayOfMonth, month, year));
         editTextTimeFrom.setText(String.format(Locale.US, "%02d:%02d", hour, minute));
@@ -259,32 +353,51 @@ public class ScheduleActivity extends Fragment {
                 DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
-                        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", selectedDay, selectedMonth, selectedYear));
+                        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", selectedDay, selectedMonth+1, selectedYear));
                     }
                 }, year, month, dayOfMonth);
                 mDatePicker.show();
             }
         });
 
-        View.OnClickListener textViewRepeatOnClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editTextRepeat.requestFocus();
-                InputMethodManager imm = (InputMethodManager) activityContext.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null) {
-                    imm.showSoftInput(editTextRepeat, InputMethodManager.SHOW_IMPLICIT);
-                }
-            }
-        };
-
-        textViewRepeat1.setOnClickListener(textViewRepeatOnClickListener);
-        textViewRepeat2.setOnClickListener(textViewRepeatOnClickListener);
-        checkBoxRepeat.setOnClickListener(textViewRepeatOnClickListener);
-
         builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // todo
+                try {
+                    DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+                    String dateAndTimeOfStartOfLesson = editTextDate.getText().toString() + " " + editTextTimeFrom.getText().toString();
+                    String dateAndTimeOfStopOfLesson = editTextDate.getText().toString() + " " + editTextTimeTo.getText().toString();
+
+                    long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
+                    long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
+                    String name = editTextName.getText().toString().trim();
+
+                    String description;
+                    if (editTextDescription.getText().toString().trim().length() > 0)
+                        description = editTextDescription.getText().toString().trim();
+                    else
+                        description = "(brak opisu)";
+
+                    String location;
+                    if (editTextLocation.getText().toString().trim().length() > 0)
+                        location = editTextDescription.getText().toString().trim();
+                    else
+                        location = "(brak lokalizacji)";
+
+                    boolean lecture = false;
+                    boolean aghEvent = false;
+                    int tag = -1;
+                    double group = 0;
+                    boolean showDateBar = false;
+
+                    Appointment newAppointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, lecture, aghEvent, tag, group, showDateBar);
+                    ScheduleUtils.saveNewAppointment(activityContext, newAppointment);
+                    onDestroyView();
+                    onResume();
+                } catch (ParseException e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
             }
         });
 
@@ -312,8 +425,143 @@ public class ScheduleActivity extends Fragment {
 
             }
         });
+    }
 
-        editTextRepeat.addTextChangedListener(new TextWatcher() {
+    private void editEvent(final Appointment oldAppointment){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View dialogView = layoutInflater.inflate(R.layout.schedule_create_new_event_layout, null);
+        builder.setView(dialogView);
+
+        final EditText editTextName = dialogView.findViewById(R.id.editTextName);
+        final EditText editTextTimeFrom = dialogView.findViewById(R.id.editTextTimeFrom);
+        final EditText editTextTimeTo = dialogView.findViewById(R.id.editTextTimeTo);
+        final EditText editTextDate = dialogView.findViewById(R.id.editTextDate);
+        final EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
+        final EditText editTextLocation = dialogView.findViewById(R.id.editTextLocation);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(oldAppointment.startTimestamp + TimeZone.getDefault().getOffset(oldAppointment.startTimestamp));
+        int hour = cal.get(Calendar.HOUR_OF_DAY);
+        int minute = cal.get(Calendar.MINUTE);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", dayOfMonth, month, year));
+        editTextTimeFrom.setText(String.format(Locale.US, "%02d:%02d", hour, minute));
+
+        cal.setTimeInMillis(oldAppointment.stopTimestamp + TimeZone.getDefault().getOffset(oldAppointment.stopTimestamp));
+        hour = cal.get(Calendar.HOUR_OF_DAY);
+        minute = cal.get(Calendar.MINUTE);
+        editTextTimeTo.setText(String.format(Locale.US, "%02d:%02d", hour, minute));
+
+        editTextName.setText(oldAppointment.name);
+        editTextDescription.setText(oldAppointment.description);
+        editTextLocation.setText(oldAppointment.location);
+
+        editTextTimeFrom.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar mcurrentTime = Calendar.getInstance();
+                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
+                int minute = mcurrentTime.get(Calendar.MINUTE);
+                TimePickerDialog mTimePicker = new TimePickerDialog(activityContext, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        editTextTimeFrom.setText(String.format(Locale.US, "%02d:%02d", selectedHour, selectedMinute));
+
+                        Calendar cal = Calendar.getInstance();
+                        cal.set(Calendar.HOUR_OF_DAY, selectedHour);
+                        cal.set(Calendar.MINUTE, selectedMinute);
+                        cal.add(Calendar.HOUR_OF_DAY, 1);
+                        cal.add(Calendar.MINUTE, 30);
+                        String endTime = String.format(Locale.US, "%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+                        editTextTimeTo.setText(endTime);
+                    }
+                }, hour, minute, true);
+                mTimePicker.show();
+            }
+        });
+
+        editTextTimeTo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int hour = Integer.parseInt(editTextTimeTo.getText().toString().split(":")[0]);
+                int minute = Integer.parseInt(editTextTimeTo.getText().toString().split(":")[1]);
+                TimePickerDialog mTimePicker = new TimePickerDialog(activityContext, new TimePickerDialog.OnTimeSetListener() {
+                    @Override
+                    public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
+                        editTextTimeTo.setText(String.format(Locale.US, "%02d:%02d", selectedHour, selectedMinute));
+                    }
+                }, hour, minute, true);
+                mTimePicker.show();
+            }
+        });
+
+        editTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", selectedDay, selectedMonth+1, selectedYear));
+                    }
+                }, year, month, dayOfMonth);
+                mDatePicker.show();
+            }
+        });
+
+        builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+                    String dateAndTimeOfStartOfLesson = editTextDate.getText().toString() + " " + editTextTimeFrom.getText().toString();
+                    String dateAndTimeOfStopOfLesson = editTextDate.getText().toString() + " " + editTextTimeTo.getText().toString();
+
+                    long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
+                    long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
+                    String name = editTextName.getText().toString().trim();
+
+                    String description;
+                    if (editTextDescription.getText().toString().trim().length() > 0)
+                        description = editTextDescription.getText().toString().trim();
+                    else
+                        description = "(brak opisu)";
+
+                    String location;
+                    if (editTextLocation.getText().toString().trim().length() > 0)
+                        location = editTextDescription.getText().toString().trim();
+                    else
+                        location = "(brak lokalizacji)";
+
+                    boolean lecture = false;
+                    boolean aghEvent = false;
+                    int tag = -1;
+                    double group = 0;
+                    boolean showDateBar = false;
+
+                    Appointment newAppointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, lecture, aghEvent, tag, group, showDateBar);
+                    ScheduleUtils.editAppointment(activityContext, oldAppointment, newAppointment);
+                    onDestroyView();
+                    onResume();
+                } catch (ParseException e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
+            }
+        });
+
+        builder.setNegativeButton(R.string.action_cancel, null);
+
+        final AlertDialog dialog = builder.show();
+
+        editTextName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -321,10 +569,10 @@ public class ScheduleActivity extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0 && Integer.parseInt(charSequence.toString().trim()) > 0)
-                    checkBoxRepeat.setChecked(true);
+                if (charSequence.toString().trim().length() > 0)
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                 else
-                    checkBoxRepeat.setChecked(false);
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             }
 
             @Override

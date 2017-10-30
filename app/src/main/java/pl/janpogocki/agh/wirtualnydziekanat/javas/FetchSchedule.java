@@ -14,8 +14,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -227,14 +225,6 @@ public class FetchSchedule {
                 status = -1;
             }
             else {
-                // sort by startTime
-                Collections.sort(list, new Comparator<Appointment>() {
-                    @Override
-                    public int compare(final Appointment object1, final Appointment object2) {
-                        return Long.valueOf(object1.startTimestamp).compareTo(object2.startTimestamp);
-                    }
-                });
-
                 Storage.schedule = list;
                 status = 1;
             }

@@ -65,6 +65,25 @@
                 android:layout_below="@id/textViewHourStart"
                 android:text="12:00" />
 
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/textViewHourStop"
+                android:gravity="bottom"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true">
+
+                <android.support.v7.widget.AppCompatImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_menu_schedule"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/imageViewMyCal"
+                    android:visibility="gone"
+                    android:tint="@color/colorGrayText" />
+
+            </RelativeLayout>
+
         </RelativeLayout>
 
         <RelativeLayout

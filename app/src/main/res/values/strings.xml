@@ -82,5 +82,6 @@
     <string name="schedule_view_preferences">Preferencje widoku</string>
     <string name="choose_group">Wybierz grupę:</string>
     <string name="action_save">Zapisz</string>
+    <string name="schedule_go_to_date">Przejdź do daty</string>
 
 </resources>

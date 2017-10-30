@@ -86,43 +86,6 @@
 
             </android.support.design.widget.TextInputLayout>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <CheckBox
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:enabled="false"
-                    android:id="@+id/checkBoxRepeat" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="Powtarzaj co "
-                    android:id="@+id/textViewRepeat1"
-                    style="@style/BlackTextMedium"/>
-
-                <EditText
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/editTextRepeat"
-                    android:gravity="center"
-                    android:inputType="number" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:text="tygodni"
-                    android:id="@+id/textViewRepeat2"
-                    style="@style/BlackTextMedium"/>
-
-            </LinearLayout>
-
         </LinearLayout>
 
     </ScrollView>

@@ -20,6 +20,10 @@
 -keep interface org.jsoup.** { *; }
 -keep public class org.jsoup.** { *; }
 
+-keep class org.apache.** {*;}
+-keep interface org.apache.** { *; }
+-keep public class org.apache.** { *; }
+
 -keep class android.** { *; }
 -keep interface android.** { *; }
 -keep public class android.** { *; }

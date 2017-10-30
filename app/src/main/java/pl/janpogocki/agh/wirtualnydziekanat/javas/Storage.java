@@ -3,6 +3,10 @@ package pl.janpogocki.agh.wirtualnydziekanat.javas;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.MessageDigest;
@@ -63,8 +67,10 @@ public class Storage {
     }
 
     public static String getUniversityStatusHash(){
+        String strToMD5 = universityStatus.get(0)+universityStatus.get(1)+universityStatus.get(2)+universityStatus.get(4)+universityStatus.get(5)+universityStatus.get(9);
+
         try {
-            return Arrays.toString(MessageDigest.getInstance("MD5").digest((universityStatus.get(0)+universityStatus.get(1)+universityStatus.get(2)+universityStatus.get(4)+universityStatus.get(5)+universityStatus.get(9)).getBytes()));
+            return new String(Hex.encodeHex(MessageDigest.getInstance("MD5").digest(strToMD5.getBytes())));
         } catch (NoSuchAlgorithmException e) {
             Log.i("aghwd", "aghwd", e);
             Storage.appendCrash(e);
