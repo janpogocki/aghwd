@@ -131,7 +131,7 @@ public class SyllabusActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute();
+            runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
             // wait for change loading subtitle
             animateFadeOut(textView3, root, 3000);

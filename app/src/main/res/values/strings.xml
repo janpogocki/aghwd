@@ -83,5 +83,7 @@
     <string name="choose_group">Wybierz grupę:</string>
     <string name="action_save">Zapisz</string>
     <string name="schedule_go_to_date">Przejdź do daty</string>
+    <string name="skos_search_for_schedule">Wyszukaj Podział Godzin dla tego pracownika AGH</string>
+    <string name="rewrite_captcha">Przepisz kod z obrazka</string>
 
 </resources>

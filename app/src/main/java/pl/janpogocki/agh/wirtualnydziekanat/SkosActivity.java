@@ -1,12 +1,18 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +20,8 @@ import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -26,6 +34,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchSkos;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchTeacherSchedule;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.RecyclerViewTeacherScheduleAdapter;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SkosActivity extends Fragment {
@@ -34,8 +44,13 @@ public class SkosActivity extends Fragment {
     View root;
     Context activityContext;
     FetchSkos fs;
+    FetchTeacherSchedule fts;
     ListView listViewGroups;
     ListAdapter listAdapter;
+    RecyclerView recyclerViewTeacherSchedule;
+    RecyclerViewTeacherScheduleAdapter recyclerViewTeacherScheduleAdapter;
+    LinearLayoutManager layoutManager;
+    AsyncTaskRunnerAutoRefresher asyncTaskRunnerAutoRefresher;
 
     public void searchTyping(String val){
         if (listAdapter != null && listViewGroups != null) {
@@ -93,7 +108,7 @@ public class SkosActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute();
+            runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else {
             // Have it, show it.
@@ -107,14 +122,116 @@ public class SkosActivity extends Fragment {
 
     public void backButtonPressedWhenBrowserOpened(){
         RelativeLayout rlData = root.findViewById(R.id.rlData);
-        RelativeLayout rlBrowser = root.findViewById(R.id.rlBrowser);
+        RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+        RelativeLayout rlTeacherSchedule = root.findViewById(R.id.rlTeacherSchedule);
+        LinearLayout rlBrowser = root.findViewById(R.id.rlBrowser);
         rlBrowser.setVisibility(View.GONE);
+        rlNoData.setVisibility(View.GONE);
+        rlTeacherSchedule.setVisibility(View.GONE);
         rlData.setVisibility(View.VISIBLE);
         ((MainActivity) activityContext).showSearchButton(true);
         Storage.openedBrowser = false;
+
+        if (asyncTaskRunnerAutoRefresher != null && !asyncTaskRunnerAutoRefresher.isCancelled())
+            asyncTaskRunnerAutoRefresher.cancel(true);
     }
 
-    private void switch2browser(final String _url){
+    private void refreshTeacherSchedule(String nameAndSurname){
+        AsyncTaskScheduleBegin runnerBegin = new AsyncTaskScheduleBegin();
+        runnerBegin.setNameAndSurname(nameAndSurname);
+        runnerBegin.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void showCaptcha(final String nameAndSurname){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View dialogView = layoutInflater.inflate(R.layout.skos_teacher_schedule_captcha, null);
+        builder.setView(dialogView);
+
+        ImageView imageViewCaptcha = dialogView.findViewById(R.id.imageViewCaptcha);
+        final EditText editTextCaptcha = dialogView.findViewById(R.id.editTextCaptcha);
+
+        builder.setTitle(R.string.rewrite_captcha);
+        imageViewCaptcha.setImageBitmap(fts.bitmapCaptcha);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                AsyncTaskScheduleAfterCaptcha runnerAfterCaptcha = new AsyncTaskScheduleAfterCaptcha();
+                runnerAfterCaptcha.setCaptchaText(editTextCaptcha.getText().toString().trim());
+                runnerAfterCaptcha.setNameAndSurname(nameAndSurname);
+                runnerAfterCaptcha.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+        });
+
+        builder.setNegativeButton(R.string.action_cancel, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+                LinearLayout rlBrowser = root.findViewById(R.id.rlBrowser);
+
+                rlLoader.setVisibility(View.GONE);
+                rlBrowser.setVisibility(View.VISIBLE);
+            }
+        });
+
+        final AlertDialog dialog = builder.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+        dialog.setCanceledOnTouchOutside(false);
+
+        editTextCaptcha.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().trim().length() > 0)
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                else
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+    }
+
+    private void scrollToNowPosition(){
+        if (recyclerViewTeacherSchedule != null) {
+            recyclerViewTeacherSchedule.post(new Runnable() {
+                @Override
+                public void run() {
+                    layoutManager.scrollToPositionWithOffset(recyclerViewTeacherScheduleAdapter.getLastPastAppointement()+1, 0);
+                }
+            });
+        }
+    }
+
+    private void showTeacherSchedule(){
+        asyncTaskRunnerAutoRefresher = new AsyncTaskRunnerAutoRefresher();
+        asyncTaskRunnerAutoRefresher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    private void firstRunRecyclerView(){
+        layoutManager = new LinearLayoutManager(activityContext, LinearLayoutManager.VERTICAL, false);
+        recyclerViewTeacherSchedule = root.findViewById(R.id.recyclerViewSchedule);
+        recyclerViewTeacherSchedule.setLayoutManager(layoutManager);
+        recyclerViewTeacherSchedule.setNestedScrollingEnabled(false);
+        recyclerViewTeacherScheduleAdapter = new RecyclerViewTeacherScheduleAdapter(activityContext);
+        recyclerViewTeacherSchedule.setAdapter(recyclerViewTeacherScheduleAdapter);
+        scrollToNowPosition();
+    }
+
+    private void refreshRecyclerView(){
+        recyclerViewTeacherScheduleAdapter.notifyDataSetChanged();
+    }
+
+    private void switch2browser(final String _nameAndSurname, final String _url){
         // close searchbar
         ((MainActivity) activityContext).showSearchButton(false);
 
@@ -124,14 +241,24 @@ public class SkosActivity extends Fragment {
 
         final RelativeLayout rlData = root.findViewById(R.id.rlData);
         final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
-        final RelativeLayout rlBrowser = root.findViewById(R.id.rlBrowser);
+        final LinearLayout rlBrowser = root.findViewById(R.id.rlBrowser);
         WebView webView = root.findViewById(R.id.webView);
+
+        // schedule button
+        LinearLayout layoutSearchTeacherSchedule = root.findViewById(R.id.layoutSearchTeacherSchedule);
+        layoutSearchTeacherSchedule.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                refreshTeacherSchedule(_nameAndSurname);
+            }
+        });
 
         rlData.setVisibility(View.GONE);
         rlLoader.setVisibility(View.VISIBLE);
 
         webView.getSettings().setJavaScriptEnabled(true);
         webView.loadUrl(_url);
+
         webView.setWebViewClient(new WebViewClient(){
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
@@ -142,9 +269,15 @@ public class SkosActivity extends Fragment {
 
             @Override
             public void onPageFinished (WebView webView, String url){
-                webView.loadUrl("javascript:(function() {var anchors = document.getElementsByTagName(\"a\");for (var i = 0; i < anchors.length; i++) {anchors[i].style.cssText = \"color:#555\";}document.body.innerHTML = document.querySelector(\"div.c-col.vcard\").outerHTML;})()");
-                rlLoader.setVisibility(View.GONE);
-                rlBrowser.setVisibility(View.VISIBLE);
+                if (Storage.nightMode)
+                    webView.loadUrl("javascript:(function() {var anchors = document.getElementsByTagName(\"a\");for (var i = 0; i < anchors.length; i++) {anchors[i].style.cssText = \"color:#ffffff\";}document.body.innerHTML = document.querySelector(\"div.c-col.vcard\").outerHTML;document.getElementsByTagName(\"body\")[0].style.cssText = \"background:#1E1E1E;color:#ffffff\"})()");
+                else
+                    webView.loadUrl("javascript:(function() {var anchors = document.getElementsByTagName(\"a\");for (var i = 0; i < anchors.length; i++) {anchors[i].style.cssText = \"color:#555\";}document.body.innerHTML = document.querySelector(\"div.c-col.vcard\").outerHTML;})()");
+
+                if (webView.getProgress() == 100){
+                    rlLoader.setVisibility(View.GONE);
+                    rlBrowser.setVisibility(View.VISIBLE);
+                }
             }
         });
     }
@@ -174,9 +307,27 @@ public class SkosActivity extends Fragment {
     }
 
     @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+            asyncTaskRunnerAutoRefresher.cancel(true);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+            asyncTaskRunnerAutoRefresher.cancel(true);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.skos), null);
+
+        asyncTaskRunnerAutoRefresher = new AsyncTaskRunnerAutoRefresher();
     }
 
     private class SearchAdapter extends BaseAdapter {
@@ -203,7 +354,7 @@ public class SkosActivity extends Fragment {
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
-            String nameAndSurname = list.get(0).get(position);
+            final String nameAndSurname = list.get(0).get(position);
             String functions = list.get(1).get(position);
             final String personURL = list.get(2).get(position);
 
@@ -232,7 +383,7 @@ public class SkosActivity extends Fragment {
             rlDataItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    switch2browser(personURL);
+                    switch2browser(nameAndSurname, personURL);
                 }
             });
 
@@ -288,7 +439,182 @@ public class SkosActivity extends Fragment {
             }
 
         }
+    }
 
+    private class AsyncTaskScheduleBegin extends AsyncTask<View, View, View> {
+        private String nameAndSurname;
+        Boolean isError = false;
+
+        public void setNameAndSurname(String nameAndSurname) {
+            this.nameAndSurname = nameAndSurname;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final LinearLayout rlBrowser = root.findViewById(R.id.rlBrowser);
+
+            rlBrowser.setVisibility(View.GONE);
+            rlLoader.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected View doInBackground(View... views) {
+            try {
+                fts = new FetchTeacherSchedule(nameAndSurname);
+
+                return root;
+            } catch (Exception e) {
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+                isError = true;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(View view) {
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+            final RelativeLayout rlTeacherSchedule = root.findViewById(R.id.rlTeacherSchedule);
+
+            rlLoader.setVisibility(View.GONE);
+
+            if (fts == null || isError){
+                rlOffline.setVisibility(View.VISIBLE);
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
+
+                rlOffline.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rlOffline.setVisibility(View.GONE);
+                        rlLoader.setVisibility(View.VISIBLE);
+
+                        refreshTeacherSchedule(nameAndSurname);
+                    }
+                });
+            }
+            // -1 means no data to show
+            else if (fts.status == -1){
+                rlNoData.setVisibility(View.VISIBLE);
+            }
+            // -2 means WU.XP captcha
+            else if (fts.status == -2){
+                showCaptcha(nameAndSurname);
+            }
+            else {
+                // Have it, show it
+                rlTeacherSchedule.setVisibility(View.VISIBLE);
+                showTeacherSchedule();
+            }
+        }
+    }
+
+    private class AsyncTaskScheduleAfterCaptcha extends AsyncTask<View, View, View> {
+        Boolean isError = false;
+        private String captchaText;
+        private String nameAndSurname;
+
+        public void setNameAndSurname(String nameAndSurname) {
+            this.nameAndSurname = nameAndSurname;
+        }
+
+        public void setCaptchaText(String captchaText) {
+            this.captchaText = captchaText;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            rlLoader.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected View doInBackground(View... views) {
+            try {
+                fts.continueFetchDziekanatXPScheduleAfterCaptcha(captchaText);
+
+                return root;
+            } catch (Exception e) {
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+                isError = true;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(View view) {
+            final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+            final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+            final RelativeLayout rlTeacherSchedule = root.findViewById(R.id.rlTeacherSchedule);
+
+            rlLoader.setVisibility(View.GONE);
+
+            if (fts == null || isError){
+                rlOffline.setVisibility(View.VISIBLE);
+                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                        .show();
+
+                rlOffline.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        rlOffline.setVisibility(View.GONE);
+                        rlLoader.setVisibility(View.VISIBLE);
+
+                        refreshTeacherSchedule(nameAndSurname);
+                    }
+                });
+            }
+            // -1 means no data to show
+            else if (fts.status == -1){
+                rlNoData.setVisibility(View.VISIBLE);
+            }
+            // -2 means WU.XP captcha
+            else if (fts.status == -2){
+                showCaptcha(nameAndSurname);
+            }
+            else {
+                // Have it, show it
+                rlTeacherSchedule.setVisibility(View.VISIBLE);
+                showTeacherSchedule();
+            }
+        }
+    }
+
+    private class AsyncTaskRunnerAutoRefresher extends AsyncTask<View, View, View> {
+        boolean firstRun;
+
+        @Override
+        protected View doInBackground(View... params) {
+            firstRun = true;
+
+            while (!isCancelled()){
+                publishProgress();
+
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
+
+                firstRun = false;
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(View... values) {
+            if (firstRun)
+                firstRunRecyclerView();
+            else
+                refreshRecyclerView();
+        }
     }
 
 }

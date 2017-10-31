@@ -215,19 +215,19 @@ public class ScheduleUtils {
                 for (int i=0; i<jsonArray.length(); i++){
                     JSONObject currentJsonObject = jsonArray.getJSONObject(i);
 
-                    if (currentJsonObject.getLong("startTimestamp") != appointment.startTimestamp
-                            && currentJsonObject.getLong("stopTimestamp") != appointment.stopTimestamp
-                            && !currentJsonObject.getString("name").equals(appointment.name)
-                            && !currentJsonObject.getString("description").equals(appointment.description)
-                            && !currentJsonObject.getString("location").equals(appointment.location)
-                            && currentJsonObject.getBoolean("aghEvent") != appointment.aghEvent
-                            && currentJsonObject.getDouble("group") != appointment.group){
-                        newJsonArray.put(currentJsonObject);
-                    }
-                    else {
+                    if (currentJsonObject.getLong("startTimestamp") == appointment.startTimestamp
+                            && currentJsonObject.getLong("stopTimestamp") == appointment.stopTimestamp
+                            && currentJsonObject.getString("name").equals(appointment.name)
+                            && currentJsonObject.getString("description").equals(appointment.description)
+                            && currentJsonObject.getString("location").equals(appointment.location)
+                            && currentJsonObject.getBoolean("aghEvent") == appointment.aghEvent
+                            && currentJsonObject.getDouble("group") == appointment.group){
                         // not put - remove from tags, if necessary
                         if (appointment.tag != -1)
                             addOrChangeOrRemoveTag(c, appointment, appointment.tag, null);
+                    }
+                    else {
+                        newJsonArray.put(currentJsonObject);
                     }
                 }
 

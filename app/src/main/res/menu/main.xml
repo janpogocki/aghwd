@@ -26,30 +26,22 @@
         app:showAsAction="always" />
 
     <item
-        android:id="@+id/action_schedule_teacher"
-        android:orderInCategory="101"
-        android:icon="@drawable/ic_menu_skos_white"
-        android:title="@string/schedule_teachers"
-        android:visible="false"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/action_schedule_go_to_date"
-        android:orderInCategory="102"
+        android:orderInCategory="101"
         android:title="@string/schedule_go_to_date"
         android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_schedule_change_group"
-        android:orderInCategory="103"
+        android:orderInCategory="102"
         android:title="@string/schedule_change_group"
         android:visible="false"
         app:showAsAction="never" />
 
     <item
         android:id="@+id/action_schedule_view_settings"
-        android:orderInCategory="104"
+        android:orderInCategory="103"
         android:title="@string/schedule_view_preferences"
         android:visible="false"
         app:showAsAction="never" />

@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity
         else {
             if (!val){
                 MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(false);
-                MenuWithActionBar.findItem(R.id.action_schedule_teacher).setVisible(false);
                 MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(false);
                 MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(false);
                 MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(false);
@@ -117,14 +116,12 @@ public class MainActivity extends AppCompatActivity
                 // WD.XP
                 else if (status == 0) {
                     MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_teacher).setVisible(true);
                     MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
                     MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
                 }
                 // EAIIB
                 else if (status == 1){
                     MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_teacher).setVisible(true);
                     MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
                     MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(true);
                     MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
@@ -445,9 +442,6 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.action_schedule_now){
             scheduleactivity.scrollToNowPosition();
-        }
-        else if (id == R.id.action_schedule_teacher){
-            // todo
         }
         else if (id == R.id.action_schedule_go_to_date){
             scheduleactivity.goToDate();

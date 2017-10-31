@@ -277,7 +277,13 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
             if (new Date(currentTime).after(hourStopDate))
                 lastPastAppointement = i;
         }
+    }
 
+    public void showOrHideRecyclerView(){
+        if (listOfAppointments.size() > 0)
+            scheduleActivity.enforceShowingRecyclerView();
+        else
+            scheduleActivity.enforceHidingRecyclerView();
     }
 
     private String getFullDateString(Date currentDate){

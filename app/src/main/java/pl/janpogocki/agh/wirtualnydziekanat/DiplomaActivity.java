@@ -33,7 +33,7 @@ public class DiplomaActivity extends Fragment {
 
             rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute();
+            runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         }
         else {
             // Have it, show it.

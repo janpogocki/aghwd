@@ -333,6 +333,76 @@ public class FetchWebsite {
         return ret;
     }
 
+    public String getWebsiteIsolated(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
+        String ret;
+
+        // Send data
+        BufferedReader reader;
+
+        // Defined URL  where to send data
+        URL url = new URL(URL);
+
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        SSLContext sc;
+        sc = SSLContext.getInstance("TLS");
+        sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
+        conn.setSSLSocketFactory(sc.getSocketFactory());
+
+        conn.setReadTimeout(10000);
+        conn.setConnectTimeout(15000);
+        conn.setDoOutput(true);
+        conn.setInstanceFollowRedirects(false);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
+
+        // Sending cookies if _sendCookies is true and List with cookies is set
+        if (Cookies2.setList) {
+            if (_sendCookies && !(Cookies2.getCookies().equals("")))
+                conn.addRequestProperty("Cookie", Cookies2.getCookies());
+        }
+
+        // Sending POST data if exists
+        if (!(_POSTdata.equals(""))){
+            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+            wr.write(_POSTdata);
+            wr.flush();
+        }
+
+        // conn.setDoInput(true);
+        conn.connect();
+
+        // Getting cookies form server if _receiveCookies
+        if (_receiveCookies && !Cookies2.setList) {
+            Cookies2.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else if (_receiveCookies && Cookies2.setList)
+            Cookies2.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+        // Getting Location if redirect
+        locationHTTP = conn.getHeaderField("Location");
+        responseCode = conn.getResponseCode();
+
+        // Get the server response
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        StringBuilder sb = new StringBuilder();
+        String line;
+
+        // Read Server Response
+        while((line = reader.readLine()) != null)
+        {
+            // Append server response in string
+            sb.append(line).append("\n");
+        }
+        ret = sb.toString();
+
+        reader.close();
+        conn.disconnect();
+
+        return ret;
+    }
+
     public String getLocationHTTP(){
         if (locationHTTP == null)
             return "";
@@ -380,6 +450,39 @@ public class FetchWebsite {
         }
         else
             Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+
+        conn.connect();
+        InputStream input = conn.getInputStream();
+        Bitmap myBitmap = BitmapFactory.decodeStream(input);
+        conn.disconnect();
+
+        return myBitmap;
+    }
+
+    public Bitmap getBitmapIsolated(Boolean _sendCookies, Boolean _receiveCookies) throws Exception {
+        URL url = new URL(URL);
+        HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+        SSLContext sc;
+        sc = SSLContext.getInstance("TLS");
+        sc.init(null, new TrustManager[]{ new TrivialTrustManager() }, new java.security.SecureRandom());
+        HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+        HttpsURLConnection.setDefaultHostnameVerifier(new TrivialHostVerifier());
+        conn.setSSLSocketFactory(sc.getSocketFactory());
+
+        conn.setDoInput(true);
+        conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
+
+        // Sending cookies if _sendCookies
+        if (_sendCookies && !(Cookies2.getCookies().equals("")))
+            conn.addRequestProperty("Cookie", Cookies2.getCookies());
+
+        // Getting cookies if _receiveCookies
+        if (_receiveCookies && !Cookies2.setList) {
+            Cookies2.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        }
+        else
+            Cookies2.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
         conn.connect();
         InputStream input = conn.getInputStream();

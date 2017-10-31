@@ -88,6 +88,30 @@ public class ScheduleActivity extends Fragment {
         });
     }
 
+    public void enforceShowingRecyclerView(){
+        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+        RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+        RelativeLayout rlData = root.findViewById(R.id.rlData);
+        FloatingActionButton fab = root.findViewById(R.id.fab);
+
+        rlData.setVisibility(View.VISIBLE);
+        rlNoData.setVisibility(View.GONE);
+        rlLoader.setVisibility(View.GONE);
+        fab.setVisibility(View.VISIBLE);
+    }
+
+    public void enforceHidingRecyclerView(){
+        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+        RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
+        RelativeLayout rlData = root.findViewById(R.id.rlData);
+        FloatingActionButton fab = root.findViewById(R.id.fab);
+
+        rlData.setVisibility(View.GONE);
+        rlNoData.setVisibility(View.VISIBLE);
+        rlLoader.setVisibility(View.GONE);
+        fab.setVisibility(View.VISIBLE);
+    }
+
     public void scrollToNowPosition(){
         if (recyclerViewSchedule != null) {
             recyclerViewSchedule.post(new Runnable() {
@@ -380,7 +404,7 @@ public class ScheduleActivity extends Fragment {
 
                     String location;
                     if (editTextLocation.getText().toString().trim().length() > 0)
-                        location = editTextDescription.getText().toString().trim();
+                        location = editTextLocation.getText().toString().trim();
                     else
                         location = "(brak lokalizacji)";
 
@@ -536,7 +560,7 @@ public class ScheduleActivity extends Fragment {
 
                     String location;
                     if (editTextLocation.getText().toString().trim().length() > 0)
-                        location = editTextDescription.getText().toString().trim();
+                        location = editTextLocation.getText().toString().trim();
                     else
                         location = "(brak lokalizacji)";
 
@@ -610,24 +634,11 @@ public class ScheduleActivity extends Fragment {
     private void refreshSchedule(View root) {
         if (Storage.schedule == null || Storage.schedule.size() == 0){
             // There's no downloaded data. Do that.
-            RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
 
-            rlLoader.setVisibility(View.VISIBLE);
             AsyncTaskRunner runner = new AsyncTaskRunner();
-            runner.execute(root);
-
-            // wait for change loading subtitle
-            animateFadeOut(textView3, root, 3000);
-            animateFadeIn(textView3bis, root, 3250);
+            runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
         }
         else {
-            // Have it, show it.
-            RelativeLayout rlData = root.findViewById(R.id.rlData);
-            FloatingActionButton fab = root.findViewById(R.id.fab);
-
-            rlData.setVisibility(View.VISIBLE);
-            fab.setVisibility(View.VISIBLE);
-
             showSchedule();
         }
     }
@@ -635,7 +646,16 @@ public class ScheduleActivity extends Fragment {
     private void showSchedule(){
         ((MainActivity) activityContext).showScheduleButtons(true, Storage.scheduleStatus);
 
-        asyncTaskRunnerAutoRefresher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        try {
+            asyncTaskRunnerAutoRefresher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        } catch (IllegalStateException e){
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
+        }
+    }
+
+    private void setRecyclerViewScheduleAdapter(){
+        recyclerViewScheduleAdapter = new RecyclerViewScheduleAdapter(activityContext, this);
     }
 
     private void firstRunRecyclerView(){
@@ -643,8 +663,8 @@ public class ScheduleActivity extends Fragment {
         recyclerViewSchedule = root.findViewById(R.id.recyclerViewSchedule);
         recyclerViewSchedule.setLayoutManager(layoutManager);
         recyclerViewSchedule.setNestedScrollingEnabled(false);
-        recyclerViewScheduleAdapter = new RecyclerViewScheduleAdapter(activityContext, this);
         recyclerViewSchedule.setAdapter(recyclerViewScheduleAdapter);
+        recyclerViewScheduleAdapter.showOrHideRecyclerView();
         scrollToNowPosition();
     }
 
@@ -673,6 +693,14 @@ public class ScheduleActivity extends Fragment {
                 createNewEvent();
             }
         });
+        fab.setVisibility(View.GONE);
+
+        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+        rlLoader.setVisibility(View.VISIBLE);
+
+        // wait for change loading subtitle
+        animateFadeOut(textView3, root, 3000);
+        animateFadeIn(textView3bis, root, 3250);
 
         return root;
     }
@@ -689,13 +717,17 @@ public class ScheduleActivity extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        asyncTaskRunnerAutoRefresher.cancel(true);
+
+        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+            asyncTaskRunnerAutoRefresher.cancel(true);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        asyncTaskRunnerAutoRefresher.cancel(true);
+
+        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+            asyncTaskRunnerAutoRefresher.cancel(true);
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
@@ -717,11 +749,8 @@ public class ScheduleActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
-            final RelativeLayout rlData = root.findViewById(R.id.rlData);
             final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
             final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
-            final FloatingActionButton fab = root.findViewById(R.id.fab);
 
             rlLoader.setVisibility(View.GONE);
 
@@ -743,14 +772,11 @@ public class ScheduleActivity extends Fragment {
             }
             else if (fs.status == -1){
                 Storage.scheduleStatus = fs.status;
-                rlNoData.setVisibility(View.VISIBLE);
-                fab.setVisibility(View.VISIBLE);
+                showSchedule();
             }
             else {
                 // Have it, show it
                 Storage.scheduleStatus = fs.status;
-                rlData.setVisibility(View.VISIBLE);
-                fab.setVisibility(View.VISIBLE);
                 showSchedule();
             }
 
@@ -764,9 +790,11 @@ public class ScheduleActivity extends Fragment {
         @Override
         protected View doInBackground(View... params) {
             firstRun = true;
-            Log.e("autorefresher", "ok");
 
             while (!isCancelled()){
+                if (firstRun)
+                    setRecyclerViewScheduleAdapter();
+
                 publishProgress();
 
                 try {

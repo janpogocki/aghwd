@@ -3,16 +3,13 @@ package pl.janpogocki.agh.wirtualnydziekanat.javas;
 import android.graphics.Bitmap;
 import android.util.Log;
 
-import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -47,6 +44,7 @@ public class Storage {
     public static List<List<String>> summarySemesters = new ArrayList<>();
     public static List<List<String>> groupsAndModules = new ArrayList<>();
     public static List<Appointment> schedule = new ArrayList<>();
+    public static List<Appointment> teacherSchedule = new ArrayList<>();
     public static List<List<String>> diploma = new ArrayList<>();
     public static List<List<String>> skosList = new ArrayList<>();
     public static List<String> universityStatus = new ArrayList<>();
@@ -103,6 +101,7 @@ public class Storage {
         summarySemesters = new ArrayList<>();
         groupsAndModules = new ArrayList<>();
         schedule = new ArrayList<>();
+        teacherSchedule = new ArrayList<>();
         diploma = new ArrayList<>();
         skosList = new ArrayList<>();
         universityStatus = new ArrayList<>();
