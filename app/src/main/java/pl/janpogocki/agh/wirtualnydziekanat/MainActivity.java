@@ -34,7 +34,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity
         startActivity(i);
     }
 
-    public void resetMainLayoutVisibility(Boolean value) {
+    public void resetMainLayoutVisibility(boolean value) {
         FrameLayout frameLayoutMain = findViewById(R.id.frameLayoutMain);
         FrameLayout frameLayoutMainV7 = findViewById(R.id.frameLayoutMainV7);
 
@@ -81,73 +80,94 @@ public class MainActivity extends AppCompatActivity
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
     }
 
-    public void showSearchButton(Boolean val){
-        if (MenuWithActionBar == null)
-            restartApp();
-        else
-            MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
+    public void showSearchButton(boolean val){
+        if (currentFragmentScreen.equals("skos")) {
+            if (MenuWithActionBar == null)
+                restartApp();
+            else
+                MenuWithActionBar.findItem(R.id.action_search).setVisible(val);
+        }
     }
 
-    public void showSendButton(Boolean val){
-        if (MenuWithActionBar == null)
-            restartApp();
-        else
-            MenuWithActionBar.findItem(R.id.action_send).setVisible(val);
+    public void showSendButton(boolean val){
+        if (currentFragmentScreen.equals("feedback")) {
+            if (MenuWithActionBar == null)
+                restartApp();
+            else
+                MenuWithActionBar.findItem(R.id.action_send).setVisible(val);
+        }
     }
 
-    public void showScheduleButtons(Boolean val, int status){
-        if (MenuWithActionBar == null)
-            restartApp();
-        else {
-            if (!val){
-                MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(false);
-                MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(false);
-                MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(false);
-                MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(false);
-            }
+    public void showScheduleButtons(boolean val, int status){
+        if (currentFragmentScreen.equals("schedule")) {
+            if (MenuWithActionBar == null)
+                restartApp();
             else {
-                // todo
-                // no data from AGH
-                if (status == -1){
-                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
-                }
-                // WD.XP
-                else if (status == 0) {
-                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
-                }
-                // EAIIB
-                else if (status == 1){
-                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(true);
-                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                if (!val) {
+                    MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(false);
+                    MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(false);
+                    MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(false);
+                    MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(false);
+                } else {
+                    // todo unitime
+                    // no data from AGH
+                    if (status == -1) {
+                        MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                    }
+                    // WD.XP
+                    else if (status == 0) {
+                        MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                    }
+                    // EAIIB
+                    else if (status == 1) {
+                        MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                    }
                 }
             }
         }
     }
 
-    public void showSemesterSpinner(Boolean val){
-        if (MenuWithActionBar == null)
-            restartApp();
-        else
-            MenuWithActionBar.findItem(R.id.toolbarSpinner).setVisible(val);
+    public void showSemesterSpinner(boolean val){
+        if (currentFragmentScreen.equals("semester") || currentFragmentScreen.equals("semester_partial")
+                || currentFragmentScreen.equals("files")) {
+            if (MenuWithActionBar == null)
+                restartApp();
+            else
+                MenuWithActionBar.findItem(R.id.toolbarSpinner).setVisible(val);
+        }
+    }
+
+    public void enableDisableSemesterSpinner(boolean val){
+        if (currentFragmentScreen.equals("semester") || currentFragmentScreen.equals("semester_partial")
+                || currentFragmentScreen.equals("files")) {
+            if (MenuWithActionBar == null)
+                restartApp();
+            else {
+                toolbarSpinner.setEnabled(val);
+                toolbarSpinner.setClickable(val);
+            }
+        }
     }
 
     private void showDefaultScreen(Boolean showSpinner){
         if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
+            currentFragmentScreen = "summary";
             navigationView.getMenu().findItem(R.id.nav_summary).setChecked(true);
             setTitle(getString(R.string.summary));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment summaryactivity_ = new SummaryActivity();
             tx.replace(R.id.frameLayoutMain, summaryactivity_);
             tx.commit();
-
-            currentFragmentScreen = "summary";
         } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
+            currentFragmentScreen = "schedule";
+
             navigationView.getMenu().findItem(R.id.nav_schedule).setChecked(true);
             setTitle(getString(R.string.schedule));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
@@ -155,11 +175,13 @@ public class MainActivity extends AppCompatActivity
             tx.replace(R.id.frameLayoutMain, scheduleactivity_);
             tx.commit();
             scheduleactivity = (ScheduleActivity) scheduleactivity_;
-
-            currentFragmentScreen = "schedule";
         } else if ("semester_partial".equals(Storage.sharedPreferencesStartScreen)) {
-            if (showSpinner)
+            currentFragmentScreen = "semester_partial";
+
+            if (showSpinner) {
                 showSemesterSpinner(true);
+                enableDisableSemesterSpinner(false);
+            }
 
             navigationView.getMenu().findItem(R.id.nav_partial_marks).setChecked(true);
             setTitle(getString(R.string.partial_marks));
@@ -167,11 +189,13 @@ public class MainActivity extends AppCompatActivity
             Fragment partialmarksexplorer_ = new PartialMarksExplorer();
             tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
             tx.commit();
-
-            currentFragmentScreen = "semester_partial";
         } else {
-            if (showSpinner)
+            currentFragmentScreen = "semester";
+
+            if (showSpinner) {
                 showSemesterSpinner(true);
+                enableDisableSemesterSpinner(false);
+            }
 
             navigationView.getMenu().findItem(R.id.nav_marks).setChecked(true);
             setTitle(getString(R.string.final_marks));
@@ -179,8 +203,6 @@ public class MainActivity extends AppCompatActivity
             Fragment marksexplorer_ = new MarksExplorer();
             tx.replace(R.id.frameLayoutMain, marksexplorer_);
             tx.commit();
-
-            currentFragmentScreen = "semester";
         }
     }
 
@@ -202,6 +224,7 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (Storage.currentSemester != i) {
+                    enableDisableSemesterSpinner(false);
                     Storage.currentSemester = i;
 
                     if (currentFragmentScreen.equals("semester")){
@@ -227,8 +250,10 @@ public class MainActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        if ("semester".contains(Storage.sharedPreferencesStartScreen))
+        if ("semester".contains(Storage.sharedPreferencesStartScreen)) {
             showSemesterSpinner(true);
+            enableDisableSemesterSpinner(false);
+        }
     }
 
     private void setupSearchView(){
@@ -348,8 +373,8 @@ public class MainActivity extends AppCompatActivity
                 notificationsStatusFirebase = stringBuilder.toString();
             }
 
-            // what's new acivity todo
-            /*try {
+            // what's new acivity
+            try {
                 int lastWhatsNew = sharedPreferences.getInt("last_whats_new", 0);
                 int currentAppVersionCode = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionCode;
 
@@ -362,7 +387,7 @@ public class MainActivity extends AppCompatActivity
             } catch (PackageManager.NameNotFoundException e) {
                 Log.i("aghwd", "aghwd", e);
                 Storage.appendCrash(e);
-            }*/
+            }
         }
     }
 
@@ -475,65 +500,66 @@ public class MainActivity extends AppCompatActivity
         resetMainLayoutVisibility(true);
 
         if (id == R.id.nav_about) {
+            currentFragmentScreen = "about";
             setTitle(getString(R.string.about_app));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment aboutactivity_ = new AboutActivity();
             tx.replace(R.id.frameLayoutMain, aboutactivity_);
             tx.commit();
-            currentFragmentScreen = "about";
         } else if (id == R.id.nav_settings) {
+            currentFragmentScreen = "settings";
             setTitle(getString(R.string.action_settings));
             resetMainLayoutVisibility(false);
             android.app.FragmentTransaction tx = getFragmentManager().beginTransaction();
             PreferenceFragment settingsactivity_ = new SettingsActivity();
             tx.replace(R.id.frameLayoutMainV7, settingsactivity_);
             tx.commit();
-            currentFragmentScreen = "settings";
         } else if (id == R.id.nav_summary) {
+            currentFragmentScreen = "summary";
             setTitle(getString(R.string.summary));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment summaryactivity_ = new SummaryActivity();
             tx.replace(R.id.frameLayoutMain, summaryactivity_);
             tx.commit();
-            currentFragmentScreen = "summary";
         } else if (id == R.id.nav_groups) {
+            currentFragmentScreen = "groups";
             setTitle(getString(R.string.groups));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment groupsactivity_ = new GroupsActivity();
             tx.replace(R.id.frameLayoutMain, groupsactivity_);
             tx.commit();
-            currentFragmentScreen = "groups";
         } else if (id == R.id.nav_diploma) {
+            currentFragmentScreen = "diploma";
             setTitle(getString(R.string.diploma));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment diplomaactivity_ = new DiplomaActivity();
             tx.replace(R.id.frameLayoutMain, diplomaactivity_);
             tx.commit();
-            currentFragmentScreen = "diploma";
         } else if (id == R.id.nav_schedule) {
+            currentFragmentScreen = "schedule";
             setTitle(getString(R.string.schedule));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment scheduleactivity_ = new ScheduleActivity();
             tx.replace(R.id.frameLayoutMain, scheduleactivity_);
             tx.commit();
             scheduleactivity = (ScheduleActivity) scheduleactivity_;
-            currentFragmentScreen = "schedule";
         } else if (id == R.id.nav_scholarships) {
+            currentFragmentScreen = "scholarships";
             setTitle(getString(R.string.scholarships));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment scholarshipsactivity_ = new ScholarshipsActivity();
             tx.replace(R.id.frameLayoutMain, scholarshipsactivity_);
             tx.commit();
             scholarshipsactivity = (ScholarshipsActivity) scholarshipsactivity_;
-            currentFragmentScreen = "scholarships";
         } else if (id == R.id.nav_syllabus) {
+            currentFragmentScreen = "syllabus";
             setTitle(getString(R.string.syllabus));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment syllabusactivity = new SyllabusActivity();
             tx.replace(R.id.frameLayoutMain, syllabusactivity);
             tx.commit();
-            currentFragmentScreen = "syllabus";
         } else if (id == R.id.nav_skos) {
+            currentFragmentScreen = "skos";
             setTitle(getString(R.string.skos));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment skosactivity_ = new SkosActivity();
@@ -545,15 +571,14 @@ public class MainActivity extends AppCompatActivity
             searchView.clearFocus();
             searchView.setIconified(true);
 
-            currentFragmentScreen = "skos";
         } else if (id == R.id.nav_feedback) {
+            currentFragmentScreen = "feedback";
             setTitle(getString(R.string.send_feedback));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment feedbackactivity_ = new FeedbackActivity();
             tx.replace(R.id.frameLayoutMain, feedbackactivity_);
             tx.commit();
             feedbackactivity = (FeedbackActivity) feedbackactivity_;
-            currentFragmentScreen = "feedback";
         } else if (id == R.id.nav_logout) {
             RememberPassword rp = new RememberPassword(this);
 
@@ -578,29 +603,32 @@ public class MainActivity extends AppCompatActivity
 
             restartApp();
         } else if (id == R.id.nav_marks) {
+            currentFragmentScreen = "semester";
             showSemesterSpinner(true);
+            enableDisableSemesterSpinner(false);
             setTitle(getString(R.string.final_marks));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment marksexplorer_ = new MarksExplorer();
             tx.replace(R.id.frameLayoutMain, marksexplorer_);
             tx.commit();
-            currentFragmentScreen = "semester";
         } else if (id == R.id.nav_partial_marks) {
+            currentFragmentScreen = "semester_partial";
             showSemesterSpinner(true);
+            enableDisableSemesterSpinner(false);
             setTitle(getString(R.string.partial_marks));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment partialmarksexplorer_ = new PartialMarksExplorer();
             tx.replace(R.id.frameLayoutMain, partialmarksexplorer_);
             tx.commit();
-            currentFragmentScreen = "semester_partial";
         } else if (id == R.id.nav_files) {
+            currentFragmentScreen = "files";
             showSemesterSpinner(true);
+            enableDisableSemesterSpinner(false);
             setTitle(getString(R.string.files));
             FragmentTransaction tx = getSupportFragmentManager().beginTransaction();
             Fragment filesactivity = new FilesActivity();
             tx.replace(R.id.frameLayoutMain, filesactivity);
             tx.commit();
-            currentFragmentScreen = "files";
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);

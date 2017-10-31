@@ -276,6 +276,8 @@ public class FilesActivity extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
+            ((MainActivity) activityContext).enableDisableSemesterSpinner(true);
+
             final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
             final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
             final SwipeRefreshLayout srl = root.findViewById(R.id.swiperefresh);

@@ -1,19 +1,27 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.ArrayAdapter;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -23,9 +31,16 @@ import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.AnimatedExpandableListView;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.ExpandableListAdapterPartialMarks;
@@ -33,6 +48,8 @@ import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchPartialMarks;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchWebsite;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Logging;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.POSTgenerator;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.PartialMark;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.PartialMarksUtils;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class PartialMarksExplorer extends Fragment {
@@ -45,7 +62,8 @@ public class PartialMarksExplorer extends Fragment {
     FetchPartialMarks fpm = null;
     Context activityContext;
 
-    RelativeLayout rlLoader, rlData;
+    RelativeLayout rlLoader, rlData, rlNoData;
+    FloatingActionButton fab;
     TextView textView3, textView3bis;
 
     Boolean goBack = false;
@@ -101,13 +119,213 @@ public class PartialMarksExplorer extends Fragment {
         });
     }
 
+    private void createNewPartialMark(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View dialogView = layoutInflater.inflate(R.layout.partial_marks_create_new_layout, null);
+        builder.setView(dialogView);
+
+        final Spinner spinnerCustomPartialMark = dialogView.findViewById(R.id.spinnerCustomPartialMark);
+        final Spinner spinnerSubjectName = dialogView.findViewById(R.id.spinnerSubjectName);
+        final Spinner spinnerLectureName = dialogView.findViewById(R.id.spinnerLectureName);
+        final Spinner spinnerTitle = dialogView.findViewById(R.id.spinnerTitle);
+        final EditText editTextDate = dialogView.findViewById(R.id.editTextDate);
+        final EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
+
+        Calendar cal = Calendar.getInstance();
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", dayOfMonth, month, year));
+
+        spinnerSubjectName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects));
+        spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksLectures));
+        spinnerTitle.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_titles)));
+        spinnerCustomPartialMark.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_custom_marks)));
+
+        editTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", selectedDay, selectedMonth+1, selectedYear));
+                    }
+                }, year, month, dayOfMonth);
+                mDatePicker.show();
+            }
+        });
+
+        builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                    String dateOfPartialMark = editTextDate.getText().toString();
+
+                    long timestampOfPartialMark = df.parse(dateOfPartialMark).getTime() - TimeZone.getDefault().getOffset(df.parse(dateOfPartialMark).getTime());
+
+                    String description;
+                    if (editTextDescription.getText().toString().trim().length() > 0)
+                        description = editTextDescription.getText().toString().trim();
+                    else
+                        description = "(brak opisu)";
+
+                    PartialMark partialMark = new PartialMark(spinnerCustomPartialMark.getSelectedItem().toString(),
+                            spinnerTitle.getSelectedItem().toString(), spinnerSubjectName.getSelectedItem().toString(),
+                            spinnerLectureName.getSelectedItem().toString(), timestampOfPartialMark, description, String.valueOf(Storage.currentSemester));
+                    PartialMarksUtils.saveNewPartialMark(activityContext, partialMark);
+
+                    fab.setVisibility(View.GONE);
+                    rlData.setVisibility(View.GONE);
+                    rlNoData.setVisibility(View.GONE);
+                    rlLoader.setVisibility(View.VISIBLE);
+                    refreshMarks(false);
+                } catch (ParseException e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
+            }
+        });
+
+        builder.setNegativeButton(R.string.action_cancel, null);
+        builder.show();
+    }
+
+    private int getIDofFindedStringInList(String search, List<String> list){
+        for (int i=0; i<list.size(); i++){
+            if (list.get(i).equals(search))
+                return i;
+        }
+
+        return -1;
+    }
+
+    private void editPartialMark(final PartialMark oldPartialMark){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+
+        LayoutInflater layoutInflater = this.getLayoutInflater();
+        View dialogView = layoutInflater.inflate(R.layout.partial_marks_create_new_layout, null);
+        builder.setView(dialogView);
+
+        final Spinner spinnerCustomPartialMark = dialogView.findViewById(R.id.spinnerCustomPartialMark);
+        final Spinner spinnerSubjectName = dialogView.findViewById(R.id.spinnerSubjectName);
+        final Spinner spinnerLectureName = dialogView.findViewById(R.id.spinnerLectureName);
+        final Spinner spinnerTitle = dialogView.findViewById(R.id.spinnerTitle);
+        final EditText editTextDate = dialogView.findViewById(R.id.editTextDate);
+        final EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(oldPartialMark.timestamp);
+        int year = cal.get(Calendar.YEAR);
+        int month = cal.get(Calendar.MONTH) + 1;
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", dayOfMonth, month, year));
+
+        spinnerSubjectName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects));
+        spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksLectures));
+        spinnerTitle.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_titles)));
+        spinnerCustomPartialMark.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_custom_marks)));
+
+        spinnerSubjectName.setSelection(getIDofFindedStringInList(oldPartialMark.subjectName, Storage.currentSemesterPartialMarksSubjects));
+        spinnerLectureName.setSelection(getIDofFindedStringInList(oldPartialMark.lectureName, Storage.currentSemesterPartialMarksLectures));
+        spinnerTitle.setSelection(getIDofFindedStringInList(oldPartialMark.title, Arrays.asList(activityContext.getResources().getStringArray(R.array.partial_marks_titles))));
+        spinnerCustomPartialMark.setSelection(getIDofFindedStringInList(oldPartialMark.mark, Arrays.asList(activityContext.getResources().getStringArray(R.array.partial_marks_custom_marks))));
+
+        editTextDescription.setText(oldPartialMark.description);
+
+        editTextDate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Calendar cal = Calendar.getInstance();
+                cal.setTimeInMillis(oldPartialMark.timestamp);
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
+                        editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", selectedDay, selectedMonth+1, selectedYear));
+                    }
+                }, year, month, dayOfMonth);
+                mDatePicker.show();
+            }
+        });
+
+        builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                try {
+                    DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
+                    String dateOfPartialMark = editTextDate.getText().toString();
+
+                    long timestampOfPartialMark = df.parse(dateOfPartialMark).getTime() - TimeZone.getDefault().getOffset(df.parse(dateOfPartialMark).getTime());
+
+                    String description;
+                    if (editTextDescription.getText().toString().trim().length() > 0)
+                        description = editTextDescription.getText().toString().trim();
+                    else
+                        description = "(brak opisu)";
+
+                    PartialMark partialMark = new PartialMark(spinnerCustomPartialMark.getSelectedItem().toString(),
+                            spinnerTitle.getSelectedItem().toString(), spinnerSubjectName.getSelectedItem().toString(),
+                            spinnerLectureName.getSelectedItem().toString(), timestampOfPartialMark, description, String.valueOf(Storage.currentSemester));
+                    PartialMarksUtils.editPartialMark(activityContext, oldPartialMark, partialMark);
+
+                    fab.setVisibility(View.GONE);
+                    rlData.setVisibility(View.GONE);
+                    rlNoData.setVisibility(View.GONE);
+                    rlLoader.setVisibility(View.VISIBLE);
+                    refreshMarks(false);
+                } catch (ParseException e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
+            }
+        });
+
+        builder.setNegativeButton(R.string.action_cancel, null);
+        builder.show();
+    }
+
+    public void showPartialMarkSettings(final PartialMark partialMark){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+        builder.setTitle(partialMark.title + " (" + partialMark.mark + ")");
+        builder.setItems(R.array.partial_marks_options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (i == 0) {
+                    editPartialMark(partialMark);
+                    dialogInterface.dismiss();
+                }
+                else if (i == 1) {
+                    PartialMarksUtils.removePartialMark(activityContext, partialMark);
+
+                    rlData.setVisibility(View.GONE);
+                    rlNoData.setVisibility(View.GONE);
+                    rlLoader.setVisibility(View.VISIBLE);
+                    refreshMarks(false);
+                }
+            }
+        });
+
+        builder.show();
+    }
+
     public void exploreMarks(View view) {
         prepareListData();
 
-        listAdapter = new ExpandableListAdapterPartialMarks(activityContext, listDataHeader, listDataChild);
+        listAdapter = new ExpandableListAdapterPartialMarks(activityContext, listDataHeader, listDataChild, this);
 
         AnimatedExpandableListView expandableListView = view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
+
+        fab.setVisibility(View.VISIBLE);
     }
 
     private void showResults(View view){
@@ -127,14 +345,21 @@ public class PartialMarksExplorer extends Fragment {
         listDataChild = fpm.getChildren();
     }
 
-    private void refreshMarks(View root) {
-        for (int i=0; i<Storage.summarySemesters.size()-1; i++){
-            Storage.currentSemesterPartialMarksHTML.remove(i);
-        }
+    private void refreshMarks(boolean downloadFromInternet) {
+        if (downloadFromInternet) {
+            for (int i = 0; i < Storage.summarySemesters.size() - 1; i++) {
+                Storage.currentSemesterPartialMarksHTML.remove(i);
+            }
 
-        Storage.currentSemesterListPointerPartialMarks = Storage.summarySemesters.size()-1;
-        PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
-        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            Storage.currentSemesterListPointerPartialMarks = Storage.summarySemesters.size() - 1;
+            PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
+            runner.execute();
+        }
+        else {
+            PartialMarksExplorer.AsyncTaskRunner runner = new PartialMarksExplorer.AsyncTaskRunner();
+            runner.setDownloadFromInternet(false);
+            runner.execute();
+        }
 
         // wait for change loading subtitle
         animateFadeOut(textView3, root, 3000);
@@ -312,6 +537,7 @@ public class PartialMarksExplorer extends Fragment {
         root = inflater.inflate(R.layout.activity_partial_marks_explorer, container, false);
         rlLoader = root.findViewById(R.id.rlLoader);
         rlData = root.findViewById(R.id.rlData);
+        rlNoData = root.findViewById(R.id.rlNoData);
         textView3 = root.findViewById(R.id.textView3);
         textView3bis = root.findViewById(R.id.textView3bis);
 
@@ -324,6 +550,16 @@ public class PartialMarksExplorer extends Fragment {
         animateFadeOut(textView3, root, 3000);
         animateFadeIn(textView3bis, root, 3250);
 
+        // fab
+        fab = root.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                createNewPartialMark();
+            }
+        });
+        fab.setVisibility(View.GONE);
+
         return root;
     }
 
@@ -334,13 +570,25 @@ public class PartialMarksExplorer extends Fragment {
     }
 
     private class AsyncTaskRunner extends AsyncTask<View, View, View> {
-        Boolean isError = false;
+        boolean isError = false;
+        private boolean downloadFromInternet = true;
+
+        public void setDownloadFromInternet(boolean downloadFromInternet) {
+            this.downloadFromInternet = downloadFromInternet;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            ((MainActivity) activityContext).enableDisableSemesterSpinner(false);
+        }
 
         @Override
         protected View doInBackground(View... params) {
             try {
-                goThroughSemester();
-                fpm = new FetchPartialMarks(Storage.currentSemesterPartialMarksHTML.get(Storage.currentSemester));
+                if (downloadFromInternet)
+                    goThroughSemester();
+
+                fpm = new FetchPartialMarks(activityContext, Storage.currentSemesterPartialMarksHTML.get(Storage.currentSemester), Storage.currentSemester);
 
                 publishProgress();
 
@@ -369,8 +617,9 @@ public class PartialMarksExplorer extends Fragment {
 
         @Override
         protected void onPostExecute(View result){
+            ((MainActivity) activityContext).enableDisableSemesterSpinner(true);
+
             final RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
-            final RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
             final SwipeRefreshLayout srl = root.findViewById(R.id.swiperefresh);
 
             srl.setColorSchemeResources(R.color.colorPrimary);
@@ -382,11 +631,12 @@ public class PartialMarksExplorer extends Fragment {
                     bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "swipe_refresh");
                     mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
+                    fab.setVisibility(View.GONE);
                     rlData.setVisibility(View.GONE);
                     rlLoader.setVisibility(View.VISIBLE);
                     srl.setRefreshing(false);
                     srl.setEnabled(false);
-                    refreshMarks(root);
+                    refreshMarks(true);
                     srl.setEnabled(true);
                 }
             });
@@ -405,7 +655,7 @@ public class PartialMarksExplorer extends Fragment {
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
 
-                        refreshMarks(root);
+                        refreshMarks(true);
                     }
                 });
             }

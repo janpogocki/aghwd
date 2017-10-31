@@ -75,22 +75,28 @@ public class FetchTeacherSchedule {
 
         Elements namesWUXP = fwParsed.select("div#ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_DropDown > div > ul > li");
         int rcbListCounter = 0;
+        boolean foundNameAndSurnameOnTheList = false;
         while (rcbListCounter < namesWUXP.size()){
             if (namesWUXP.get(rcbListCounter).ownText().contains(revertedNameAndSurname)) {
                 nameAndSurname = namesWUXP.get(rcbListCounter).ownText().trim();
+                foundNameAndSurnameOnTheList = true;
                 break;
             }
 
             rcbListCounter++;
         }
 
-        // search teacherID no. rcbListCounter
-        String [] valuesExploded = fww.split(Pattern.quote("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_ClientState\",\"collapseAnimation\":\"{\\\"duration\\\":450}\",\"expandAnimation\":\"{\\\"duration\\\":450}\",\"itemData\":[{"))[1].split(Pattern.quote("}]"))[0].split(Pattern.quote("},{"));
+        if (!foundNameAndSurnameOnTheList)
+            status = -1;
+        else {
+            // search teacherID no. rcbListCounter
+            String[] valuesExploded = fww.split(Pattern.quote("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_ClientState\",\"collapseAnimation\":\"{\\\"duration\\\":450}\",\"expandAnimation\":\"{\\\"duration\\\":450}\",\"itemData\":[{"))[1].split(Pattern.quote("}]"))[0].split(Pattern.quote("},{"));
 
-        JSONObject jsonObject = new JSONObject("{" + valuesExploded[rcbListCounter] + "}");
-        teacherID = jsonObject.getString("value");
+            JSONObject jsonObject = new JSONObject("{" + valuesExploded[rcbListCounter] + "}");
+            teacherID = jsonObject.getString("value");
 
-        status = -2;
+            status = -2;
+        }
     }
 
     public void continueFetchDziekanatXPScheduleAfterCaptcha(String captchaText) throws Exception {

@@ -369,6 +369,14 @@ public class SkosActivity extends Fragment {
             TextView textView3rdLine = convertView.findViewById(R.id.textView3rdLine);
             LinearLayout rlDataItem = convertView.findViewById(R.id.rlDataItem);
 
+            rlDataItem.setFocusable(true);
+            rlDataItem.setClickable(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN)
+                rlDataItem.setBackground(activityContext.obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackground}).getDrawable(0));
+            else
+                rlDataItem.setBackgroundDrawable(activityContext.obtainStyledAttributes(new int[]{android.R.attr.selectableItemBackground}).getDrawable(0));
+
             textViewHeader.setText(nameAndSurname);
             textView2ndLine.setText(functions);
             textView3rdLine.setText(personURL);

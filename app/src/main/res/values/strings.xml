@@ -17,7 +17,7 @@
     <string name="log_in_fail_unknown_error">Nieznany błąd serwera</string>
     <string name="log_in_fail_incomplete_index_title">Ups…</string>
     <string name="log_in_fail_incomplete_index_content">Logowanie przebiegło pomyślnie, ale wygląda na to, że Twój indeks nie jest jeszcze uzupełniony wymaganą ilością danych. Aplikacja będzie zapewne działała poprawnie już wkrótce.</string>
-    <string name="log_in_multikierunek">Wybierz kierunek</string>
+    <string name="log_in_multikierunek">Wybierz kierunek:</string>
     <string name="log_in_remember">Zapamiętaj mnie</string>
     <string name="log_in_loading">Trwa ładowanie…</string>
     <string name="loading_longer">To może potrwać trochę dłużej…</string>
@@ -74,11 +74,10 @@
     <string name="download_ok">Plik został pobrany</string>
     <string name="download_permission_info">Aby pobierać pliki z AGH WD, zezwól aplikacji na dostęp do plików na Twoim urządzeniu</string>
     <string name="scholarships">Stypendia</string>
-    <string name="whats_new_text">Cześć! 😊\n\n--whatsnew--\n\nWasz Janek</string>
+    <string name="whats_new_text">Cześć Testerzy! :)\n\nW Wasze ręce oddaję zupełnie nową wersję AGH WD - 1.5.0 beta 3. W razie zauważonych problemów proszę o kontakt ze mną.\n\nW nowej wersji przebudowałem Podział Godzin, który stał się organizerem. Można w nim dodawać, usuwać, tagować zajęcia, a także filtrować widoki.\n\nW SkOs-ie udostępniłem możliwość przeglądania Podziałów Godzin Prowadzących. Obecnie są zaimplementowane dwie bazy danych: Wirtualna Uczelnia oraz Plan Zajęć EAIIB.\n\nNowa wersja to również odświeżone oceny cząstkowe. Można już samemu dodawać własne oceny i prowadzić swój \"dzienniczek studenta\".\n\nWprowadziłem również pełne wsparcie dla poziomej orientacji ekranu logowania.\n\nNiech apka służy! ;)\n\nWasz Janek</string>
     <string name="what_new_title">Co nowego?</string>
     <string name="schedule_nearest_event">Przejdź do najbliższego wydarzenia</string>
     <string name="schedule_change_group">Zmień grupę</string>
-    <string name="schedule_teachers">Podział Godzin prowadzących</string>
     <string name="schedule_view_preferences">Preferencje widoku</string>
     <string name="choose_group">Wybierz grupę:</string>
     <string name="action_save">Zapisz</string>

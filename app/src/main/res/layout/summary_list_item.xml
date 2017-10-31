@@ -17,7 +17,6 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:checked="true"
-            android:clickable="false"
             android:layout_marginTop="5sp" />
     </RelativeLayout>
 

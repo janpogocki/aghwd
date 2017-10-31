@@ -444,6 +444,8 @@ public class FetchWebsite {
         if (_sendCookies && !(Cookies.getCookies().equals("")))
             conn.addRequestProperty("Cookie", Cookies.getCookies());
 
+        conn.connect();
+
         // Getting cookies if _receiveCookies
         if (_receiveCookies && !Cookies.setList) {
             Cookies.setCookies(conn.getHeaderFields().get("Set-Cookie"));
@@ -451,7 +453,6 @@ public class FetchWebsite {
         else
             Cookies.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
-        conn.connect();
         InputStream input = conn.getInputStream();
         Bitmap myBitmap = BitmapFactory.decodeStream(input);
         conn.disconnect();
@@ -477,6 +478,8 @@ public class FetchWebsite {
         if (_sendCookies && !(Cookies2.getCookies().equals("")))
             conn.addRequestProperty("Cookie", Cookies2.getCookies());
 
+        conn.connect();
+
         // Getting cookies if _receiveCookies
         if (_receiveCookies && !Cookies2.setList) {
             Cookies2.setCookies(conn.getHeaderFields().get("Set-Cookie"));
@@ -484,7 +487,6 @@ public class FetchWebsite {
         else
             Cookies2.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
-        conn.connect();
         InputStream input = conn.getInputStream();
         Bitmap myBitmap = BitmapFactory.decodeStream(input);
         conn.disconnect();

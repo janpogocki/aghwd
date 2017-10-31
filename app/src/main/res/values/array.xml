@@ -21,6 +21,13 @@
         <item>Będziesz sprawdzać nową ocenę?\nTrzymam kciuki! :)</item>
         <item>Zrelaksuj się, to tylko oceny… ;D</item>
         <item>A legitymacja podbita? ;)</item>
+        <item>Podział godzin prowadzących\nznajdziesz w SkOs-ie! :)</item>
+        <item>Nowa ocena na zajęciach?\nDopisz ją sobie w Ocenach cząstkowych!</item>
+        <item>Zintegrowany Podział godzin\ntylko w AGH WD!</item>
+        <item>Twoje studia w jednym miejscu!</item>
+        <item>Czy Twoi znajomi\nwiedzą już o AGH WD? ;)</item>
+        <item>AGH WD na ciemno czy jasno?\nSkonfiguruj Tryb nocny\nw Ustawieniach!</item>
+        <item>„Literka A, literka G,\nliterka H - jak AGH.\nKto tych literek nie szanuje…” ;)</item>
         <!--<item>Włącz powiadomienia\ni bądź na bieżąco z AGH WD! ;)</item>-->
         <!--<item>Znajdź AGH WD\nw Chrome Web Store\ni otrzymuj powiadomienia\nna komputerze!</item>-->
     </string-array>
@@ -83,6 +90,34 @@
         <item>Oznacz/odznacz tagiem \"Ważne\"</item>
         <item>Oznacz/odznacz tagiem \"Kolokwium\"</item>
         <item>Oznacz/odznacz tagiem \"Egzamin\"</item>
+        <item>Edytuj</item>
+        <item>Usuń</item>
+    </string-array>
+
+    <string-array name="partial_marks_custom_marks">
+        <item>+</item>
+        <item>-</item>
+        <item>2.0</item>
+        <item>3.0</item>
+        <item>3.5</item>
+        <item>4.0</item>
+        <item>4.5</item>
+        <item>5.0</item>
+    </string-array>
+
+    <string-array name="partial_marks_titles">
+        <item>Aktywność</item>
+        <item>Wejściówka</item>
+        <item>Kolokwium</item>
+        <item>Sprawdzian</item>
+        <item>Sprawozdanie</item>
+        <item>Projekt</item>
+        <item>Referat</item>
+        <item>Egzamin</item>
+        <item>Inne</item>
+    </string-array>
+
+    <string-array name="partial_marks_options">
         <item>Edytuj</item>
         <item>Usuń</item>
     </string-array>

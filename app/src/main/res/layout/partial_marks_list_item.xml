@@ -1,52 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     style="@style/LightGray2">
 
-    <RelativeLayout
-        android:layout_width="35dp"
-        android:layout_height="match_parent"
-        android:visibility="visible"></RelativeLayout>
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayoutAllItem"
+        android:orientation="horizontal">
+
+        <Space
+            android:layout_width="35dp"
+            android:layout_height="match_parent"
+            android:visibility="visible" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/linearLayout2"
-            android:layout_marginTop="10dp">
+            android:orientation="horizontal">
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_column="0"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:minWidth="50dp"
                 android:layout_gravity="top|center"
-                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="10dp"
                 android:gravity="center_horizontal">
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textAppearance="@style/BlackTextMedium"
                     android:text="5.0"
                     android:textStyle="bold"
                     android:id="@+id/textViewMark"
                     android:gravity="center_vertical|center" />
-            </RelativeLayout>
 
-            <RelativeLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_column="1"
-                android:gravity="left|center_vertical|center_horizontal"
-                android:layout_weight="5"
-                android:layout_gravity="center">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="bottom|center_horizontal">
+
+                    <android.support.v7.widget.AppCompatImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_menu_partial_marks"
+                        android:id="@+id/imageViewMyPartialMark"
+                        android:visibility="gone"
+                        android:tint="@color/colorGrayText" />
+
+                </RelativeLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="10dp"
+                android:gravity="left|center">
 
                 <TextView
                     android:layout_width="match_parent"
@@ -60,10 +74,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Data"
+                    android:lineSpacingExtra="8dp"
                     style="@style/BlackTextSmall"
                     android:layout_marginTop="8dp"
                     android:id="@+id/textViewData"
-                    android:layout_below="@+id/textViewCategory"
                     android:gravity="left" />
 
                 <TextView
@@ -73,32 +87,11 @@
                     android:text="Uwagi"
                     android:id="@+id/textViewUwagi"
                     android:gravity="left"
-                    android:layout_below="@+id/textViewData"
                     android:layout_marginTop="8dp" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="10dp"
-                android:layout_height="wrap_content"
-                android:layout_column="2"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_gravity="center"
-                android:layout_weight="0">
-
-                <Space
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-            </RelativeLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_below="@+id/linearLayout2"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-    </RelativeLayout>
+    </LinearLayout>
 
 </LinearLayout>
