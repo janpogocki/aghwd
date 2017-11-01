@@ -19,6 +19,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 import pl.janpogocki.agh.wirtualnydziekanat.R;
+import pl.janpogocki.agh.wirtualnydziekanat.SkosActivity;
 
 /**
  * Created by Jan on 30.10.2017.
@@ -30,10 +31,12 @@ public class RecyclerViewTeacherScheduleAdapter extends RecyclerView.Adapter<Rec
     private Context c;
     private int lastPastAppointement;
     private List<Appointment> listOfAppointments;
+    private SkosActivity skosActivity;
 
-    public RecyclerViewTeacherScheduleAdapter(Context c) {
+    public RecyclerViewTeacherScheduleAdapter(Context c, SkosActivity skosActivity) {
         this.c = c;
         this.lastPastAppointement = 0;
+        this.skosActivity = skosActivity;
 
         prepareFinalListOfAppointments();
     }
@@ -83,7 +86,6 @@ public class RecyclerViewTeacherScheduleAdapter extends RecyclerView.Adapter<Rec
             if (new Date(currentTime).after(hourStopDate))
                 lastPastAppointement = i;
         }
-
     }
 
     private String getFullDateString(Date currentDate){
@@ -179,9 +181,13 @@ public class RecyclerViewTeacherScheduleAdapter extends RecyclerView.Adapter<Rec
         else
             viewHolder.rlBigDate.setVisibility(View.GONE);
 
-        // onClickListener - disable
-        viewHolder.scheduleClickableLayout.setClickable(false);
-        viewHolder.scheduleClickableLayout.setFocusable(false);
+        // onClickListener
+        viewHolder.scheduleClickableLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                skosActivity.showEventSettings(listOfAppointments.get(i));
+            }
+        });
     }
 
     @Override

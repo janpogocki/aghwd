@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -139,10 +141,25 @@ public class PartialMarksExplorer extends Fragment {
         int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
         editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", dayOfMonth, month, year));
 
-        spinnerSubjectName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects));
-        spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksLectures));
+        final List<String> sortedSubjectsList = new ArrayList<>(Storage.currentSemesterPartialMarksSubjects.keySet());
+        Collections.sort(sortedSubjectsList);
+
+        spinnerSubjectName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, sortedSubjectsList));
+        spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects.get(sortedSubjectsList.get(0))));
         spinnerTitle.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_titles)));
         spinnerCustomPartialMark.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_custom_marks)));
+
+        spinnerSubjectName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects.get(sortedSubjectsList.get(i))));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,7 +220,7 @@ public class PartialMarksExplorer extends Fragment {
                 return i;
         }
 
-        return -1;
+        return 0;
     }
 
     private void editPartialMark(final PartialMark oldPartialMark){
@@ -221,23 +238,38 @@ public class PartialMarksExplorer extends Fragment {
         final EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
 
         Calendar cal = Calendar.getInstance();
-        cal.setTimeInMillis(oldPartialMark.timestamp);
+        cal.setTimeInMillis(oldPartialMark.timestamp + TimeZone.getDefault().getOffset(oldPartialMark.timestamp));
         int year = cal.get(Calendar.YEAR);
         int month = cal.get(Calendar.MONTH) + 1;
         int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
         editTextDate.setText(String.format(Locale.US, "%02d.%02d.%04d", dayOfMonth, month, year));
 
-        spinnerSubjectName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects));
-        spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksLectures));
+        final List<String> sortedSubjectsList = new ArrayList<>(Storage.currentSemesterPartialMarksSubjects.keySet());
+        Collections.sort(sortedSubjectsList);
+
+        spinnerSubjectName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, sortedSubjectsList));
+        spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects.get(oldPartialMark.subjectName)));
         spinnerTitle.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_titles)));
         spinnerCustomPartialMark.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, activityContext.getResources().getStringArray(R.array.partial_marks_custom_marks)));
 
-        spinnerSubjectName.setSelection(getIDofFindedStringInList(oldPartialMark.subjectName, Storage.currentSemesterPartialMarksSubjects));
-        spinnerLectureName.setSelection(getIDofFindedStringInList(oldPartialMark.lectureName, Storage.currentSemesterPartialMarksLectures));
+        spinnerSubjectName.setSelection(getIDofFindedStringInList(oldPartialMark.subjectName, sortedSubjectsList));
+        spinnerLectureName.setSelection(getIDofFindedStringInList(oldPartialMark.lectureName, Storage.currentSemesterPartialMarksSubjects.get(oldPartialMark.subjectName)));
         spinnerTitle.setSelection(getIDofFindedStringInList(oldPartialMark.title, Arrays.asList(activityContext.getResources().getStringArray(R.array.partial_marks_titles))));
         spinnerCustomPartialMark.setSelection(getIDofFindedStringInList(oldPartialMark.mark, Arrays.asList(activityContext.getResources().getStringArray(R.array.partial_marks_custom_marks))));
 
         editTextDescription.setText(oldPartialMark.description);
+
+        spinnerSubjectName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                spinnerLectureName.setAdapter(new ArrayAdapter<>(activityContext, R.layout.support_simple_spinner_dropdown_item, Storage.currentSemesterPartialMarksSubjects.get(sortedSubjectsList.get(i))));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+
+            }
+        });
 
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override

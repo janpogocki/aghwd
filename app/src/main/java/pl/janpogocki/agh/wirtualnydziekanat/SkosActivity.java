@@ -33,9 +33,11 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import java.util.ArrayList;
 import java.util.List;
 
+import pl.janpogocki.agh.wirtualnydziekanat.javas.Appointment;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchSkos;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchTeacherSchedule;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.RecyclerViewTeacherScheduleAdapter;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.ScheduleUtils;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SkosActivity extends Fragment {
@@ -136,6 +138,31 @@ public class SkosActivity extends Fragment {
             asyncTaskRunnerAutoRefresher.cancel(true);
     }
 
+    public void showEventSettings(final Appointment currentAppointment){
+        AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
+        builder.setTitle(currentAppointment.name);
+
+        builder.setItems(R.array.teacher_schedule_event_options, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                if (i == 0){
+                    // copy to mycal
+                    ScheduleUtils.copyAppointment(activityContext, currentAppointment, null);
+                }
+                else if (i == 1){
+                    // copy all like this one to mycal
+                    ScheduleUtils.copyAppointment(activityContext, currentAppointment, recyclerViewTeacherScheduleAdapter.getListOfAppointments());
+                }
+
+                dialogInterface.dismiss();
+                onDestroyView();
+                onResume();
+            }
+        });
+
+        builder.show();
+    }
+
     private void refreshTeacherSchedule(String nameAndSurname){
         AsyncTaskScheduleBegin runnerBegin = new AsyncTaskScheduleBegin();
         runnerBegin.setNameAndSurname(nameAndSurname);
@@ -222,7 +249,7 @@ public class SkosActivity extends Fragment {
         recyclerViewTeacherSchedule = root.findViewById(R.id.recyclerViewSchedule);
         recyclerViewTeacherSchedule.setLayoutManager(layoutManager);
         recyclerViewTeacherSchedule.setNestedScrollingEnabled(false);
-        recyclerViewTeacherScheduleAdapter = new RecyclerViewTeacherScheduleAdapter(activityContext);
+        recyclerViewTeacherScheduleAdapter = new RecyclerViewTeacherScheduleAdapter(activityContext, this);
         recyclerViewTeacherSchedule.setAdapter(recyclerViewTeacherScheduleAdapter);
         scrollToNowPosition();
     }

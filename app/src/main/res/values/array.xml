@@ -67,7 +67,7 @@
 
     <string-array name="schedule_view_settings_values">
         <item>Nie pokazuj kalendarza AGH</item>
-        <item>Nie pokazuj moich wydarzeń</item>
+        <item>Nie pokazuj mojego kalendarza</item>
         <item>Nie pokazuj wykładów</item>
         <item>Nie pokazuj bez tagów</item>
         <item>Nie pokazuj z tagiem \"Ukryte\"</item>
@@ -94,9 +94,14 @@
         <item>Usuń</item>
     </string-array>
 
+    <string-array name="teacher_schedule_event_options">
+        <item>Utwórz kopię tego wydarzenia w moim kalendarzu</item>
+        <item>Utwórz kopię tego wydarzenia we wszystkich terminach w moim kalendarzu</item>
+    </string-array>
+
     <string-array name="partial_marks_custom_marks">
         <item>+</item>
-        <item>-</item>
+        <item>—</item>
         <item>2.0</item>
         <item>3.0</item>
         <item>3.5</item>

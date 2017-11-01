@@ -74,7 +74,7 @@
     <string name="download_ok">Plik został pobrany</string>
     <string name="download_permission_info">Aby pobierać pliki z AGH WD, zezwól aplikacji na dostęp do plików na Twoim urządzeniu</string>
     <string name="scholarships">Stypendia</string>
-    <string name="whats_new_text">Cześć Testerzy! :)\n\nW Wasze ręce oddaję zupełnie nową wersję AGH WD - 1.5.0 beta 3. W razie zauważonych problemów proszę o kontakt ze mną.\n\nW nowej wersji przebudowałem Podział Godzin, który stał się organizerem. Można w nim dodawać, usuwać, tagować zajęcia, a także filtrować widoki.\n\nW SkOs-ie udostępniłem możliwość przeglądania Podziałów Godzin Prowadzących. Obecnie są zaimplementowane dwie bazy danych: Wirtualna Uczelnia oraz Plan Zajęć EAIIB.\n\nNowa wersja to również odświeżone oceny cząstkowe. Można już samemu dodawać własne oceny i prowadzić swój \"dzienniczek studenta\".\n\nWprowadziłem również pełne wsparcie dla poziomej orientacji ekranu logowania.\n\nNiech apka służy! ;)\n\nWasz Janek</string>
+    <string name="whats_new_text">Cześć Testerzy! :)\n\nW Wasze ręce oddaję zupełnie nową wersję AGH WD - 1.5.0 beta 4. W razie zauważonych problemów proszę o kontakt ze mną.\n\nW nowej wersji przebudowałem Podział Godzin, który stał się organizerem. Można w nim dodawać, usuwać, tagować zajęcia, a także filtrować widoki.\n\nW SkOs-ie udostępniłem możliwość przeglądania Podziałów Godzin Prowadzących. Obecnie są zaimplementowane dwie bazy danych: Wirtualna Uczelnia oraz Plan Zajęć EAIIB.\n\nNowa wersja to również odświeżone oceny cząstkowe. Można już samemu dodawać własne oceny i prowadzić swój \"dzienniczek studenta\".\n\nWprowadziłem również pełne wsparcie dla poziomej orientacji ekranu logowania.\n\nNiech apka służy! ;)\n\nWasz Janek</string>
     <string name="what_new_title">Co nowego?</string>
     <string name="schedule_nearest_event">Przejdź do najbliższego wydarzenia</string>
     <string name="schedule_change_group">Zmień grupę</string>
@@ -84,5 +84,14 @@
     <string name="schedule_go_to_date">Przejdź do daty</string>
     <string name="skos_search_for_schedule">Wyszukaj Podział Godzin dla tego pracownika AGH</string>
     <string name="rewrite_captcha">Przepisz kod z obrazka</string>
+    <string name="privacy">Prywatność</string>
+    <string name="settings_are_you_sure">Czy na pewno usunąć?</string>
+    <string name="settings_mycal_are_you_sure_text">Usunięte zostaną z tego urządzenia wszystkie wydarzenia dodane lub skopiowane z dowolnego kalendarza AGH, dla obecnie zalogowanego użytkownika</string>
+    <string name="settings_pm_are_you_sure_text">Usunięte zostaną z tego urządzenia wszystkie oceny, plusy i minusy ze wszystkich semestrów Ocen cząstkowych, dla obecnie zalogowanego użytkownika</string>
+    <string name="delete">Usuń</string>
+    <string name="downloading_file">Trwa pobieranie pliku…</string>
+    <string name="deleting_is_doing">Trwa usuwanie…</string>
+    <string name="deleting_complete">Usuwanie zakończone</string>
+    <string name="deleting_error">Błąd usuwania, spróbuj ponownie</string>
 
 </resources>

@@ -170,7 +170,7 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
         @Override
         protected void onPreExecute() {
             progress = new ProgressDialog(_context);
-            progress.setMessage("Trwa pobieranie pliku...");
+            progress.setMessage(_context.getString(R.string.downloading_file));
             progress.setIndeterminate(true);
             progress.setCancelable(false);
             progress.show();

@@ -46,8 +46,7 @@ public class FetchPartialMarks {
 
             status = -1;
 
-            Storage.currentSemesterPartialMarksSubjects = new ArrayList<>();
-            Storage.currentSemesterPartialMarksLectures = new ArrayList<>();
+            Storage.currentSemesterPartialMarksSubjects = new HashMap<>();
 
             for (String subpage : HTML2interprete){
                 Document htmlParsed = Jsoup.parse(subpage);
@@ -64,12 +63,12 @@ public class FetchPartialMarks {
                     String lessonName = subjectAndLessons.get(2).ownText();
 
                     // add subjectName to Storage if not exists
-                    if (!Storage.currentSemesterPartialMarksSubjects.contains(subjectName))
-                        Storage.currentSemesterPartialMarksSubjects.add(subjectName);
+                    if (!Storage.currentSemesterPartialMarksSubjects.keySet().contains(subjectName)) {
+                        Storage.currentSemesterPartialMarksSubjects.put(subjectName, new ArrayList<String>());
+                    }
 
-                    // add lessonName to Storage if not exists
-                    if (!Storage.currentSemesterPartialMarksLectures.contains(lessonName))
-                        Storage.currentSemesterPartialMarksLectures.add(lessonName);
+                    // add lessonName to key
+                    Storage.currentSemesterPartialMarksSubjects.get(subjectName).add(lessonName);
 
                     // Fetch marks in table
                     Elements marksTR = htmlParsedTableTbodyTR.get(i+1).getElementsByTag("td").get(1)

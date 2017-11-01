@@ -41,8 +41,7 @@ public class Storage {
     public static HashMap<Integer, List<String>> currentSemesterPartialMarksHTML = new HashMap<>();
     public static HashMap<Integer, String> currentFilesHTML = new HashMap<>();
     public static HashMap<Integer, List<List<String>>> currentFilesDocsHTML = new HashMap<>();
-    public static List<String> currentSemesterPartialMarksSubjects = new ArrayList<>();
-    public static List<String> currentSemesterPartialMarksLectures = new ArrayList<>();
+    public static HashMap<String, List<String>> currentSemesterPartialMarksSubjects = new HashMap<>();
     public static List<List<String>> summarySemesters = new ArrayList<>();
     public static List<List<String>> groupsAndModules = new ArrayList<>();
     public static List<Appointment> schedule = new ArrayList<>();
@@ -100,8 +99,7 @@ public class Storage {
         currentSemesterPartialMarksHTML = new HashMap<>();
         currentFilesHTML = new HashMap<>();
         currentFilesDocsHTML = new HashMap<>();
-        currentSemesterPartialMarksSubjects = new ArrayList<>();
-        currentSemesterPartialMarksLectures = new ArrayList<>();
+        currentSemesterPartialMarksSubjects = new HashMap<>();
         summarySemesters = new ArrayList<>();
         groupsAndModules = new ArrayList<>();
         schedule = new ArrayList<>();

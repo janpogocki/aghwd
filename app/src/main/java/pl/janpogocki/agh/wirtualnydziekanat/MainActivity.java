@@ -594,6 +594,15 @@ public class MainActivity extends AppCompatActivity
             FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
             PreferenceManager.getDefaultSharedPreferences(this).edit().clear().apply();
 
+            try {
+                SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+                int currentAppVersionCode = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionCode;
+                sharedPreferences.edit().putInt("last_whats_new", currentAppVersionCode).apply();
+            } catch (PackageManager.NameNotFoundException e) {
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+            }
+
             restartApp();
         } else if (id == R.id.nav_relogging) {
             Bundle bundle = new Bundle();
