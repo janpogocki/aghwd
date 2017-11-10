@@ -2,12 +2,18 @@ package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
 import android.util.Log;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.json.JSONArray;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.FileNotFoundException;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -31,12 +37,18 @@ public class FetchSchedule {
             new FetchUniversityStatus(false);
         }
 
-        if (Storage.universityStatus != null && Storage.universityStatus.size() > 6
-                && Storage.universityStatus.get(1).contains("Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej")){
-            FetchEaiibSchedule();
-        }
-        else {
-            FetchDziekanatXPSchedule();
+        if (Storage.schedule == null || Storage.schedule.size() == 0) {
+            if (Storage.universityStatus.get(1).contains("Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej")) {
+                FetchEaiibSchedule();
+            } else if (Storage.universityStatus.get(1).contains("Humanistyczny")
+                    || Storage.universityStatus.get(1).contains("Energetyki i Paliw")
+                    || Storage.universityStatus.get(1).contains("Fizyki i Informatyki Stosowanej")
+                    || Storage.universityStatus.get(1).contains("Geodezji Górniczej i Inżynierii Środowiska")
+                    || Storage.universityStatus.get(1).contains("Geologii, Geofizyki i Ochrony Środowiska")) {
+                FetchUniTimeSchedule();
+            } else {
+                FetchDziekanatXPSchedule();
+            }
         }
     }
 
@@ -225,6 +237,106 @@ public class FetchSchedule {
                 status = -1;
             }
             else {
+                Storage.schedule = list;
+                status = 1;
+            }
+        }
+    }
+
+    private void FetchUniTimeSchedule() throws Exception {
+        String dictionaryURL = "https://api.janpogocki.pl/aghwd/aghwd_unitime.php"; //todo
+
+        FetchWebsite fw, fw2;
+        String fww2, specjalnosc, stopien, rodzaj;
+        boolean planAvailable = true;
+
+        String fww = "";
+        specjalnosc = Storage.universityStatus.get(3).trim();
+
+        if (Storage.universityStatus.get(5).contains("pierwszego"))
+            stopien = "1";
+        else if (Storage.universityStatus.get(5).contains("drugiego"))
+            stopien = "2";
+        else
+            stopien = "3";
+
+        if (Storage.universityStatus.get(4).contains("stacjonarne"))
+            rodzaj = "S";
+        else
+            rodzaj = "N";
+
+        fw2 = new FetchWebsite(dictionaryURL +
+                "?wydzial=" + Storage.summarySemesters.get(1) +
+                "&kierunek=" + Storage.summarySemesters.get(2) +
+                "&specjalnosc=" + specjalnosc +
+                "&stopien=" + stopien +
+                "&semestr=" + Storage.getSemesterNumberById(Storage.summarySemesters.size()-1) +
+                "&rodzaj=" + rodzaj);
+        fww2 = fw2.getWebsite(false, false, ""); //todo
+
+        try {
+            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&name=" + fww2 + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
+            fww = fw.getWebsiteGETSecure(false, false, "");
+        } catch (Exception e){
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
+            status = -1;
+            planAvailable = false;
+        }
+
+        if (planAvailable) {
+            // parse CSV with timetable
+            String[] csvHeader = {"Name", "Section", "Type", "Title", "Date", "Published Start", "Published End", "Location", "Capacity", "Instructor / Sponsor", "Email", "Requested Services", "Approved"};
+            CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(csvHeader);
+            Reader reader = new StringReader(fww);
+            CSVParser csvParser = new CSVParser(reader, csvFormat);
+
+            List<Appointment> list = new ArrayList<>();
+            List<CSVRecord> csvRecords = csvParser.getRecords();
+            csvRecords.remove(0);
+            for (CSVRecord record : csvRecords) {
+                if (record.get("Published Start").replace("noon", "12:00").contains(":")
+                        && record.get("Published End").replace("noon", "12:00").contains(":")) {
+                    String dateAndTimeOfStartOfLesson = record.get("Date") + " " + record.get("Published Start").replace("noon", "12:00");
+                    String dateAndTimeOfStopOfLesson = record.get("Date") + " " + record.get("Published End").replace("noon", "12:00");
+                    DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+                    df.setLenient(true);
+
+                    long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
+                    long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
+                    String name = record.get("Title").replace("\n", "");
+                    String description = "Grupa " + record.get("Section") + ", " + record.get("Type").replace("\n", "") + "\n" + record.get("Instructor / Sponsor");
+                    String location = record.get("Location").replace("\n", "");
+
+                    boolean lecture;
+                    if (record.get("Type").toLowerCase().contains("wykład"))
+                        lecture = true;
+                    else
+                        lecture = false;
+
+                    double group;
+                    if (lecture)
+                        group = 0;
+                    else {
+                        if (record.get("Section").matches("[0-9]+"))
+                            group = Double.parseDouble(record.get("Section"));
+                        else if (record.get("Section").matches("[0-9]+[a-z]")) {
+                            group = Double.parseDouble(record.get("Section").replaceAll("[a-z]", ""))
+                                    + (((((int) record.get("Section").replaceAll("[0-9]+", "").charAt(0)) - 96)) / (double) 10);
+                        } else
+                            group = 9999;
+                    }
+
+                    Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, lecture, true, -1, group, false);
+
+                    list.add(appointment);
+                }
+            }
+
+            // If there is no data to show
+            if (list.size() == 0) {
+                status = -1;
+            } else {
                 Storage.schedule = list;
                 status = 1;
             }

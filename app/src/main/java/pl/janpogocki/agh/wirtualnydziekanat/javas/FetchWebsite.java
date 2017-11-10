@@ -1,18 +1,24 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.nio.CharBuffer;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
@@ -49,7 +55,11 @@ public class FetchWebsite {
     private class TrivialHostVerifier implements HostnameVerifier {
         @Override
         public boolean verify(String host, SSLSession session) {
-            return host.equalsIgnoreCase("dziekanat.agh.edu.pl") || host.equalsIgnoreCase("api.janpogocki.pl") || host.equalsIgnoreCase("www.syllabus.agh.edu.pl");
+            return host.equalsIgnoreCase("dziekanat.agh.edu.pl")
+                    || host.equalsIgnoreCase("api.janpogocki.pl")
+                    || host.equalsIgnoreCase("skos.agh.edu.pl")
+                    || host.equalsIgnoreCase("plan.agh.edu.pl")
+                    || host.equalsIgnoreCase("syllabuskrk.agh.edu.pl");
         }
     }
 
@@ -95,7 +105,6 @@ public class FetchWebsite {
             wr.flush();
         }
 
-        // conn.setDoInput(true);
         conn.connect();
 
         // Getting cookies form server if _receiveCookies
@@ -110,20 +119,24 @@ public class FetchWebsite {
         responseCode = conn.getResponseCode();
 
         // Get the server response
-        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()), 4096);
         StringBuilder sb = new StringBuilder();
-        String line;
 
         // Read Server Response
-        while((line = reader.readLine()) != null)
+        CharBuffer buffer = CharBuffer.allocate(4096);
+
+        while(reader.read(buffer) > 0)
         {
+            buffer.flip();
             // Append server response in string
-            sb.append(line).append("\n");
+            sb.append(buffer);
+
+            buffer.clear();
         }
         ret = sb.toString();
 
-        reader.close();
         conn.disconnect();
+        reader.close();
 
         return ret;
     }
@@ -163,7 +176,6 @@ public class FetchWebsite {
             wr.flush();
         }
 
-        // conn.setDoInput(true);
         conn.connect();
 
         // Getting cookies form server if _receiveCookies
@@ -192,17 +204,16 @@ public class FetchWebsite {
             os.write(buffer, 0, bytesRead);
         }
 
+        conn.disconnect();
+
         os.close();
         is.close();
-
-        conn.disconnect();
 
         return finalFilename;
     }
 
-    public String getWebsiteSyllabus(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
+    public String getWebsiteGETSecure(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
         String ret;
-        Storage.timeOfLastConnection = System.currentTimeMillis();
 
         // Send data
         BufferedReader reader;
@@ -253,20 +264,24 @@ public class FetchWebsite {
         responseCode = conn.getResponseCode();
 
         // Get the server response
-        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()), 4096);
         StringBuilder sb = new StringBuilder();
-        String line;
 
         // Read Server Response
-        while((line = reader.readLine()) != null)
+        CharBuffer buffer = CharBuffer.allocate(4096);
+
+        while(reader.read(buffer) > 0)
         {
+            buffer.flip();
             // Append server response in string
-            sb.append(line).append("\n");
+            sb.append(buffer);
+
+            buffer.clear();
         }
         ret = sb.toString();
 
-        reader.close();
         conn.disconnect();
+        reader.close();
 
         return ret;
     }
@@ -315,30 +330,29 @@ public class FetchWebsite {
         responseCode = conn.getResponseCode();
 
         // Get the server response
-        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()), 4096);
         StringBuilder sb = new StringBuilder();
-        String line;
 
         // Read Server Response
-        while((line = reader.readLine()) != null)
+        CharBuffer buffer = CharBuffer.allocate(4096);
+
+        while(reader.read(buffer) > 0)
         {
+            buffer.flip();
             // Append server response in string
-            sb.append(line).append("\n");
+            sb.append(buffer);
+
+            buffer.clear();
         }
         ret = sb.toString();
 
-        reader.close();
         conn.disconnect();
+        reader.close();
 
         return ret;
     }
 
-    public String getWebsiteIsolated(Boolean _sendCookies, Boolean _receiveCookies, String _POSTdata) throws Exception {
-        String ret;
-
-        // Send data
-        BufferedReader reader;
-
+    public void getWebsiteWUXPTeacherSchedule(Boolean _sendCookies, Boolean _receiveCookies, Context c, int iteration) throws Exception {
         // Defined URL  where to send data
         URL url = new URL(URL);
 
@@ -358,49 +372,93 @@ public class FetchWebsite {
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
         // Sending cookies if _sendCookies is true and List with cookies is set
-        if (Cookies2.setList) {
-            if (_sendCookies && !(Cookies2.getCookies().equals("")))
-                conn.addRequestProperty("Cookie", Cookies2.getCookies());
+        if (CookiesIsolated.setList) {
+            if (_sendCookies && !(CookiesIsolated.getCookies().equals("")))
+                conn.addRequestProperty("Cookie", CookiesIsolated.getCookies());
         }
 
         // Sending POST data if exists
-        if (!(_POSTdata.equals(""))){
-            OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-            wr.write(_POSTdata);
-            wr.flush();
+        if (iteration == 1) {
+            File fileBigPostGenerator = new File(c.getCacheDir() + "/temp_big_post_generator.txt");
+            if (fileBigPostGenerator.exists()) {
+                OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+                InputStream is = new FileInputStream(fileBigPostGenerator);
+
+                int bytesRead = -1;
+                byte[] buffer = new byte[1024];
+                while ((bytesRead = is.read(buffer)) != -1) {
+                    wr.write(new String(buffer, "UTF-8"), 0, bytesRead);
+                    wr.flush();
+                }
+            }
         }
 
-        // conn.setDoInput(true);
         conn.connect();
 
         // Getting cookies form server if _receiveCookies
-        if (_receiveCookies && !Cookies2.setList) {
-            Cookies2.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        if (_receiveCookies && !CookiesIsolated.setList) {
+            CookiesIsolated.setCookies(conn.getHeaderFields().get("Set-Cookie"));
         }
-        else if (_receiveCookies && Cookies2.setList)
-            Cookies2.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+        else if (_receiveCookies && CookiesIsolated.setList)
+            CookiesIsolated.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
         // Getting Location if redirect
         locationHTTP = conn.getHeaderField("Location");
         responseCode = conn.getResponseCode();
 
-        // Get the server response
-        reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        StringBuilder sb = new StringBuilder();
-        String line;
+        if (iteration == 0) {
+            // Read Server Response
+            File fileWuxp = new File(c.getCacheDir() + "/temp_wuxp.txt");
+            OutputStream os = new FileOutputStream(fileWuxp);
 
-        // Read Server Response
-        while((line = reader.readLine()) != null)
-        {
-            // Append server response in string
-            sb.append(line).append("\n");
+            int bytesRead = -1;
+            byte[] buffer2 = new byte[4096];
+            while ((bytesRead = conn.getInputStream().read(buffer2)) != -1) {
+                os.write(buffer2, 0, bytesRead);
+                os.flush();
+            }
+            os.close();
         }
-        ret = sb.toString();
+        else {
+            // Get the server response
+            BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()), 4096);
+            List<String> list = new ArrayList<>();
+            boolean allowToAppend = false;
+            File fileWuxp = new File(c.getCacheDir() + "/temp_wuxp.txt");
+            OutputStream os = new FileOutputStream(fileWuxp);
 
-        reader.close();
+            // Read Server Response
+            CharBuffer buffer = CharBuffer.allocate(4096);
+
+            while (reader.read(buffer) >= 0) {
+                buffer.flip();
+                // Append server response in string
+
+                if (!allowToAppend)
+                    list.add(buffer.toString());
+
+                if (!allowToAppend && list.size() == 2){
+                    String tempStr = list.get(0) + list.get(1);
+
+                    if (tempStr.contains("theForm.submit();")) {
+                        //sb.append(tempStr);
+                        os.write(tempStr.getBytes());
+                        allowToAppend = true;
+                    }
+                    else
+                        list.remove(0);
+                }
+
+                if (allowToAppend)
+                    os.write(buffer.toString().getBytes());
+
+                buffer.clear();
+            }
+            reader.close();
+            os.close();
+        }
+
         conn.disconnect();
-
-        return ret;
     }
 
     public String getLocationHTTP(){
@@ -475,17 +533,17 @@ public class FetchWebsite {
         conn.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.3; WOW64; rv:52.0) Gecko/20100101 Firefox/52.0");
 
         // Sending cookies if _sendCookies
-        if (_sendCookies && !(Cookies2.getCookies().equals("")))
-            conn.addRequestProperty("Cookie", Cookies2.getCookies());
+        if (_sendCookies && !(CookiesIsolated.getCookies().equals("")))
+            conn.addRequestProperty("Cookie", CookiesIsolated.getCookies());
 
         conn.connect();
 
         // Getting cookies if _receiveCookies
-        if (_receiveCookies && !Cookies2.setList) {
-            Cookies2.setCookies(conn.getHeaderFields().get("Set-Cookie"));
+        if (_receiveCookies && !CookiesIsolated.setList) {
+            CookiesIsolated.setCookies(conn.getHeaderFields().get("Set-Cookie"));
         }
         else
-            Cookies2.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
+            CookiesIsolated.updateCookies(conn.getHeaderFields().get("Set-Cookie"));
 
         InputStream input = conn.getInputStream();
         Bitmap myBitmap = BitmapFactory.decodeStream(input);

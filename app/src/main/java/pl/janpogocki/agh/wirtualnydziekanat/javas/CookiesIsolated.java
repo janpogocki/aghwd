@@ -8,13 +8,13 @@ import java.util.List;
  * Managing cookies received from AGH Wirtualna Uczelnia - SANDBOX
  */
 
-public class Cookies2 {
+public class CookiesIsolated {
     private static List<String> cookiesStorage = null;
     public static Boolean setList = false;
 
     public static void setCookies(List<String> _cookies){
         cookiesStorage = new ArrayList<>(_cookies);
-        Cookies2.removeSemicolons();
+        CookiesIsolated.removeSemicolons();
         setList = true;
     }
 
@@ -28,10 +28,10 @@ public class Cookies2 {
                     }
                 }
             }
-            Cookies2.removeSemicolons();
+            CookiesIsolated.removeSemicolons();
         }
         else
-            Cookies2.setCookies(_cookies);
+            CookiesIsolated.setCookies(_cookies);
     }
 
     public static String getCookies(){

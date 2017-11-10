@@ -47,6 +47,13 @@
         app:showAsAction="never" />
 
     <item
+        android:id="@+id/action_schedule_refresh"
+        android:orderInCategory="104"
+        android:title="@string/refresh"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
         android:id="@+id/action_send"
         android:orderInCategory="100"
         android:icon="@drawable/ic_send"

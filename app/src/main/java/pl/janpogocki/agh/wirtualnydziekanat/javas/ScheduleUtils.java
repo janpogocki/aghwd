@@ -20,6 +20,15 @@ import java.util.List;
  */
 
 public class ScheduleUtils {
+    public static String getSemesterUniTimeName(){
+        int maxVal = Storage.summarySemesters.size()-1;
+
+        if (Storage.summarySemesters.get(maxVal).get(3).equals("Z"))
+            return "Semestr+zimowy" + Storage.summarySemesters.get(maxVal).get(0).split("/")[0] + "AGH";
+        else
+            return "Semestr+letni" + Storage.summarySemesters.get(maxVal).get(0).split("/")[0] + "AGH";
+    }
+
     public static void saveNewAppointment(Context c, Appointment appointment){
         try {
             String filename = Storage.getUniversityStatusHash() + "_mycal.json";

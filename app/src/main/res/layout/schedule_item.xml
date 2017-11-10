@@ -100,16 +100,17 @@
                 android:id="@+id/textViewHeader" />
 
             <TextView
+                android:id="@+id/textView2ndLine"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textAppearance="@style/BlackTextSmall"
-                android:text="Prowadzący\nTyp zajęć"
-                android:lineSpacingExtra="10dp"
-                android:id="@+id/textView2ndLine"
-                android:layout_below="@+id/textViewHeader"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true"
-                android:layout_marginTop="10dp" />
+                android:layout_below="@+id/textViewHeader"
+                android:layout_marginTop="11dp"
+                android:lineSpacingExtra="10dp"
+                android:maxLines="4"
+                android:text="Prowadzący\nTyp zajęć"
+                android:textAppearance="@style/BlackTextSmall" />
 
             <TextView
                 android:layout_width="wrap_content"

@@ -6,6 +6,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.google.firebase.analytics.FirebaseAnalytics;
 
 import java.net.URLConnection;
 import java.util.HashMap;
@@ -203,13 +206,21 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
                         .show();
 
                 DownloadManager downloadManager = (DownloadManager) _context.getSystemService(Context.DOWNLOAD_SERVICE);
-                downloadManager.addCompletedDownload(fw.getDownloadFilename(),
-                        _context.getString(R.string.app_name),
-                        true,
-                        URLConnection.guessContentTypeFromName(filename),
-                        filename,
-                        fw.getContentLenght(),
-                        true);
+                if (downloadManager != null) {
+                    downloadManager.addCompletedDownload(fw.getDownloadFilename(),
+                            _context.getString(R.string.app_name),
+                            true,
+                            URLConnection.guessContentTypeFromName(filename),
+                            filename,
+                            fw.getContentLenght(),
+                            true);
+                }
+
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "file_download");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "files");
+                FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(_context);
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             }
         }
     }

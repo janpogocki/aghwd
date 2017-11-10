@@ -164,10 +164,9 @@ public class PartialMarksExplorer extends Fragment {
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                int dayOfMonth = Integer.parseInt(editTextDate.getText().toString().split("\\.")[0]);
+                int month = Integer.parseInt(editTextDate.getText().toString().split("\\.")[1]) - 1;
+                int year = Integer.parseInt(editTextDate.getText().toString().split("\\.")[2]);
                 DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -182,6 +181,11 @@ public class PartialMarksExplorer extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "create");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_partial_marks");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
                     String dateOfPartialMark = editTextDate.getText().toString();
 
@@ -274,11 +278,9 @@ public class PartialMarksExplorer extends Fragment {
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                cal.setTimeInMillis(oldPartialMark.timestamp);
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                int dayOfMonth = Integer.parseInt(editTextDate.getText().toString().split("\\.")[0]);
+                int month = Integer.parseInt(editTextDate.getText().toString().split("\\.")[1]) - 1;
+                int year = Integer.parseInt(editTextDate.getText().toString().split("\\.")[2]);
                 DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -293,6 +295,11 @@ public class PartialMarksExplorer extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "edit");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_partial_marks");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     DateFormat df = new SimpleDateFormat("dd.MM.yyyy", Locale.US);
                     String dateOfPartialMark = editTextDate.getText().toString();
 
@@ -338,6 +345,11 @@ public class PartialMarksExplorer extends Fragment {
                 else if (i == 1) {
                     PartialMarksUtils.removePartialMark(activityContext, partialMark);
 
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "remove");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_partial_marks");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     rlData.setVisibility(View.GONE);
                     rlNoData.setVisibility(View.GONE);
                     rlLoader.setVisibility(View.VISIBLE);
@@ -357,7 +369,8 @@ public class PartialMarksExplorer extends Fragment {
         AnimatedExpandableListView expandableListView = view.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
 
-        fab.setVisibility(View.VISIBLE);
+        if (Storage.currentSemesterPartialMarksSubjects.keySet().size() > 0)
+            fab.setVisibility(View.VISIBLE);
     }
 
     private void showResults(View view){

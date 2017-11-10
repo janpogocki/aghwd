@@ -127,6 +127,10 @@ public class SkosActivity extends Fragment {
         RelativeLayout rlNoData = root.findViewById(R.id.rlNoData);
         RelativeLayout rlTeacherSchedule = root.findViewById(R.id.rlTeacherSchedule);
         LinearLayout rlBrowser = root.findViewById(R.id.rlBrowser);
+
+        if (rlTeacherSchedule.getVisibility() == View.VISIBLE)
+            mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.skos), null);
+
         rlBrowser.setVisibility(View.GONE);
         rlNoData.setVisibility(View.GONE);
         rlTeacherSchedule.setVisibility(View.GONE);
@@ -147,10 +151,20 @@ public class SkosActivity extends Fragment {
             public void onClick(DialogInterface dialogInterface, int i) {
                 if (i == 0){
                     // copy to mycal
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "copy_to_mycal");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "skos_schedule");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     ScheduleUtils.copyAppointment(activityContext, currentAppointment, null);
                 }
                 else if (i == 1){
                     // copy all like this one to mycal
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "copy_all_to_mycal");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "skos_schedule");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     ScheduleUtils.copyAppointment(activityContext, currentAppointment, recyclerViewTeacherScheduleAdapter.getListOfAppointments());
                 }
 
@@ -163,13 +177,13 @@ public class SkosActivity extends Fragment {
         builder.show();
     }
 
-    private void refreshTeacherSchedule(String nameAndSurname){
+    private void refreshTeacherSchedule(String nameAndSurname, String url){
         AsyncTaskScheduleBegin runnerBegin = new AsyncTaskScheduleBegin();
-        runnerBegin.setNameAndSurname(nameAndSurname);
+        runnerBegin.setVars(nameAndSurname, url, activityContext);
         runnerBegin.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
-    private void showCaptcha(final String nameAndSurname){
+    private void showCaptcha(final String nameAndSurname, final String url) throws Exception {
         AlertDialog.Builder builder = new AlertDialog.Builder(activityContext);
 
         LayoutInflater layoutInflater = this.getLayoutInflater();
@@ -188,6 +202,7 @@ public class SkosActivity extends Fragment {
                 AsyncTaskScheduleAfterCaptcha runnerAfterCaptcha = new AsyncTaskScheduleAfterCaptcha();
                 runnerAfterCaptcha.setCaptchaText(editTextCaptcha.getText().toString().trim());
                 runnerAfterCaptcha.setNameAndSurname(nameAndSurname);
+                runnerAfterCaptcha.setSkosUrl(url);
                 runnerAfterCaptcha.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             }
         });
@@ -240,6 +255,7 @@ public class SkosActivity extends Fragment {
     }
 
     private void showTeacherSchedule(){
+        mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.skos_teacher_schedule), null);
         asyncTaskRunnerAutoRefresher = new AsyncTaskRunnerAutoRefresher();
         asyncTaskRunnerAutoRefresher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
@@ -261,9 +277,6 @@ public class SkosActivity extends Fragment {
     private void switch2browser(final String _nameAndSurname, final String _url){
         // close searchbar
         ((MainActivity) activityContext).showSearchButton(false);
-
-        Storage.openedBrowser = true;
-
         ((MainActivity) activityContext).hideKeyboard(getView());
 
         final RelativeLayout rlData = root.findViewById(R.id.rlData);
@@ -276,7 +289,7 @@ public class SkosActivity extends Fragment {
         layoutSearchTeacherSchedule.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                refreshTeacherSchedule(_nameAndSurname);
+                refreshTeacherSchedule(_nameAndSurname, _url);
             }
         });
 
@@ -304,6 +317,8 @@ public class SkosActivity extends Fragment {
                 if (webView.getProgress() == 100){
                     rlLoader.setVisibility(View.GONE);
                     rlBrowser.setVisibility(View.VISIBLE);
+
+                    Storage.openedBrowser = true;
                 }
             }
         });
@@ -478,10 +493,14 @@ public class SkosActivity extends Fragment {
 
     private class AsyncTaskScheduleBegin extends AsyncTask<View, View, View> {
         private String nameAndSurname;
+        private String skosUrl;
+        private Context c;
         Boolean isError = false;
 
-        public void setNameAndSurname(String nameAndSurname) {
+        public void setVars(String nameAndSurname, String skosUrl, Context c) {
             this.nameAndSurname = nameAndSurname;
+            this.skosUrl = skosUrl;
+            this.c = c;
         }
 
         @Override
@@ -491,12 +510,14 @@ public class SkosActivity extends Fragment {
 
             rlBrowser.setVisibility(View.GONE);
             rlLoader.setVisibility(View.VISIBLE);
+
+            Storage.openedBrowser = false;
         }
 
         @Override
         protected View doInBackground(View... views) {
             try {
-                fts = new FetchTeacherSchedule(nameAndSurname);
+                fts = new FetchTeacherSchedule(c, nameAndSurname, skosUrl);
 
                 return root;
             } catch (Exception e) {
@@ -515,6 +536,7 @@ public class SkosActivity extends Fragment {
             final RelativeLayout rlTeacherSchedule = root.findViewById(R.id.rlTeacherSchedule);
 
             rlLoader.setVisibility(View.GONE);
+            Storage.openedBrowser = true;
 
             if (fts == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
@@ -527,7 +549,7 @@ public class SkosActivity extends Fragment {
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
 
-                        refreshTeacherSchedule(nameAndSurname);
+                        refreshTeacherSchedule(nameAndSurname, skosUrl);
                     }
                 });
             }
@@ -537,7 +559,12 @@ public class SkosActivity extends Fragment {
             }
             // -2 means WU.XP captcha
             else if (fts.status == -2){
-                showCaptcha(nameAndSurname);
+                try {
+                    showCaptcha(nameAndSurname, skosUrl);
+                } catch (Exception e) {
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
             }
             else {
                 // Have it, show it
@@ -551,6 +578,7 @@ public class SkosActivity extends Fragment {
         Boolean isError = false;
         private String captchaText;
         private String nameAndSurname;
+        private String skosUrl;
 
         public void setNameAndSurname(String nameAndSurname) {
             this.nameAndSurname = nameAndSurname;
@@ -560,10 +588,15 @@ public class SkosActivity extends Fragment {
             this.captchaText = captchaText;
         }
 
+        public void setSkosUrl(String skosUrl) {
+            this.skosUrl = skosUrl;
+        }
+
         @Override
         protected void onPreExecute() {
             final RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
             rlLoader.setVisibility(View.VISIBLE);
+            Storage.openedBrowser = false;
         }
 
         @Override
@@ -588,6 +621,7 @@ public class SkosActivity extends Fragment {
             final RelativeLayout rlTeacherSchedule = root.findViewById(R.id.rlTeacherSchedule);
 
             rlLoader.setVisibility(View.GONE);
+            Storage.openedBrowser = true;
 
             if (fts == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
@@ -600,7 +634,7 @@ public class SkosActivity extends Fragment {
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
 
-                        refreshTeacherSchedule(nameAndSurname);
+                        refreshTeacherSchedule(nameAndSurname, skosUrl);
                     }
                 });
             }
@@ -610,7 +644,17 @@ public class SkosActivity extends Fragment {
             }
             // -2 means WU.XP captcha
             else if (fts.status == -2){
-                showCaptcha(nameAndSurname);
+                try {
+                    showCaptcha(nameAndSurname, skosUrl);
+                } catch (Exception e) {
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
+            }
+            // -3 means WU.XP bad captcha - once again all
+            else if (fts.status == -3){
+                fts = null;
+                refreshTeacherSchedule(nameAndSurname, skosUrl);
             }
             else {
                 // Have it, show it
@@ -634,7 +678,6 @@ public class SkosActivity extends Fragment {
                     Thread.sleep(30000);
                 } catch (InterruptedException e) {
                     Log.i("aghwd", "aghwd", e);
-                    Storage.appendCrash(e);
                 }
 
                 firstRun = false;

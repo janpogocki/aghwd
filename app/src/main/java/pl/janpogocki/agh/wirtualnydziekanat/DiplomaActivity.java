@@ -51,7 +51,10 @@ public class DiplomaActivity extends Fragment {
         ListAdapter listAdapter = new BaseAdapter() {
             @Override
             public int getCount() {
-                return Storage.diploma.get(0).size();
+                if (Storage.diploma.get(0) != null)
+                    return Storage.diploma.get(0).size();
+                else
+                    return 0;
             }
 
             @Override

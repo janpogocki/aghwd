@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
@@ -108,26 +109,29 @@ public class MainActivity extends AppCompatActivity
                     MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(false);
                     MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(false);
                     MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(false);
+                    MenuWithActionBar.findItem(R.id.action_schedule_refresh).setVisible(false);
                 } else {
-                    // todo unitime
                     // no data from AGH
                     if (status == -1) {
                         MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_refresh).setVisible(true);
                     }
                     // WD.XP
                     else if (status == 0) {
                         MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_refresh).setVisible(true);
                     }
-                    // EAIIB
+                    // EAIIB & UniTime
                     else if (status == 1) {
                         MenuWithActionBar.findItem(R.id.action_schedule_now).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_go_to_date).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_change_group).setVisible(true);
                         MenuWithActionBar.findItem(R.id.action_schedule_view_settings).setVisible(true);
+                        MenuWithActionBar.findItem(R.id.action_schedule_refresh).setVisible(true);
                     }
                 }
             }
@@ -290,6 +294,35 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    private void checkDefaultItem(Menu menu, boolean showSpinner){
+        if ("summary".equals(Storage.sharedPreferencesStartScreen)) {
+            currentFragmentScreen = "summary";
+            menu.findItem(R.id.nav_summary).setChecked(true);
+        } else if ("schedule".equals(Storage.sharedPreferencesStartScreen)) {
+            currentFragmentScreen = "schedule";
+
+            menu.findItem(R.id.nav_schedule).setChecked(true);
+        } else if ("semester_partial".equals(Storage.sharedPreferencesStartScreen)) {
+            currentFragmentScreen = "semester_partial";
+
+            if (showSpinner) {
+                showSemesterSpinner(true);
+                enableDisableSemesterSpinner(false);
+            }
+
+            menu.findItem(R.id.nav_partial_marks).setChecked(true);
+        } else {
+            currentFragmentScreen = "semester";
+
+            if (showSpinner) {
+                showSemesterSpinner(true);
+                enableDisableSemesterSpinner(false);
+            }
+
+            menu.findItem(R.id.nav_marks).setChecked(true);
+        }
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -392,8 +425,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMultiWindowModeChanged(boolean isInMultiWindowMode) {
-        super.onMultiWindowModeChanged(isInMultiWindowMode);
+    public void onMultiWindowModeChanged(boolean isInMultiWindowMode, Configuration newConfig) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode, newConfig);
 
         // current screen is different from default => return to default
 
@@ -402,10 +435,11 @@ public class MainActivity extends AppCompatActivity
         showSearchButton(false);
         showSendButton(false);
         showScheduleButtons(false, 0);
+        showSemesterSpinner(false);
         resetMainLayoutVisibility(true);
 
         uncheckCheckedItem(navigationView.getMenu());
-        showDefaultScreen(true);
+        checkDefaultItem(navigationView.getMenu(), true);
     }
 
     @Override
@@ -476,6 +510,9 @@ public class MainActivity extends AppCompatActivity
         }
         else if (id == R.id.action_schedule_view_settings){
             scheduleactivity.showViewSettings();
+        }
+        else if (id == R.id.action_schedule_refresh){
+            scheduleactivity.refreshScheduleFromMenu();
         }
         else if (id == R.id.action_send) {
             hideKeyboard(getWindow().getDecorView().getRootView());

@@ -1,8 +1,12 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.jsoup.Jsoup;
@@ -10,6 +14,11 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -29,19 +38,27 @@ import java.util.regex.Pattern;
 public class FetchTeacherSchedule {
     public int status;
     public Bitmap bitmapCaptcha;
+    private Context c;
     private String nameAndSurname;
+    private String skosUrl;
 
     // for WU.XP
     private String viewstateName = "__VIEWSTATE";
     private String viewstateGeneratorName = "__VIEWSTATEGENERATOR";
     private String eventValidationName = "__EVENTVALIDATION";
-    private String viewstateValue, viewstateGeneratorValue, eventValidationValue, teacherID;
+    private String eventValidationValue, viewstateGeneratorValue, teacherID;
+    private InputStream viewstateValue;
 
-    public FetchTeacherSchedule(String nameAndSurname) throws Exception {
+    public FetchTeacherSchedule(Context c, String nameAndSurname, String skosUrl) throws Exception {
+        this.c = c;
         this.nameAndSurname = nameAndSurname;
+        this.skosUrl = skosUrl;
 
         while (true){
             if (FetchEaiibSchedule())
+                break;
+
+            if (FetchUniTimeSchedule())
                 break;
 
             FetchDziekanatXPSchedule();
@@ -51,16 +68,18 @@ public class FetchTeacherSchedule {
 
     private void FetchDziekanatXPSchedule() throws Exception {
         FetchWebsite fw;
-        String fww;
         Document fwParsed;
 
         fw = new FetchWebsite(Logging.URLdomain + "/PodzGodzinTok.aspx");
-        fww = fw.getWebsiteIsolated(true, true, "");
-        fwParsed = Jsoup.parse(fww);
+        fw.getWebsiteWUXPTeacherSchedule(true, true, c, 0);
+        fwParsed = Jsoup.parse(new File(c.getCacheDir() + "/temp_wuxp.txt"),
+                "UTF-8", Logging.URLdomain + "/");
 
-        viewstateValue = fwParsed.getElementById(viewstateName).attr("value");
         viewstateGeneratorValue = fwParsed.getElementById(viewstateGeneratorName).attr("value");
         eventValidationValue = fwParsed.getElementById(eventValidationName).attr("value");
+
+        // save viewstateValue to stream (huge data!)
+        viewstateValue = new ByteArrayInputStream(fwParsed.getElementById(viewstateName).attr("value").getBytes("UTF-8"));
 
         String captchaURL = fwParsed.getElementsByTag("img").get(0).attr("src");
         FetchWebsite fw2 = new FetchWebsite(Logging.URLdomain + "/" + captchaURL);
@@ -90,7 +109,7 @@ public class FetchTeacherSchedule {
             status = -1;
         else {
             // search teacherID no. rcbListCounter
-            String[] valuesExploded = fww.split(Pattern.quote("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_ClientState\",\"collapseAnimation\":\"{\\\"duration\\\":450}\",\"expandAnimation\":\"{\\\"duration\\\":450}\",\"itemData\":[{"))[1].split(Pattern.quote("}]"))[0].split(Pattern.quote("},{"));
+            String[] valuesExploded = fwParsed.html().split(Pattern.quote("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_ClientState\",\"collapseAnimation\":\"{\\\"duration\\\":450}\",\"expandAnimation\":\"{\\\"duration\\\":450}\",\"itemData\":[{"))[1].split(Pattern.quote("}]"))[0].split(Pattern.quote("},{"));
 
             JSONObject jsonObject = new JSONObject("{" + valuesExploded[rcbListCounter] + "}");
             teacherID = jsonObject.getString("value");
@@ -101,48 +120,49 @@ public class FetchTeacherSchedule {
 
     public void continueFetchDziekanatXPScheduleAfterCaptcha(String captchaText) throws Exception {
         FetchWebsite fw;
-        String fww;
         Document fwParsed;
         boolean badCaptcha = false;
 
         // post generator
-        POSTgenerator POSTgenerator = new POSTgenerator();
+        BigPOSTgenerator bigPOSTgenerator = new BigPOSTgenerator(c.getCacheDir() + "/temp_big_post_generator.txt");
 
         try {
-            POSTgenerator.add(viewstateName, viewstateValue);
-            POSTgenerator.add(viewstateGeneratorName, viewstateGeneratorValue);
-            POSTgenerator.add(eventValidationName, eventValidationValue);
+            bigPOSTgenerator.add(viewstateName, viewstateValue);
+            bigPOSTgenerator.add(viewstateGeneratorName, viewstateGeneratorValue);
+            bigPOSTgenerator.add(eventValidationName, eventValidationValue);
 
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlWydzial", "Fizyki i Informatyki Stosowanej, Inżynierii Metali i Informatyki Przemysłowej, Geodezji Górniczej i Inżynierii Środowiska, Elektrotechniki, Automatyki, Informatyki i Elektroniki, Międzywydziałowa Szkoła Energetyki, Inżynierii Mechanicznej i Robotyki, Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej, Centrum AGH UNESCO, Informatyki, Elektroniki i Telekomunikacji, Górnictwa i Geoinżynierii, Matematyki Stosowanej, Geologii, Geofizyki i Ochrony Środowiska, Humanistyczny, Energetyki i Paliw, Metali Nieżelaznych, Odlewnictwa, Inżynierii Materiałowej i Ceramiki, Wiertnictwa, Nafty i Gazu, Międzywydziałowa Szkoła Inżynierii Biomedycznej, Zarządzania, IAESTE AGH");
-            POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlWydzial_ClientState", "{\"logEntries\":[],\"value\":\"10\",\"text\":\"Fizyki i Informatyki Stosowanej, Inżynierii Metali i Informatyki Przemysłowej, Geodezji Górniczej i Inżynierii Środowiska, Elektrotechniki, Automatyki, Informatyki i Elektroniki, Międzywydziałowa Szkoła Energetyki, Inżynierii Mechanicznej i Robotyki, Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej, Centrum AGH UNESCO, Informatyki, Elektroniki i Telekomunikacji, Górnictwa i Geoinżynierii, Matematyki Stosowanej, Geologii, Geofizyki i Ochrony Środowiska, Humanistyczny, Energetyki i Paliw, Metali Nieżelaznych, Odlewnictwa, Inżynierii Materiałowej i Ceramiki, Wiertnictwa, Nafty i Gazu, Międzywydziałowa Szkoła Inżynierii Biomedycznej, Zarządzania, IAESTE AGH\",\"enabled\":true,\"checkedIndices\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],\"checkedItemsTextOverflows\":false}");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlKierunek", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlTyp", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlRodzaj", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlRodzaj", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlForma", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlSemestr", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlDays", "Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela");
-            POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlDays_ClientState", "{\"logEntries\":[],\"value\":\"1\",\"text\":\"Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela\",\"enabled\":true,\"checkedIndices\":[0,1,2,3,4,5,6],\"checkedItemsTextOverflows\":false}");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlPrzedmiot", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlProwadzacy", nameAndSurname);
-            POSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_ClientState", "{\"logEntries\":[],\"value\":\"" + teacherID + "\",\"text\":\"dr hab. Andrzej Adamczak\",\"enabled\":true,\"checkedIndices\":[],\"checkedItemsTextOverflows\":false}");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlSala", "Wszystkie");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$btn_Filtruj", "Wyszukaj zajęcia");
-            POSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$captcha$ctl04", captchaText);
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlWydzial", "Fizyki i Informatyki Stosowanej, Inżynierii Metali i Informatyki Przemysłowej, Geodezji Górniczej i Inżynierii Środowiska, Elektrotechniki, Automatyki, Informatyki i Elektroniki, Międzywydziałowa Szkoła Energetyki, Inżynierii Mechanicznej i Robotyki, Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej, Centrum AGH UNESCO, Informatyki, Elektroniki i Telekomunikacji, Górnictwa i Geoinżynierii, Matematyki Stosowanej, Geologii, Geofizyki i Ochrony Środowiska, Humanistyczny, Energetyki i Paliw, Metali Nieżelaznych, Odlewnictwa, Inżynierii Materiałowej i Ceramiki, Wiertnictwa, Nafty i Gazu, Międzywydziałowa Szkoła Inżynierii Biomedycznej, Zarządzania, IAESTE AGH");
+            bigPOSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlWydzial_ClientState", "{\"logEntries\":[],\"value\":\"10\",\"text\":\"Fizyki i Informatyki Stosowanej, Inżynierii Metali i Informatyki Przemysłowej, Geodezji Górniczej i Inżynierii Środowiska, Elektrotechniki, Automatyki, Informatyki i Elektroniki, Międzywydziałowa Szkoła Energetyki, Inżynierii Mechanicznej i Robotyki, Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej, Centrum AGH UNESCO, Informatyki, Elektroniki i Telekomunikacji, Górnictwa i Geoinżynierii, Matematyki Stosowanej, Geologii, Geofizyki i Ochrony Środowiska, Humanistyczny, Energetyki i Paliw, Metali Nieżelaznych, Odlewnictwa, Inżynierii Materiałowej i Ceramiki, Wiertnictwa, Nafty i Gazu, Międzywydziałowa Szkoła Inżynierii Biomedycznej, Zarządzania, IAESTE AGH\",\"enabled\":true,\"checkedIndices\":[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],\"checkedItemsTextOverflows\":false}");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlKierunek", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlTyp", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlRodzaj", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlRodzaj", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlForma", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlSemestr", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlDays", "Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela");
+            bigPOSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlDays_ClientState", "{\"logEntries\":[],\"value\":\"1\",\"text\":\"Poniedziałek, Wtorek, Środa, Czwartek, Piątek, Sobota, Niedziela\",\"enabled\":true,\"checkedIndices\":[0,1,2,3,4,5,6],\"checkedItemsTextOverflows\":false}");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlPrzedmiot", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlProwadzacy", nameAndSurname);
+            bigPOSTgenerator.add("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_ddlProwadzacy_ClientState", "{\"logEntries\":[],\"value\":\"" + teacherID + "\",\"text\":\"dr hab. Andrzej Adamczak\",\"enabled\":true,\"checkedIndices\":[],\"checkedItemsTextOverflows\":false}");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$ddlSala", "Wszystkie");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$btn_Filtruj", "Wyszukaj zajęcia");
+            bigPOSTgenerator.add("ctl00$ctl00$ContentPlaceHolder$RightContentPlaceHolder$captcha$ctl04", captchaText);
+            bigPOSTgenerator.closeFile();
         } catch (UnsupportedEncodingException e) {
             Log.i("aghwd", "aghwd", e);
             Storage.appendCrash(e);
         }
 
         fw = new FetchWebsite(Logging.URLdomain + "/PodzGodzinTok.aspx");
-        fww = fw.getWebsiteIsolated(true, true, POSTgenerator.getGeneratedPOST());
-        fwParsed = Jsoup.parse(fww);
+        fw.getWebsiteWUXPTeacherSchedule(true, true, c, 1);
+        fwParsed = Jsoup.parse(new File(c.getCacheDir() + "/temp_wuxp.txt"),
+                "UTF-8", Logging.URLdomain + "/");
 
         Elements tableRows = fwParsed.select(".gridDane");
 
         List<Appointment> list = new ArrayList<>();
 
-        if (fww.contains("ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_lblMessage"))
+        if (fwParsed.select("span#ctl00_ctl00_ContentPlaceHolder_RightContentPlaceHolder_lblMessage").size() == 1)
             badCaptcha = true;
         else {
             for (Element current : tableRows) {
@@ -158,10 +178,8 @@ public class FetchTeacherSchedule {
                     String name = current2.get(0).ownText();
                     String description = current2.get(1).ownText() + " (" + current2.get(6).ownText() + ")" + "\n" + current2.get(10).ownText() + ", " + current2.get(11).ownText();
                     String location = current2.get(5).ownText();
-                    boolean lecture = false;
-                    double group = 0;
 
-                    Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, lecture, true, -1, group, false);
+                    Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, false, true, -1, 0, false);
 
                     list.add(appointment);
                 } catch (ParseException e) {
@@ -172,7 +190,7 @@ public class FetchTeacherSchedule {
         }
 
         if (badCaptcha){
-            status = -2;
+            status = -3;
         }
         // If there is no data to show
         else if (list.size() == 0) {
@@ -234,7 +252,7 @@ public class FetchTeacherSchedule {
                 long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
 
                 String [] descBR = jsonArray.getJSONObject(i).getString("title")
-                        .replaceAll("<p class=\"popover-only\">[a-zA-Z0-9 \\-/ęóąśłżźćńĘÓĄŚŁŻŹĆŃ]{1,}</p> ", "").split("<br/>");
+                        .replaceAll("<p class=\"popover-only\">[a-zA-Z0-9 \\-/ęóąśłżźćńĘÓĄŚŁŻŹĆŃ]+</p> ", "").split("<br/>");
 
                 double group = 0;
                 boolean lecture = false;
@@ -279,4 +297,71 @@ public class FetchTeacherSchedule {
         }
     }
 
+    private boolean FetchUniTimeSchedule() throws Exception {
+        FetchWebsite fw;
+        String fww;
+        Document fwParsed;
+        String teacherEmail;
+
+        fw = new FetchWebsite(skosUrl);
+        fww = fw.getWebsite(false, false, "");
+        fwParsed = Jsoup.parse(fww);
+
+        try {
+            teacherEmail = fwParsed.select(".email").get(0).attr("data-html");
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
+
+        teacherEmail = new StringBuilder(teacherEmail
+                .replace("#", "@")
+                .replace("&lt;", "<")
+                .replace("&gt;", ">")).reverse().toString()
+                .replace("<a href=\"mailto:", "")
+                .split("\" class")[0];
+
+        try {
+            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=person&ext=" + teacherEmail + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
+            fww = fw.getWebsiteGETSecure(false, false, "");
+        } catch (Exception e){
+            return false;
+        }
+
+        // parse CSV with timetable
+        String [] csvHeader = {"Name","Section","Type","Title","Date","Published Start","Published End","Location","Capacity","Instructor / Sponsor","Email","Requested Services","Approved"};
+        CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(csvHeader);
+        Reader reader = new StringReader(fww);
+        CSVParser csvParser = new CSVParser(reader, csvFormat);
+
+        List<Appointment> list = new ArrayList<>();
+        List<CSVRecord> csvRecords = csvParser.getRecords();
+        csvRecords.remove(0);
+        for (CSVRecord record : csvRecords){
+            String dateAndTimeOfStartOfLesson = record.get("Date") + " " + record.get("Published Start");
+            String dateAndTimeOfStopOfLesson = record.get("Date") + " " + record.get("Published End");
+            DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+            df.setLenient(true);
+
+            long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
+            long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
+            String name = record.get("Title").replace("\n", "");
+            String description = "Grupa " + record.get("Section") + ", " + record.get("Type").replace("\n", "") + "\n" + record.get("Instructor / Sponsor");
+            String location = record.get("Location").replace("\n", "");
+
+            Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, false, true, -1, 0, false);
+
+            list.add(appointment);
+        }
+
+        // If there is no data to show
+        if (list.size() == 0) {
+            status = -1;
+            return false;
+        }
+        else {
+            Storage.teacherSchedule = list;
+            status = 1;
+            return true;
+        }
+    }
 }

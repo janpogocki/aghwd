@@ -218,8 +218,8 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
         // sort group ids
         Collections.sort(listOfGroupIds);
 
-        // remove unnecessary events (groups) if eaiib
-        if (Storage.universityStatus.get(1).contains("Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej")) {
+        // remove unnecessary events (groups) if eaiib or unitime
+        if (Storage.scheduleStatus == 1) {
             double selectedGroup = Double.parseDouble(String.valueOf(PreferenceManager.getDefaultSharedPreferences(c).getFloat(Storage.getUniversityStatusHash() + "_choosen_eaiib_group", -1)));
 
             if (selectedGroup == -1) {

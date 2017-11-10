@@ -8,20 +8,23 @@ import java.net.URLEncoder;
  * Generating String ready to send via POST method
  */
 public class POSTgenerator {
-    private String generatedPOST = "";
+    private StringBuilder generatedPOST;
+
+    public POSTgenerator() {
+        generatedPOST = new StringBuilder();
+    }
 
     public void add(String _arg1, String _arg2) throws UnsupportedEncodingException{
-        if (generatedPOST.equals("")){
-            generatedPOST = URLEncoder.encode(_arg1, "UTF-8")
-                    + "=" + URLEncoder.encode(_arg2, "UTF-8");
+        if (generatedPOST.length() > 0) {
+            generatedPOST.append("&");
         }
-        else{
-            generatedPOST += "&" + URLEncoder.encode(_arg1, "UTF-8") + "="
-                    + URLEncoder.encode(_arg2, "UTF-8");
-        }
+
+        generatedPOST.append(URLEncoder.encode(_arg1, "UTF-8"));
+        generatedPOST.append("=");
+        generatedPOST.append(URLEncoder.encode(_arg2, "UTF-8"));
     }
 
     public String getGeneratedPOST(){
-        return generatedPOST;
+        return generatedPOST.toString();
     }
 }

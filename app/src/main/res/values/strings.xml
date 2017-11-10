@@ -55,6 +55,7 @@
     <string name="schedule">Podział godzin</string>
     <string name="syllabus">Syllabus</string>
     <string name="skos">SkOs</string>
+    <string name="skos_teacher_schedule">Podział Godzin prowadzącego</string>
     <string name="semester">Semestr</string>
     <string name="marks">Oceny</string>
     <string name="options">Opcje</string>
@@ -74,7 +75,7 @@
     <string name="download_ok">Plik został pobrany</string>
     <string name="download_permission_info">Aby pobierać pliki z AGH WD, zezwól aplikacji na dostęp do plików na Twoim urządzeniu</string>
     <string name="scholarships">Stypendia</string>
-    <string name="whats_new_text">Cześć Testerzy! :)\n\nW Wasze ręce oddaję zupełnie nową wersję AGH WD - 1.5.0 beta 4. W razie zauważonych problemów proszę o kontakt ze mną.\n\nW nowej wersji przebudowałem Podział Godzin, który stał się organizerem. Można w nim dodawać, usuwać, tagować zajęcia, a także filtrować widoki.\n\nW SkOs-ie udostępniłem możliwość przeglądania Podziałów Godzin Prowadzących. Obecnie są zaimplementowane dwie bazy danych: Wirtualna Uczelnia oraz Plan Zajęć EAIIB.\n\nNowa wersja to również odświeżone oceny cząstkowe. Można już samemu dodawać własne oceny i prowadzić swój \"dzienniczek studenta\".\n\nWprowadziłem również pełne wsparcie dla poziomej orientacji ekranu logowania.\n\nNiech apka służy! ;)\n\nWasz Janek</string>
+    <string name="whats_new_text">Cześć Testerzy! :)\n\nW Wasze ręce oddaję zupełnie nową wersję AGH WD - 1.5.0 beta 6. W razie zauważonych problemów proszę o kontakt ze mną.\n\nW nowej wersji przebudowałem Podział Godzin, który stał się organizerem. Można w nim dodawać, usuwać, tagować zajęcia, a także filtrować widoki.\n\nW SkOs-ie udostępniłem możliwość przeglądania Podziałów Godzin Prowadzących. Są zaimplementowane aż trzy bazy danych: Wirtualna Uczelnia, Plan Zajęć EAIIB oraz UniTime.\n\nNowa wersja to również odświeżone oceny cząstkowe. Można już samemu dodawać własne oceny i prowadzić swój \"dzienniczek studenta\".\n\nWprowadziłem również pełne wsparcie dla poziomej orientacji ekranu logowania.\n\nNiech apka służy! ;)\n\nWasz Janek</string>
     <string name="what_new_title">Co nowego?</string>
     <string name="schedule_nearest_event">Przejdź do najbliższego wydarzenia</string>
     <string name="schedule_change_group">Zmień grupę</string>
@@ -93,5 +94,6 @@
     <string name="deleting_is_doing">Trwa usuwanie…</string>
     <string name="deleting_complete">Usuwanie zakończone</string>
     <string name="deleting_error">Błąd usuwania, spróbuj ponownie</string>
+    <string name="refresh">Odśwież</string>
 
 </resources>

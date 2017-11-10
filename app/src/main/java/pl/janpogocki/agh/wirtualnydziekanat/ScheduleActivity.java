@@ -160,6 +160,11 @@ public class ScheduleActivity extends Fragment {
                         }
                     });
                 }
+
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "go_to_date");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
             }
         }, year, month, dayOfMonth);
         mDatePicker.setTitle(R.string.schedule_go_to_date);
@@ -175,6 +180,11 @@ public class ScheduleActivity extends Fragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "change_group");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                 PreferenceManager.getDefaultSharedPreferences(activityContext).edit().putFloat(Storage.getUniversityStatusHash() + "_choosen_eaiib_group",
                         Float.parseFloat(String.valueOf(recyclerViewScheduleAdapter.getListOfGroupIds()[((AlertDialog) dialogInterface).getListView().getCheckedItemPosition()])))
                         .apply();
@@ -203,6 +213,10 @@ public class ScheduleActivity extends Fragment {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "change_view_settings");
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
                 for (int j=0; j<valuesCount; j++){
                     PreferenceManager.getDefaultSharedPreferences(activityContext).edit()
@@ -228,30 +242,65 @@ public class ScheduleActivity extends Fragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     if (i == 0){
                         // copy to mycal
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "copy_to_mycal");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.copyAppointment(activityContext, currentAppointment, null);
                     }
                     else if (i == 1){
                         // copy all like this one to mycal
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "copy_all_to_mycal");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.copyAppointment(activityContext, currentAppointment, recyclerViewScheduleAdapter.getListOfAppointments());
                     }
                     else if (i == 2){
                         // tag "hide"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_hide");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 0, null);
                     }
                     else if (i == 3){
                         // tag "hide" to all like this one
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_hide_all");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 0, recyclerViewScheduleAdapter.getListOfAppointments());
                     }
                     else if (i == 4){
                         // tag "wazne"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_important");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 1, null);
                     }
                     else if (i == 5){
                         // tag "kolokwium"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_kolokwium");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 2, null);
                     }
                     else if (i == 6){
                         // tag "egzamin"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_exam");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 3, null);
                     }
 
@@ -267,22 +316,47 @@ public class ScheduleActivity extends Fragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     if (i == 0){
                         // tag "wazne"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_important");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 1, null);
                     }
                     else if (i == 1){
                         // tag "kolokwium"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_kolokwium");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 2, null);
                     }
                     else if (i == 2){
                         // tag "egzamin"
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "tag_exam");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.addOrChangeOrRemoveTag(activityContext, currentAppointment, 3, null);
                     }
                     else if (i == 3){
                         // edit event
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "edit");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         editEvent(currentAppointment);
                     }
                     else if (i == 4){
                         // delete event
+                        Bundle bundle = new Bundle();
+                        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "remove");
+                        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                         ScheduleUtils.removeAppointment(activityContext, currentAppointment);
                     }
 
@@ -331,9 +405,8 @@ public class ScheduleActivity extends Fragment {
         editTextTimeFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
+                int hour = Integer.parseInt(editTextTimeFrom.getText().toString().split(":")[0]);
+                int minute = Integer.parseInt(editTextTimeFrom.getText().toString().split(":")[1]);
                 TimePickerDialog mTimePicker = new TimePickerDialog(activityContext, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -370,10 +443,9 @@ public class ScheduleActivity extends Fragment {
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                int dayOfMonth = Integer.parseInt(editTextDate.getText().toString().split("\\.")[0]);
+                int month = Integer.parseInt(editTextDate.getText().toString().split("\\.")[1]) - 1;
+                int year = Integer.parseInt(editTextDate.getText().toString().split("\\.")[2]);
                 DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -388,6 +460,11 @@ public class ScheduleActivity extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "create");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
                     String dateAndTimeOfStartOfLesson = editTextDate.getText().toString() + " " + editTextTimeFrom.getText().toString();
                     String dateAndTimeOfStopOfLesson = editTextDate.getText().toString() + " " + editTextTimeTo.getText().toString();
@@ -487,9 +564,8 @@ public class ScheduleActivity extends Fragment {
         editTextTimeFrom.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar mcurrentTime = Calendar.getInstance();
-                int hour = mcurrentTime.get(Calendar.HOUR_OF_DAY);
-                int minute = mcurrentTime.get(Calendar.MINUTE);
+                int hour = Integer.parseInt(editTextTimeFrom.getText().toString().split(":")[0]);
+                int minute = Integer.parseInt(editTextTimeFrom.getText().toString().split(":")[1]);
                 TimePickerDialog mTimePicker = new TimePickerDialog(activityContext, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
@@ -526,10 +602,9 @@ public class ScheduleActivity extends Fragment {
         editTextDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                int dayOfMonth = Integer.parseInt(editTextDate.getText().toString().split("\\.")[0]);
+                int month = Integer.parseInt(editTextDate.getText().toString().split("\\.")[1]) - 1;
+                int year = Integer.parseInt(editTextDate.getText().toString().split("\\.")[2]);
                 DatePickerDialog mDatePicker = new DatePickerDialog(activityContext, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
@@ -544,6 +619,11 @@ public class ScheduleActivity extends Fragment {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 try {
+                    Bundle bundle = new Bundle();
+                    bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "edit");
+                    bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "custom_schedule");
+                    mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
                     DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
                     String dateAndTimeOfStartOfLesson = editTextDate.getText().toString() + " " + editTextTimeFrom.getText().toString();
                     String dateAndTimeOfStopOfLesson = editTextDate.getText().toString() + " " + editTextTimeTo.getText().toString();
@@ -624,6 +704,8 @@ public class ScheduleActivity extends Fragment {
                 returned[i] = "Tylko wykłady";
             else if (Float.parseFloat(String.valueOf(array[i])) % 1 == 0)
                 returned[i] = "Grupa " + String.valueOf(array[i]).split("\\.")[0];
+            else if (array[i].equals("9999.0"))
+                returned[i] = "Niestandardowa";
             else
                 returned[i] = "Grupa " + String.valueOf(array[i]).split("\\.")[0] + String.valueOf((char) (96+Integer.parseInt(array[i].toString().split("\\.")[1])));
         }
@@ -631,7 +713,7 @@ public class ScheduleActivity extends Fragment {
         return returned;
     }
 
-    private void refreshSchedule(View root) {
+    private void refreshSchedule() {
         if (Storage.schedule == null || Storage.schedule.size() == 0){
             // There's no downloaded data. Do that.
 
@@ -643,14 +725,37 @@ public class ScheduleActivity extends Fragment {
         }
     }
 
-    private void showSchedule(){
-        ((MainActivity) activityContext).showScheduleButtons(true, Storage.scheduleStatus);
+    public void refreshScheduleFromMenu(){
+        RelativeLayout rlLoader = root.findViewById(R.id.rlLoader);
+        RelativeLayout rlOffline = root.findViewById(R.id.rlOffline);
+        RelativeLayout rlData = root.findViewById(R.id.rlData);
+        FloatingActionButton fab = root.findViewById(R.id.fab);
 
+        rlData.setVisibility(View.GONE);
+        rlOffline.setVisibility(View.GONE);
+        rlLoader.setVisibility(View.VISIBLE);
+        fab.setVisibility(View.GONE);
+
+        // wait for change loading subtitle
+        animateFadeOut(textView3, root, 3000);
+        animateFadeIn(textView3bis, root, 3250);
+
+        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+            asyncTaskRunnerAutoRefresher.cancel(true);
+
+        asyncTaskRunnerAutoRefresher = new AsyncTaskRunnerAutoRefresher();
+
+        Storage.schedule = null;
+
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
+    }
+
+    private void showSchedule(){
         try {
             asyncTaskRunnerAutoRefresher.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } catch (IllegalStateException e){
             Log.i("aghwd", "aghwd", e);
-            Storage.appendCrash(e);
         }
     }
 
@@ -711,7 +816,7 @@ public class ScheduleActivity extends Fragment {
         mFirebaseAnalytics.setCurrentScreen(getActivity(), getString(R.string.schedule), null);
 
         asyncTaskRunnerAutoRefresher = new AsyncTaskRunnerAutoRefresher();
-        refreshSchedule(root);
+        refreshSchedule();
     }
 
     @Override
@@ -755,7 +860,7 @@ public class ScheduleActivity extends Fragment {
             rlLoader.setVisibility(View.GONE);
 
             if (fs == null || isError){
-                Storage.groupsAndModules = null;
+                Storage.schedule = null;
                 rlOffline.setVisibility(View.VISIBLE);
                 Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
                         .show();
@@ -766,7 +871,7 @@ public class ScheduleActivity extends Fragment {
                         rlOffline.setVisibility(View.GONE);
                         rlLoader.setVisibility(View.VISIBLE);
 
-                        refreshSchedule(root);
+                        refreshSchedule();
                     }
                 });
             }
@@ -801,7 +906,6 @@ public class ScheduleActivity extends Fragment {
                     Thread.sleep(30000);
                 } catch (InterruptedException e) {
                     Log.i("aghwd", "aghwd", e);
-                    Storage.appendCrash(e);
                 }
 
                 firstRun = false;
@@ -812,8 +916,10 @@ public class ScheduleActivity extends Fragment {
 
         @Override
         protected void onProgressUpdate(View... values) {
-            if (firstRun)
+            if (firstRun) {
+                ((MainActivity) activityContext).showScheduleButtons(true, Storage.scheduleStatus);
                 firstRunRecyclerView();
+            }
             else
                 refreshRecyclerView();
         }

@@ -9,7 +9,7 @@ import org.jsoup.nodes.Document;
  */
 
 public class FetchSyllabus {
-    public static final String URLdomainSyllabus = "https://www.syllabus.agh.edu.pl";
+    public static final String URLdomainSyllabus = "https://syllabuskrk.agh.edu.pl";
 
     public FetchSyllabus() throws Exception {
         FetchWebsite fw;
@@ -26,7 +26,7 @@ public class FetchSyllabus {
         level = Storage.universityStatus.get(5).toLowerCase();
 
         fw = new FetchWebsite(URLdomainSyllabus + "/" + rokRozpoczecia + "/pl/treasuries/academy_units/offer");
-        fww = fw.getWebsiteSyllabus(false, false, "");
+        fww = fw.getWebsiteGETSecure(false, false, "");
 
         // Check website existence
         if (fw.getResponseCode() / 100 == 2){
@@ -34,7 +34,7 @@ public class FetchSyllabus {
             String linkDepartment = URLdomainSyllabus + fwParsed.select("a.department-link.table-item-link:containsOwn(" + nazwaWydzialu + ")").get(0).attr("href");
 
             fw = new FetchWebsite(linkDepartment);
-            fww = fw.getWebsiteSyllabus(false, false, "");
+            fww = fw.getWebsiteGETSecure(false, false, "");
 
             if (fw.getResponseCode() / 100 == 2) {
                 Storage.syllabusURLlinkDepartment = linkDepartment;
