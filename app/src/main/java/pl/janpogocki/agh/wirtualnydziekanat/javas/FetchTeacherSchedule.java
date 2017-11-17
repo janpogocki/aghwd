@@ -263,8 +263,8 @@ public class FetchTeacherSchedule {
                     String [] descBR0split = descBR[0].split(", ");
 
                     name = descBR[0].replace(", " + descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1], "");
-                    description = descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim() + "\n"
-                            + descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1];
+                    description = descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1] + "\n"
+                            + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
 
                     if (descBR.length > 2)
                         description = description + "\n" + descBR[2].replace("Informacja: ", "").trim();
@@ -273,8 +273,8 @@ public class FetchTeacherSchedule {
                     String [] descBR0split = descBR[0].split(", ");
 
                     name = descBR[0].replace(", " + descBR0split[descBR0split.length-1], "");
-                    description = descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim() + "\n"
-                            + descBR0split[descBR0split.length-1];
+                    description = descBR0split[descBR0split.length-1] + "\n"
+                            + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
 
                     if (descBR.length > 2)
                         description = description + "\n" + descBR[2].replace("Informacja: ", "").trim();

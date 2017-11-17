@@ -99,8 +99,6 @@ public class AboutActivity extends Fragment {
 
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.janpogocki.pl"));
                 startActivity(browserIntent);
-
-                Log.e("link", "clicked");
             }
         });
 

@@ -15,7 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
@@ -84,7 +84,7 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
         txtListChildData.setText(childDesc);
         txtListChildUwagi.setText(childData);
 
-        RelativeLayout rlDataItem = convertView.findViewById(R.id.rlDataItem);
+        LinearLayout rlDataItem = convertView.findViewById(R.id.rlDataItem);
         rlDataItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

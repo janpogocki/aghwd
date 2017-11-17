@@ -98,21 +98,6 @@ public class RecyclerViewTeacherScheduleAdapter extends RecyclerView.Adapter<Rec
         return nameOfDayOfWeek[cal.get(Calendar.DAY_OF_WEEK)-1] + ", " + cal.get(Calendar.DAY_OF_MONTH) + " " + nameOfMonths[cal.get(Calendar.MONTH)];
     }
 
-    private String getCountdownTime(long diff){
-        if (diff <= 60*60*1000)
-            return (int) Math.ceil(diff/(double)(60*1000)) + " min";
-        else if (diff <= 24*60*60*1000){
-            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-            cal.setTimeInMillis(diff);
-            cal.add(Calendar.MINUTE, 1);
-            return String.format(Locale.US, "%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
-        }
-        else if (diff <= 48*60*60*1000)
-            return "1 dzień";
-        else
-            return (int) Math.round(diff/(double)(24*60*60*1000)) + " dni";
-    }
-
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.schedule_item, viewGroup, false);
@@ -149,17 +134,16 @@ public class RecyclerViewTeacherScheduleAdapter extends RecyclerView.Adapter<Rec
         Date currentDate = new Date(currentTime);
 
         if (currentDate.before(hourStartDate)){
-            long diff = hourStartTime - currentTime;
-            viewHolder.textViewHourCountdown.setText("za\n" + getCountdownTime(diff));
+            viewHolder.textViewHourCountdown.setText(ScheduleUtils.getCountdownTime(hourStartTime, currentTime, true));
 
+            long diff = hourStartTime - currentTime;
             if (diff <= 15*60*1000)
                 viewHolder.textViewHourCountdown.setTextColor(c.getResources().getColor(R.color.colorPrimary));
             else if (diff <= 60*60*1000)
                 viewHolder.textViewHourCountdown.setTextColor(c.getResources().getColor(R.color.colorOrange));
         }
         else if ((currentDate.equals(hourStartDate) || currentDate.after(hourStartDate)) && currentDate.before(hourStopDate)){
-            long diff = hourStopTime - currentTime;
-            viewHolder.textViewHourCountdown.setText("trwa\njeszcze\n" + getCountdownTime(diff));
+            viewHolder.textViewHourCountdown.setText(ScheduleUtils.getCountdownTime(hourStartTime, currentTime, false));
             viewHolder.textViewHourCountdown.setTextColor(c.getResources().getColor(R.color.colorGreen));
         }
         else {

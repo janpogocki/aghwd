@@ -11,7 +11,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.FileNotFoundException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
@@ -211,8 +210,8 @@ public class FetchSchedule {
                     String [] descBR0split = descBR[0].split(", ");
 
                     name = descBR[0].replace(", " + descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1], "");
-                    description = descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim() + "\n"
-                            + descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1];
+                    description = descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1] + "\n"
+                            + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
 
                     if (descBR.length > 2)
                         description = description + "\n" + descBR[2].replace("Informacja: ", "").trim();
@@ -221,8 +220,8 @@ public class FetchSchedule {
                     String [] descBR0split = descBR[0].split(", ");
 
                     name = descBR[0].replace(", " + descBR0split[descBR0split.length-1], "");
-                    description = descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim() + "\n"
-                            + descBR0split[descBR0split.length-1];
+                    description = descBR0split[descBR0split.length-1] + "\n"
+                            + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
 
                     if (descBR.length > 2)
                         description = description + "\n" + descBR[2].replace("Informacja: ", "").trim();
@@ -244,13 +243,12 @@ public class FetchSchedule {
     }
 
     private void FetchUniTimeSchedule() throws Exception {
-        String dictionaryURL = "https://api.janpogocki.pl/aghwd/aghwd_unitime.php"; //todo
+        String dictionaryURL = "http://sprawdz.plan.agh.edu.pl/aghwd_unitime.php";
 
         FetchWebsite fw, fw2;
         String fww2, specjalnosc, stopien, rodzaj;
-        boolean planAvailable = true;
 
-        String fww = "";
+        String fww;
         specjalnosc = Storage.universityStatus.get(3).trim();
 
         if (Storage.universityStatus.get(5).contains("pierwszego"))
@@ -266,25 +264,26 @@ public class FetchSchedule {
             rodzaj = "N";
 
         fw2 = new FetchWebsite(dictionaryURL +
-                "?wydzial=" + Storage.summarySemesters.get(1) +
-                "&kierunek=" + Storage.summarySemesters.get(2) +
-                "&specjalnosc=" + specjalnosc +
+                "?wydzial=" + Storage.universityStatus.get(1) +
+                "&kierunek=" + Storage.universityStatus.get(2).replace("+", "%2B") +
+                "&specjalnosc=" + specjalnosc.replace("+", "%2B") +
                 "&stopien=" + stopien +
                 "&semestr=" + Storage.getSemesterNumberById(Storage.summarySemesters.size()-1) +
                 "&rodzaj=" + rodzaj);
-        fww2 = fw2.getWebsite(false, false, ""); //todo
+        fww2 = fw2.getWebsiteHTTP(false, false, "");
 
-        try {
-            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&name=" + fww2 + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
-            fww = fw.getWebsiteGETSecure(false, false, "");
-        } catch (Exception e){
-            Log.i("aghwd", "aghwd", e);
-            Storage.appendCrash(e);
-            status = -1;
+        boolean planAvailable;
+        if (fww2.contains("null")) {
             planAvailable = false;
+            status = -1;
         }
+        else
+            planAvailable = true;
 
         if (planAvailable) {
+            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&name=" + fww2.replace("+", "%2B").replace("%2BS", "+S") + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
+            fww = fw.getWebsiteGETSecure(false, false, "");
+
             // parse CSV with timetable
             String[] csvHeader = {"Name", "Section", "Type", "Title", "Date", "Published Start", "Published End", "Location", "Capacity", "Instructor / Sponsor", "Email", "Requested Services", "Approved"};
             CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(csvHeader);

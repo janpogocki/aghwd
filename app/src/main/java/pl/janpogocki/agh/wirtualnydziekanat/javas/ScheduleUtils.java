@@ -12,7 +12,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Jan on 29.10.2017.
@@ -27,6 +31,50 @@ public class ScheduleUtils {
             return "Semestr+zimowy" + Storage.summarySemesters.get(maxVal).get(0).split("/")[0] + "AGH";
         else
             return "Semestr+letni" + Storage.summarySemesters.get(maxVal).get(0).split("/")[0] + "AGH";
+    }
+
+    public static String getCountdownTime(long hourStartTime, long currentTime, boolean futureEvent){
+        Calendar cal1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal1.setTimeInMillis(hourStartTime);
+        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.set(Calendar.MINUTE, 0);
+        cal1.set(Calendar.SECOND, 0);
+        cal1.set(Calendar.MILLISECOND, 0);
+
+        Calendar cal2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        cal2.setTimeInMillis(System.currentTimeMillis());
+        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.set(Calendar.MINUTE, 0);
+        cal2.set(Calendar.SECOND, 0);
+        cal2.set(Calendar.MILLISECOND, 0);
+
+        long diff = hourStartTime - currentTime;
+        int diffDays = (int) TimeUnit.DAYS.convert(cal1.getTimeInMillis()-cal2.getTimeInMillis(), TimeUnit.MILLISECONDS);
+
+        String prefix;
+        if (futureEvent)
+            prefix = "za\n";
+        else
+            prefix = "trwa\njeszcze\n";
+
+        if (diff <= 60*60*1000)
+            return prefix + (int) Math.ceil(diff/(double)(60*1000)) + " min";
+        else if (diff <= 24*60*60*1000){
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+            cal.setTimeInMillis(diff);
+            cal.add(Calendar.MINUTE, 1);
+            return prefix + String.format(Locale.US, "%02d:%02d", cal.get(Calendar.HOUR_OF_DAY), cal.get(Calendar.MINUTE));
+        }
+        else if (diffDays == 1 && !futureEvent)
+            return prefix + "1 dzień";
+        else if (diffDays == 1 && futureEvent)
+            return "jutro";
+        else if (diffDays == 2 && !futureEvent)
+            return prefix + "2 dni";
+        else if (diffDays == 2 && futureEvent)
+            return "pojutrze";
+        else
+            return prefix + diffDays + " dni";
     }
 
     public static void saveNewAppointment(Context c, Appointment appointment){
