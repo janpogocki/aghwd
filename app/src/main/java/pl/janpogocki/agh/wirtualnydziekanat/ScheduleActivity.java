@@ -759,7 +759,7 @@ public class ScheduleActivity extends Fragment {
         }
     }
 
-    private void setRecyclerViewScheduleAdapter(){
+    private void setRecyclerViewScheduleAdapter() throws Exception{
         recyclerViewScheduleAdapter = new RecyclerViewScheduleAdapter(activityContext, this);
     }
 
@@ -897,10 +897,15 @@ public class ScheduleActivity extends Fragment {
             firstRun = true;
 
             while (!isCancelled()){
-                if (firstRun)
-                    setRecyclerViewScheduleAdapter();
-
-                publishProgress();
+                if (firstRun) {
+                    try {
+                        setRecyclerViewScheduleAdapter();
+                        publishProgress();
+                    } catch (Exception e) {
+                        Log.i("aghwd", "aghwd", e);
+                        Storage.appendCrash(e);
+                    }
+                }
 
                 try {
                     Thread.sleep(30000);

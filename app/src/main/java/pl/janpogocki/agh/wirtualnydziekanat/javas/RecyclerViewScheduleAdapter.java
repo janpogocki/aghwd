@@ -44,7 +44,7 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
     private List<Double> listOfGroupIds;
     private ScheduleActivity scheduleActivity;
 
-    public RecyclerViewScheduleAdapter(Context c, ScheduleActivity scheduleActivity) {
+    public RecyclerViewScheduleAdapter(Context c, ScheduleActivity scheduleActivity) throws Exception {
         this.c = c;
         this.lastPastAppointement = 0;
         this.scheduleActivity = scheduleActivity;
@@ -97,7 +97,7 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
         return false;
     }
 
-    private void prepareFinalListOfAppointments(){
+    private void prepareFinalListOfAppointments() throws Exception {
         listOfAppointments = new ArrayList<>();
         listOfGroupIds = new ArrayList<>();
         String lastDate = "";
@@ -111,22 +111,17 @@ public class RecyclerViewScheduleAdapter extends RecyclerView.Adapter<RecyclerVi
         File file = new File(c.getFilesDir() + "/" + filename);
 
         if (file.exists()){
-            try {
-                StringBuilder jsonFromFile = new StringBuilder();
-                FileInputStream inputStream = c.openFileInput(filename);
-                BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = r.readLine()) != null) {
-                    jsonFromFile.append(line);
-                }
-                r.close();
-                inputStream.close();
-
-                jsonObject = new JSONObject(jsonFromFile.toString());
-            } catch (Exception e){
-                Log.i("aghwd", "aghwd", e);
-                Storage.appendCrash(e);
+            StringBuilder jsonFromFile = new StringBuilder();
+            FileInputStream inputStream = c.openFileInput(filename);
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = r.readLine()) != null) {
+                jsonFromFile.append(line);
             }
+            r.close();
+            inputStream.close();
+
+            jsonObject = new JSONObject(jsonFromFile.toString());
         }
 
         // insert events from mycal.json

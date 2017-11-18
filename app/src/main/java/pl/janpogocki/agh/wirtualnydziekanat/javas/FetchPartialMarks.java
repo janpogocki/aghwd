@@ -132,49 +132,44 @@ public class FetchPartialMarks {
         }
     }
 
-    private void prepareDataFromJSON(Context c, int currentSemester){
+    private void prepareDataFromJSON(Context c, int currentSemester) throws Exception {
         // import and sort data from json
         String filenamePM = Storage.getUniversityStatusHash() + "_pm_" + currentSemester + ".json";
         File filePM = new File(c.getFilesDir() + "/" + filenamePM);
 
         if (filePM.exists()){
-            try {
-                StringBuilder jsonFromPM = new StringBuilder();
-                FileInputStream inputStream = c.openFileInput(filenamePM);
-                BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-                while ((line = r.readLine()) != null) {
-                    jsonFromPM.append(line);
-                }
-                r.close();
-                inputStream.close();
-
-                JSONArray jsonArrayPM = new JSONArray(jsonFromPM.toString());
-
-                // iterate and add marks
-                for (int i=0; i<jsonArrayPM.length(); i++){
-                    String id = jsonArrayPM.getJSONObject(i).getString("id");
-                    String mark = jsonArrayPM.getJSONObject(i).getString("mark");
-                    String title = jsonArrayPM.getJSONObject(i).getString("title");
-                    long timestamp = jsonArrayPM.getJSONObject(i).getLong("timestamp");
-                    String description = jsonArrayPM.getJSONObject(i).getString("description");
-
-                    PartialMark currentPartialMark = new PartialMark(mark, title, id, "", timestamp, description, String.valueOf(currentSemester));
-
-                    listOfJsonPartialMarks.add(currentPartialMark);
-                }
-
-                // sort marks by timestamp
-                Collections.sort(listOfJsonPartialMarks, new Comparator<PartialMark>() {
-                    @Override
-                    public int compare(final PartialMark object1, final PartialMark object2) {
-                        return Long.valueOf(object1.timestamp).compareTo(object2.timestamp);
-                    }
-                });
-            } catch (Exception e){
-                Log.i("aghwd", "aghwd", e);
-                Storage.appendCrash(e);
+            StringBuilder jsonFromPM = new StringBuilder();
+            FileInputStream inputStream = c.openFileInput(filenamePM);
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = r.readLine()) != null) {
+                jsonFromPM.append(line);
             }
+            r.close();
+            inputStream.close();
+
+            JSONArray jsonArrayPM = new JSONArray(jsonFromPM.toString());
+
+            // iterate and add marks
+            for (int i=0; i<jsonArrayPM.length(); i++){
+                String id = jsonArrayPM.getJSONObject(i).getString("id");
+                String mark = jsonArrayPM.getJSONObject(i).getString("mark");
+                String title = jsonArrayPM.getJSONObject(i).getString("title");
+                long timestamp = jsonArrayPM.getJSONObject(i).getLong("timestamp");
+                String description = jsonArrayPM.getJSONObject(i).getString("description");
+
+                PartialMark currentPartialMark = new PartialMark(mark, title, id, "", timestamp, description, String.valueOf(currentSemester));
+
+                listOfJsonPartialMarks.add(currentPartialMark);
+            }
+
+            // sort marks by timestamp
+            Collections.sort(listOfJsonPartialMarks, new Comparator<PartialMark>() {
+                @Override
+                public int compare(final PartialMark object1, final PartialMark object2) {
+                    return Long.valueOf(object1.timestamp).compareTo(object2.timestamp);
+                }
+            });
         }
     }
 

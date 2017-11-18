@@ -203,15 +203,25 @@ public class FetchSchedule {
 
                 double group = jsonArray.getJSONObject(i).getDouble("group");
                 boolean lecture = jsonArray.getJSONObject(i).getDouble("group") == 0;
-                String location = descBR[1].split(",")[0].replace("Sala: ", "").trim();
-                String name, description;
+                String name, description, location;
+
+                // check if location exists
+                if (descBR[1].toLowerCase().contains("sala") && descBR[1].toLowerCase().contains("prowadzący"))
+                    location = descBR[1].split(",")[0].replace("Sala: ", "").trim();
+                else if (descBR[1].toLowerCase().contains("sala") && !descBR[1].toLowerCase().contains("prowadzący"))
+                    location = descBR[1].replace("Sala: ", "").trim();
+                else
+                    location = "(brak lokalizacji)";
 
                 if (descBR[0].toLowerCase().contains("grupa")){
                     String [] descBR0split = descBR[0].split(", ");
 
                     name = descBR[0].replace(", " + descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1], "");
-                    description = descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1] + "\n"
-                            + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
+                    description = descBR0split[descBR0split.length-2].trim() + ", " + descBR0split[descBR0split.length-1];
+
+                    // check if teacher exists
+                    if (descBR[1].toLowerCase().contains("prowadzący"))
+                        description += "\n" + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
 
                     if (descBR.length > 2)
                         description = description + "\n" + descBR[2].replace("Informacja: ", "").trim();
@@ -220,8 +230,11 @@ public class FetchSchedule {
                     String [] descBR0split = descBR[0].split(", ");
 
                     name = descBR[0].replace(", " + descBR0split[descBR0split.length-1], "");
-                    description = descBR0split[descBR0split.length-1] + "\n"
-                            + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
+                    description = descBR0split[descBR0split.length-1];
+
+                    // check if teacher exists
+                    if (descBR[1].toLowerCase().contains("prowadzący"))
+                        description += "\n" + descBR[1].split(", ")[2].trim() + " " + descBR[1].split(", ")[1].replace("prowadzący: ", "").trim();
 
                     if (descBR.length > 2)
                         description = description + "\n" + descBR[2].replace("Informacja: ", "").trim();
