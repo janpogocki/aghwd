@@ -151,9 +151,7 @@ public class MainActivity extends AppCompatActivity
     public void enableDisableSemesterSpinner(boolean val){
         if (currentFragmentScreen.equals("semester") || currentFragmentScreen.equals("semester_partial")
                 || currentFragmentScreen.equals("files")) {
-            if (MenuWithActionBar == null)
-                restartApp();
-            else {
+            if (MenuWithActionBar != null) {
                 toolbarSpinner.setEnabled(val);
                 toolbarSpinner.setClickable(val);
             }
@@ -254,7 +252,8 @@ public class MainActivity extends AppCompatActivity
             public void onNothingSelected(AdapterView<?> adapterView) {}
         });
 
-        if ("semester".contains(Storage.sharedPreferencesStartScreen)) {
+        if ("semester".contains(Storage.sharedPreferencesStartScreen)
+                || "semester_partial".contains(Storage.sharedPreferencesStartScreen)) {
             showSemesterSpinner(true);
             enableDisableSemesterSpinner(false);
         }

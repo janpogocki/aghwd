@@ -353,6 +353,7 @@ public class LogIn extends AppCompatActivity {
                     // Jump to MainActivity
                     Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
                     startActivity(openMarks);
+                    finish();
                 } else if (logging.status == 1) {
                     // is ok, log in
                     // hide loader
@@ -451,6 +452,7 @@ public class LogIn extends AppCompatActivity {
                 // Jump to MainActivity
                 Intent openMarks = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(openMarks);
+                finish();
             }
         }
     }
