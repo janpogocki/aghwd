@@ -361,12 +361,12 @@ public class PartialMarksExplorer extends Fragment {
         builder.show();
     }
 
-    public void exploreMarks(View view) {
+    public void exploreMarks() {
         prepareListData();
 
         listAdapter = new ExpandableListAdapterPartialMarks(activityContext, listDataHeader, listDataChild, this);
 
-        AnimatedExpandableListView expandableListView = view.findViewById(R.id.expandableListView);
+        AnimatedExpandableListView expandableListView = root.findViewById(R.id.expandableListView);
         expandableListView.setAdapter(listAdapter);
 
         if (Storage.currentSemesterPartialMarksSubjects.keySet().size() > 0)
@@ -655,9 +655,10 @@ public class PartialMarksExplorer extends Fragment {
 
         @Override
         protected void onProgressUpdate(View... params){
-            exploreMarks(root);
-            rlLoader.setVisibility(View.GONE);
+            if (fpm != null)
+                exploreMarks();
 
+            rlLoader.setVisibility(View.GONE);
         }
 
         @Override

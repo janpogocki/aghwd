@@ -108,10 +108,16 @@ public class PartialMarksUtils {
                             }
                 }
 
-                // save to file
-                PrintWriter out = new PrintWriter(file);
-                out.print(newJsonArray.toString());
-                out.close();
+                if (newJsonArray.length() == 0){
+                    // remove file
+                    file.delete();
+                }
+                else {
+                    // save to file
+                    PrintWriter out = new PrintWriter(file);
+                    out.print(newJsonArray.toString());
+                    out.close();
+                }
             }
         } catch (Exception e) {
             Log.i("aghwd", "aghwd", e);

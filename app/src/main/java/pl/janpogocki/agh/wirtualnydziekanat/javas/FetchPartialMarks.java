@@ -36,15 +36,20 @@ public class FetchPartialMarks {
         if (HTML2interprete == null || HTML2interprete.isEmpty() || HTML2interprete.get(0).equals("0"))
             status = -1;
         else {
+            status = -1;
+
             if (Storage.universityStatus == null || Storage.universityStatus.size() == 0){
                 new FetchUniversityStatus(false);
             }
 
             database = new ArrayList<>();
             listOfJsonPartialMarks = new ArrayList<>();
-            prepareDataFromJSON(c, currentSemester);
-
-            status = -1;
+            try {
+                prepareDataFromJSON(c, currentSemester);
+            } catch (Exception e) {
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+            }
 
             Storage.currentSemesterPartialMarksSubjects = new HashMap<>();
 
@@ -95,25 +100,27 @@ public class FetchPartialMarks {
                     }
 
                     // add marks from json
-                    for (PartialMark current : listOfJsonPartialMarks){
-                        if (current.subjectName.equals(subjectName + lessonName)){
-                            long currentTimestamp = current.timestamp + TimeZone.getDefault().getOffset(current.timestamp);
-                            Calendar cal = Calendar.getInstance();
-                            cal.setTimeInMillis(currentTimestamp);
-                            String currentDate = String.format(Locale.US, "%04d-%02d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH)+1, cal.get(Calendar.DAY_OF_MONTH));
+                    if (listOfJsonPartialMarks != null && listOfJsonPartialMarks.size() > 0) {
+                        for (PartialMark current : listOfJsonPartialMarks) {
+                            if (current.subjectName.equals(subjectName + lessonName)) {
+                                long currentTimestamp = current.timestamp + TimeZone.getDefault().getOffset(current.timestamp);
+                                Calendar cal = Calendar.getInstance();
+                                cal.setTimeInMillis(currentTimestamp);
+                                String currentDate = String.format(Locale.US, "%04d-%02d-%02d", cal.get(Calendar.YEAR), cal.get(Calendar.MONTH) + 1, cal.get(Calendar.DAY_OF_MONTH));
 
-                            List<String> db3 = new ArrayList<>();
-                            db3.add(current.title); // nazwa
-                            db3.add(current.mark); // ocena
-                            db3.add(currentDate); // data
-                            db3.add(""); // prowadzacy
-                            db3.add(current.description); // uwagi
-                            db3.add("user_mark"); // wyroznik agh_mark
-                            db3.add(subjectName); // przedmiot
-                            db3.add(lessonName); // typ zajec
-                            db3.add(String.valueOf(currentSemester)); // obecny semestr
+                                List<String> db3 = new ArrayList<>();
+                                db3.add(current.title); // nazwa
+                                db3.add(current.mark); // ocena
+                                db3.add(currentDate); // data
+                                db3.add(""); // prowadzacy
+                                db3.add(current.description); // uwagi
+                                db3.add("user_mark"); // wyroznik agh_mark
+                                db3.add(subjectName); // przedmiot
+                                db3.add(lessonName); // typ zajec
+                                db3.add(String.valueOf(currentSemester)); // obecny semestr
 
-                            db2.add(db3);
+                                db2.add(db3);
+                            }
                         }
                     }
 

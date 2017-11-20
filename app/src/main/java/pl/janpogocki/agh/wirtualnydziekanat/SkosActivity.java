@@ -352,7 +352,7 @@ public class SkosActivity extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+        if (asyncTaskRunnerAutoRefresher != null && !asyncTaskRunnerAutoRefresher.isCancelled())
             asyncTaskRunnerAutoRefresher.cancel(true);
     }
 
@@ -360,7 +360,7 @@ public class SkosActivity extends Fragment {
     public void onPause() {
         super.onPause();
 
-        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+        if (asyncTaskRunnerAutoRefresher != null && !asyncTaskRunnerAutoRefresher.isCancelled())
             asyncTaskRunnerAutoRefresher.cancel(true);
     }
 

@@ -740,7 +740,7 @@ public class ScheduleActivity extends Fragment {
         animateFadeOut(textView3, root, 3000);
         animateFadeIn(textView3bis, root, 3250);
 
-        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+        if (asyncTaskRunnerAutoRefresher != null && !asyncTaskRunnerAutoRefresher.isCancelled())
             asyncTaskRunnerAutoRefresher.cancel(true);
 
         asyncTaskRunnerAutoRefresher = new AsyncTaskRunnerAutoRefresher();
@@ -823,7 +823,7 @@ public class ScheduleActivity extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
 
-        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+        if (asyncTaskRunnerAutoRefresher != null && !asyncTaskRunnerAutoRefresher.isCancelled())
             asyncTaskRunnerAutoRefresher.cancel(true);
     }
 
@@ -831,7 +831,7 @@ public class ScheduleActivity extends Fragment {
     public void onPause() {
         super.onPause();
 
-        if (!asyncTaskRunnerAutoRefresher.isCancelled())
+        if (asyncTaskRunnerAutoRefresher != null && !asyncTaskRunnerAutoRefresher.isCancelled())
             asyncTaskRunnerAutoRefresher.cancel(true);
     }
 

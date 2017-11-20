@@ -208,10 +208,16 @@ public class ScheduleUtils {
                 }
             }
 
-            // save updated new jsonObject to file
-            PrintWriter out = new PrintWriter(file);
-            out.print(jsonObject.toString());
-            out.close();
+            if (jsonObject.length() == 0){
+                // remove file
+                file.delete();
+            }
+            else {
+                // save updated new jsonObject to file
+                PrintWriter out = new PrintWriter(file);
+                out.print(jsonObject.toString());
+                out.close();
+            }
         } catch (Exception e) {
             Log.i("aghwd", "aghwd", e);
             Storage.appendCrash(e);
@@ -288,10 +294,16 @@ public class ScheduleUtils {
                     }
                 }
 
-                // save to file
-                PrintWriter out = new PrintWriter(file);
-                out.print(newJsonArray.toString());
-                out.close();
+                if (newJsonArray.length() == 0){
+                    // remove file
+                    file.delete();
+                }
+                else {
+                    // save to file
+                    PrintWriter out = new PrintWriter(file);
+                    out.print(newJsonArray.toString());
+                    out.close();
+                }
             }
         } catch (Exception e) {
             Log.i("aghwd", "aghwd", e);
