@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,8 +143,14 @@ public class GroupsActivity extends Fragment {
             if (fg == null || isError){
                 Storage.groupsAndModules = null;
                 rlOffline.setVisibility(View.VISIBLE);
-                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .show();
+
+                try {
+                    Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override

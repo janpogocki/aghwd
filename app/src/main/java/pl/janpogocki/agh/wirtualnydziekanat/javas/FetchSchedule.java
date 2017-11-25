@@ -165,7 +165,9 @@ public class FetchSchedule {
         String poziomStudiow = Storage.universityStatus.get(5);
 
         try {
-            if (poziomStudiow.contains("pierwszego") && kierunek.contains("Elektrotechnika") && specjalnosc.length() > 0)
+            if (poziomStudiow.contains("pierwszego") && kierunek.contains("Elektrotechnika") && specjalnosc.length() > 0 && formaStudiow.contains("Niestacjonarne"))
+                statusEaiib = fwParsed.select("select#view-select > option:matches(" + kierunek + " - " + specjalnosc + " - " + formaStudiow + " - Studia I stopnia - [a-zA-Z]{0,} [0-9]{4}\\/[0-9]{4}\\/S" + Storage.getSemesterNumberById(Storage.summarySemesters.size() - 1) + ")").get(0).attr("value");
+            else if (poziomStudiow.contains("pierwszego") && kierunek.contains("Elektrotechnika") && specjalnosc.length() > 0)
                 statusEaiib = fwParsed.select("select#view-select > option:matches(" + kierunek + " - " + formaStudiow + " - Studia I stopnia - Blok obieralny " + specjalnosc.replaceAll("\"", "").substring(specjalnosc.replaceAll("\"", "").length() - 1) + " - [a-zA-Z]{0,} [0-9]{4}\\/[0-9]{4}\\/S" + Storage.getSemesterNumberById(Storage.summarySemesters.size() - 1) + ")").get(0).attr("value");
             else if (poziomStudiow.contains("pierwszego"))
                 statusEaiib = fwParsed.select("select#view-select > option:matches(" + kierunek + " - " + formaStudiow + " - Studia I stopnia - [a-zA-Z]{0,} [0-9]{4}\\/[0-9]{4}\\/S" + Storage.getSemesterNumberById(Storage.summarySemesters.size() - 1) + ")").get(0).attr("value");

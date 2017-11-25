@@ -172,12 +172,22 @@ public class SettingsActivity extends PreferenceFragment
             progress.dismiss();
 
             if (isError) {
-                Snackbar.make(view, activityContext.getResources().getString(R.string.deleting_error), Snackbar.LENGTH_LONG)
-                        .show();
+                try {
+                    Snackbar.make(view, activityContext.getResources().getString(R.string.deleting_error), Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
             }
             else {
-                Snackbar.make(view, activityContext.getResources().getString(R.string.deleting_complete), Snackbar.LENGTH_LONG)
-                        .show();
+                try {
+                    Snackbar.make(view, activityContext.getResources().getString(R.string.deleting_complete), Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
             }
         }
     }

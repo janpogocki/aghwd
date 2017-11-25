@@ -95,8 +95,13 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
                             new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
                             0);
 
-                    Snackbar.make(view, R.string.download_permission_info, Snackbar.LENGTH_LONG)
-                            .show();
+                    try {
+                        Snackbar.make(view, R.string.download_permission_info, Snackbar.LENGTH_LONG)
+                                .show();
+                    } catch (Exception e){
+                        Log.i("aghwd", "aghwd", e);
+                        Storage.appendCrash(e);
+                    }
                 }
                 else {
                     // Download file to downloads
@@ -198,12 +203,22 @@ public class ExpandableListAdapterFiles extends AnimatedExpandableListView.Anima
             progress.dismiss();
             
             if (isError) {
-                Snackbar.make(_view, R.string.download_error, Snackbar.LENGTH_LONG)
-                        .show();
+                try {
+                    Snackbar.make(_view, R.string.download_error, Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
             }
             else {
-                Snackbar.make(_view, R.string.download_ok, Snackbar.LENGTH_LONG)
-                        .show();
+                try {
+                    Snackbar.make(_view, R.string.download_ok, Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
 
                 DownloadManager downloadManager = (DownloadManager) _context.getSystemService(Context.DOWNLOAD_SERVICE);
                 if (downloadManager != null) {

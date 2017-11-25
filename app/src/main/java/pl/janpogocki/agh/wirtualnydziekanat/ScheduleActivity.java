@@ -132,8 +132,9 @@ public class ScheduleActivity extends Fragment {
             @Override
             public void onDateSet(DatePicker datePicker, int selectedYear, int selectedMonth, int selectedDay) {
                 Calendar cal = Calendar.getInstance();
-                cal.set(selectedYear, selectedMonth, selectedDay);
+                cal.set(selectedYear, selectedMonth, selectedDay, 0, 0, 0);
                 Date selectedDate =  cal.getTime();
+                boolean foundDay = false;
 
                 for (int i=0; i<recyclerViewScheduleAdapter.getListOfAppointments().size()-1; i++){
                     Date currentDate = new Date(recyclerViewScheduleAdapter.getListOfAppointments().get(i+1).startTimestamp);
@@ -148,11 +149,12 @@ public class ScheduleActivity extends Fragment {
                                 }
                             });
                         }
-                        return;
+                        foundDay = true;
+                        break;
                     }
                 }
 
-                if (recyclerViewSchedule != null && recyclerViewScheduleAdapter.getListOfAppointments().size() != 0) {
+                if (!foundDay && recyclerViewSchedule != null && recyclerViewScheduleAdapter.getListOfAppointments().size() != 0) {
                     recyclerViewSchedule.post(new Runnable() {
                         @Override
                         public void run() {
@@ -862,8 +864,13 @@ public class ScheduleActivity extends Fragment {
             if (fs == null || isError){
                 Storage.schedule = null;
                 rlOffline.setVisibility(View.VISIBLE);
-                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .show();
+                try {
+                    Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override

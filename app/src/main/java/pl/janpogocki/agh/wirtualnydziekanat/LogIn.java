@@ -126,8 +126,13 @@ public class LogIn extends AppCompatActivity {
 
     private void logInButtonPressed(View v){
         if (editText.getText().toString().equals("") || editText2.getText().toString().equals("")){
-            Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fill_all_inputs, Snackbar.LENGTH_LONG)
-                    .setAction("Action", null).show();
+            try {
+                Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fill_all_inputs, Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            } catch (Exception e){
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+            }
         }
         else {
             String login = editText.getText().toString();
@@ -308,12 +313,22 @@ public class LogIn extends AppCompatActivity {
                         relativeLayout2.setVisibility(View.VISIBLE);
 
                     if (logging.status == -3) {
-                        Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_technical_works, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                        try {
+                            Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_technical_works, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        } catch (Exception e){
+                            Log.i("aghwd", "aghwd", e);
+                            Storage.appendCrash(e);
+                        }
                     }
                     else {
-                        Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_unknown_error, Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
+                        try {
+                            Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_unknown_error, Snackbar.LENGTH_LONG)
+                                    .setAction("Action", null).show();
+                        } catch (Exception e){
+                            Log.i("aghwd", "aghwd", e);
+                            Storage.appendCrash(e);
+                        }
                     }
                 } else if (logging.status == -2) {
                     // agh index is not ready to view
@@ -336,8 +351,13 @@ public class LogIn extends AppCompatActivity {
                     relativeLayout2.setVisibility(View.VISIBLE);
                     relativeLayout3.setVisibility(View.GONE);
                     editText2.setText("");
-                    Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_wrong_data, Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
+                    try {
+                        Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_wrong_data, Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    } catch (Exception e){
+                        Log.i("aghwd", "aghwd", e);
+                        Storage.appendCrash(e);
+                    }
                 } else if (logging.status == 0) {
                     // is ok, log in
                     String firebaseIsRemembered;
@@ -393,8 +413,13 @@ public class LogIn extends AppCompatActivity {
                 Log.i("aghwd", "aghwd", e);
                 Storage.appendCrash(e);
                 relativeLayout3.setVisibility(View.GONE);
-                Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                try {
+                    Snackbar.make(findViewById(R.id.relativeLayout), R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                } catch (Exception e1){
+                    Log.i("aghwd", "aghwd", e1);
+                    Storage.appendCrash(e1);
+                }
 
                 if (rp.isRemembered())
                     relativeLayout4.setVisibility(View.VISIBLE);

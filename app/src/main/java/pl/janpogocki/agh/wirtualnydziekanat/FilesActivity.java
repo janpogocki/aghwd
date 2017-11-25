@@ -303,8 +303,13 @@ public class FilesActivity extends Fragment {
             if (ff == null || isError){
                 rlOffline.setVisibility(View.VISIBLE);
                 rlLoader.setVisibility(View.GONE);
-                Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
-                        .show();
+                try {
+                    Snackbar.make(root, R.string.log_in_fail_server_down, Snackbar.LENGTH_LONG)
+                            .show();
+                } catch (Exception e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
 
                 rlOffline.setOnClickListener(new View.OnClickListener() {
                     @Override

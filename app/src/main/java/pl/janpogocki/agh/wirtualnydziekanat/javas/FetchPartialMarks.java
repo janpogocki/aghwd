@@ -186,9 +186,15 @@ public class FetchPartialMarks {
 
         for (LabelAndList<LabelAndList<List<String>>> current : database) {
             db2 = new ArrayList<>();
-            db2.add(current.getLabel());
-            db2.add(current.getList().get(0).getLabel());
-            db.add(db2);
+
+            try {
+                db2.add(current.getLabel());
+                db2.add(current.getList().get(0).getLabel());
+                db.add(db2);
+            } catch (Exception e){
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+            }
         }
 
         return db;
@@ -200,15 +206,20 @@ public class FetchPartialMarks {
         List<String> db3;
 
         for (LabelAndList<LabelAndList<List<String>>> current : database) {
-            String subjectTitle = current.getLabel() + current.getList().get(0).getLabel();
-            db2 = new ArrayList<>();
-            for (List<String> current2 : current.getList().get(0).getList()) {
-                db3 = new ArrayList<>();
+            try {
+                String subjectTitle = current.getLabel() + current.getList().get(0).getLabel();
+                db2 = new ArrayList<>();
+                for (List<String> current2 : current.getList().get(0).getList()) {
+                    db3 = new ArrayList<>();
 
-                db3.addAll(current2);
+                    db3.addAll(current2);
 
-                db2.add(db3);
-                db.put(subjectTitle, db2);
+                    db2.add(db3);
+                    db.put(subjectTitle, db2);
+                }
+            } catch (Exception e){
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
             }
         }
 
