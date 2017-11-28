@@ -278,13 +278,13 @@ public class FetchSchedule {
         else
             rodzaj = "S";
 
-        fw2 = new FetchWebsite(dictionaryURL +
+        fw2 = new FetchWebsite((dictionaryURL +
                 "?wydzial=" + Storage.universityStatus.get(1) +
                 "&kierunek=" + Storage.universityStatus.get(2).replace("+", "%2B") +
                 "&specjalnosc=" + specjalnosc.replace("+", "%2B") +
                 "&stopien=" + stopien +
-                "&semestr=" + Storage.getSemesterNumberById(Storage.summarySemesters.size()-1) +
-                "&rodzaj=" + rodzaj);
+                "&semestr=" + Storage.getSemesterNumberById(Storage.summarySemesters.size() - 1) +
+                "&rodzaj=" + rodzaj).replaceAll(" ", "%20"));
         fww2 = fw2.getWebsiteHTTP(false, false, "");
 
         boolean planAvailable;
@@ -296,7 +296,7 @@ public class FetchSchedule {
             planAvailable = true;
 
         if (planAvailable) {
-            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&name=" + fww2.replace("+", "%2B").replace("%2BS", "+S") + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
+            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&name=" + fww2.replace("+", "%2B").replace("%2BS", "+S").replaceAll(" ", "%20") + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
             fww = fw.getWebsiteGETSecure(false, false, "");
 
             // parse CSV with timetable

@@ -406,7 +406,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // what's new acivity
-            try {
+            /*try {
                 int lastWhatsNew = sharedPreferences.getInt("last_whats_new", 0);
                 int currentAppVersionCode = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionCode;
 
@@ -419,7 +419,7 @@ public class MainActivity extends AppCompatActivity
             } catch (PackageManager.NameNotFoundException e) {
                 Log.i("aghwd", "aghwd", e);
                 Storage.appendCrash(e);
-            }
+            }*/
         }
     }
 
