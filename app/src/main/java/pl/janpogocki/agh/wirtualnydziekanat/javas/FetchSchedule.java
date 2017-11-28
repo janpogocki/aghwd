@@ -1,5 +1,6 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.commons.csv.CSVFormat;
@@ -160,7 +161,7 @@ public class FetchSchedule {
         fwParsed = Jsoup.parse(fww);
 
         String kierunek = Storage.universityStatus.get(2);
-        String specjalnosc = Storage.universityStatus.get(3);
+        String specjalnosc = Storage.universityStatus.get(3).replaceAll("\u00A0", "").trim();
         String formaStudiow = Storage.universityStatus.get(4).substring(0,1).toUpperCase() + Storage.universityStatus.get(4).substring(1);
         String poziomStudiow = Storage.universityStatus.get(5);
 
@@ -261,10 +262,9 @@ public class FetchSchedule {
         String dictionaryURL = "http://sprawdz.plan.agh.edu.pl/aghwd_unitime.php";
 
         FetchWebsite fw, fw2;
-        String fww2, specjalnosc, stopien, rodzaj;
+        String fww, fww2, specjalnosc, stopien, rodzaj;
 
-        String fww;
-        specjalnosc = Storage.universityStatus.get(3).trim();
+        specjalnosc = Storage.universityStatus.get(3).replaceAll("\u00A0", "").trim();
 
         if (Storage.universityStatus.get(5).contains("pierwszego"))
             stopien = "1";
@@ -273,10 +273,10 @@ public class FetchSchedule {
         else
             stopien = "3";
 
-        if (Storage.universityStatus.get(4).contains("stacjonarne"))
-            rodzaj = "S";
-        else
+        if (Storage.universityStatus.get(4).contains("niestacjonarne"))
             rodzaj = "N";
+        else
+            rodzaj = "S";
 
         fw2 = new FetchWebsite(dictionaryURL +
                 "?wydzial=" + Storage.universityStatus.get(1) +
