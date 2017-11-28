@@ -161,6 +161,10 @@ public class FetchSchedule {
         fwParsed = Jsoup.parse(fww);
 
         String kierunek = Storage.universityStatus.get(2);
+
+        if (kierunek.contains("Mikroelektronika w Technice i Medycynie"))
+            kierunek = "Mikroelektronika w technice i medycynie";
+
         String specjalnosc = Storage.universityStatus.get(3).replaceAll("\u00A0", "").trim();
         String formaStudiow = Storage.universityStatus.get(4).substring(0,1).toUpperCase() + Storage.universityStatus.get(4).substring(1);
         String poziomStudiow = Storage.universityStatus.get(5);
