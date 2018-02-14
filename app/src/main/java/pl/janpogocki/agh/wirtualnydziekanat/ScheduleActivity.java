@@ -21,8 +21,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.TimePicker;
@@ -389,6 +392,13 @@ public class ScheduleActivity extends Fragment {
         final EditText editTextDate = dialogView.findViewById(R.id.editTextDate);
         final EditText editTextDescription = dialogView.findViewById(R.id.editTextDescription);
         final EditText editTextLocation = dialogView.findViewById(R.id.editTextLocation);
+        LinearLayout layoutCyclicalEvent = dialogView.findViewById(R.id.layoutCyclicalEvent);
+        final LinearLayout subLayoutCyclicalEvent = dialogView.findViewById(R.id.subLayoutCyclicalEvent);
+        final CheckBox checkBoxCyclicalEvent = dialogView.findViewById(R.id.checkBoxCyclicalEvent);
+        TextView textViewCyclicalEvent = dialogView.findViewById(R.id.textViewCyclicalEvent);
+        final EditText editTextCyclicalDays = dialogView.findViewById(R.id.editTextCyclicalDays);
+
+        layoutCyclicalEvent.setVisibility(View.VISIBLE);
 
         Calendar cal = Calendar.getInstance();
         int hour = cal.get(Calendar.HOUR_OF_DAY);
@@ -458,6 +468,16 @@ public class ScheduleActivity extends Fragment {
             }
         });
 
+        textViewCyclicalEvent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (checkBoxCyclicalEvent.isChecked())
+                    checkBoxCyclicalEvent.setChecked(false);
+                else
+                    checkBoxCyclicalEvent.setChecked(true);
+            }
+        });
+
         builder.setPositiveButton(R.string.action_save, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -494,7 +514,13 @@ public class ScheduleActivity extends Fragment {
                     boolean showDateBar = false;
 
                     Appointment newAppointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, lecture, aghEvent, tag, group, showDateBar);
-                    ScheduleUtils.saveNewAppointment(activityContext, newAppointment);
+
+                    if (checkBoxCyclicalEvent.isChecked()) {
+                        int interval = Integer.parseInt(editTextCyclicalDays.getText().toString());
+                        ScheduleUtils.saveNewAppointment(activityContext, newAppointment, interval);
+                    } else
+                        ScheduleUtils.saveNewAppointment(activityContext, newAppointment);
+
                     onDestroyView();
                     onResume();
                 } catch (ParseException e){
@@ -509,6 +535,30 @@ public class ScheduleActivity extends Fragment {
         final AlertDialog dialog = builder.show();
         dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
 
+        checkBoxCyclicalEvent.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                if (checked){
+                    subLayoutCyclicalEvent.setVisibility(View.VISIBLE);
+
+                    if (editTextName.getText().toString().length() > 0 && editTextCyclicalDays.getText().toString().length() > 0
+                            && editTextCyclicalDays.getText().toString().matches("[0-9]+")
+                            && Integer.parseInt(editTextCyclicalDays.getText().toString()) > 0)
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    else
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+                else {
+                    subLayoutCyclicalEvent.setVisibility(View.GONE);
+
+                    if (editTextName.getText().toString().length() > 0)
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                    else
+                        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+                }
+            }
+        });
+
         editTextName.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -517,8 +567,35 @@ public class ScheduleActivity extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().trim().length() > 0)
+                if ((charSequence.toString().trim().length() > 0 && !checkBoxCyclicalEvent.isChecked())
+                        || (checkBoxCyclicalEvent.isChecked() && charSequence.toString().trim().length() > 0
+                            && editTextCyclicalDays.getText().toString().trim().length() > 0)
+                            && editTextCyclicalDays.getText().toString().matches("[0-9]+")
+                            && Integer.parseInt(editTextCyclicalDays.getText().toString()) > 0)
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                else
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        editTextCyclicalDays.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (checkBoxCyclicalEvent.isChecked() && charSequence.toString().trim().length() > 0
+                        && editTextName.getText().toString().trim().length() > 0
+                        && charSequence.toString().matches("[0-9]+")
+                        && Integer.parseInt(charSequence.toString()) > 0)
+                dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
                 else
                     dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
             }

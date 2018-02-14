@@ -376,38 +376,65 @@ public class LogIn extends AppCompatActivity {
                     finish();
                 } else if (logging.status == 1) {
                     // is ok, log in
-                    // hide loader
-                    relativeLayout3.setVisibility(View.GONE);
+                    // check if is remembered kierunek
+                    final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    String rememberedKierunek = sharedPreferences.getString("remembered_multi_kierunek", "NOT_FOUND");
 
-                    // build dialog window
-                    final CharSequence[] multiKierunekLabelNamesCharSequence = new CharSequence[Storage.multiKierunekLabelNames.size()];
-                    Storage.multiKierunekLabelNames.toArray(multiKierunekLabelNamesCharSequence);
+                    if (rememberedKierunek.equals("NOT_FOUND")) {
+                        // hide loader
+                        relativeLayout3.setVisibility(View.GONE);
 
-                    final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
-                    Storage.choosenMultiKierunekValue = Storage.multiKierunekValues.get(0);
-                    builder.setTitle(R.string.log_in_multikierunek)
-                            .setSingleChoiceItems(multiKierunekLabelNamesCharSequence, 0,
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int item) {
-                                            Storage.choosenMultiKierunekValue = Storage.multiKierunekValues.get(item);
-                                        }
-                                    })
-                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int id) {
-                                    // show loader
-                                    relativeLayout3.setVisibility(View.VISIBLE);
+                        // build dialog window
+                        final CharSequence[] multiKierunekLabelNamesCharSequence = new CharSequence[Storage.multiKierunekLabelNames.size()];
+                        Storage.multiKierunekLabelNames.toArray(multiKierunekLabelNamesCharSequence);
 
-                                    // do logging in background
-                                    runner2 = new AsyncTaskRunner2();
-                                    runner2.executeOnExecutor(THREAD_POOL_EXECUTOR);
-                                }
-                            })
-                            .setCancelable(false);
+                        final AlertDialog.Builder builder = new AlertDialog.Builder(relativeLayout2.getContext());
+                        Storage.choosenMultiKierunekValue = Storage.multiKierunekValues.get(0);
+                        builder.setTitle(R.string.log_in_multikierunek)
+                                .setSingleChoiceItems(multiKierunekLabelNamesCharSequence, 0,
+                                        new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int item) {
+                                                Storage.choosenMultiKierunekValue = Storage.multiKierunekValues.get(item);
+                                            }
+                                        })
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // show loader
+                                        relativeLayout3.setVisibility(View.VISIBLE);
 
-                    if (!activity.isFinishing())
-                        builder.create().show();
+                                        // do logging in background
+                                        runner2 = new AsyncTaskRunner2();
+                                        runner2.executeOnExecutor(THREAD_POOL_EXECUTOR);
+                                    }
+                                })
+                                .setNeutralButton("OK, zapamiętaj wybór", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        // show loader
+                                        relativeLayout3.setVisibility(View.VISIBLE);
+
+                                        // do logging in background
+                                        runner2 = new AsyncTaskRunner2();
+                                        runner2.executeOnExecutor(THREAD_POOL_EXECUTOR);
+
+                                        // remember choice
+                                        sharedPreferences.edit().putString("remembered_multi_kierunek", Storage.choosenMultiKierunekValue).apply();
+                                    }
+                                })
+                                .setCancelable(false);
+
+                        if (!activity.isFinishing())
+                            builder.create().show();
+                    }
+                    else {
+                        Storage.choosenMultiKierunekValue = rememberedKierunek;
+
+                        // do logging in background
+                        runner2 = new AsyncTaskRunner2();
+                        runner2.executeOnExecutor(THREAD_POOL_EXECUTOR);
+                    }
                 }
             } catch(NullPointerException e){
                 Log.i("aghwd", "aghwd", e);

@@ -143,7 +143,7 @@ public class RecyclerViewTeacherScheduleAdapter extends RecyclerView.Adapter<Rec
                 viewHolder.textViewHourCountdown.setTextColor(c.getResources().getColor(R.color.colorOrange));
         }
         else if ((currentDate.equals(hourStartDate) || currentDate.after(hourStartDate)) && currentDate.before(hourStopDate)){
-            viewHolder.textViewHourCountdown.setText(ScheduleUtils.getCountdownTime(hourStartTime, currentTime, false));
+            viewHolder.textViewHourCountdown.setText(ScheduleUtils.getCountdownTime(hourStopTime, currentTime, false));
             viewHolder.textViewHourCountdown.setTextColor(c.getResources().getColor(R.color.colorGreen));
         }
         else {

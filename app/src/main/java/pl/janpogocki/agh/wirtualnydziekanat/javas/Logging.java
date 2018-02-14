@@ -168,12 +168,13 @@ public class Logging {
                     list2.add(current3ownTextTrimmed);
             }
 
-            list.add(list2);
+            if (!list2.get(7).toLowerCase().contains("absolwent"))
+                list.add(list2);
         }
 
         // Checks whether list is not empty
         if (list.size() > 0){
-            Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = tableRows.size()-1;
+            Storage.currentSemester = Storage.currentSemesterListPointer = Storage.currentSemesterListPointerPartialMarks = list.size()-1;
             Storage.summarySemesters = list;
 
             // Jump to OcenyP.aspx, get info latest marks

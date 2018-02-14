@@ -641,6 +641,8 @@ public class MainActivity extends AppCompatActivity
 
             restartApp();
         } else if (id == R.id.nav_relogging) {
+            PreferenceManager.getDefaultSharedPreferences(this).edit().remove("remembered_multi_kierunek").apply();
+
             Bundle bundle = new Bundle();
             bundle.putString(FirebaseAnalytics.Param.ITEM_ID, getString(R.string.relogging));
             bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "navbar_action");

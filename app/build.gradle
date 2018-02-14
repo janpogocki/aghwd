@@ -3,18 +3,18 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
     compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 65
-        versionName '1.5.8'
+        versionCode 66
+        versionName '1.5.9'
     }
     buildTypes {
         release {
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false
+            /*shrinkResources true*/
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -33,10 +33,10 @@ dependencies {
     compile 'com.maksim88:PasswordEditText:v0.9'
     compile 'org.jsoup:jsoup:1.10.3'
     compile 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
-    compile 'com.google.android.gms:play-services-base:11.6.0'
-    compile 'com.google.firebase:firebase-core:11.6.0'
-    compile 'com.google.firebase:firebase-messaging:11.6.0'
-    compile 'com.google.firebase:firebase-perf:11.6.0'
+    compile 'com.google.android.gms:play-services-base:11.8.0'
+    compile 'com.google.firebase:firebase-core:11.8.0'
+    compile 'com.google.firebase:firebase-messaging:11.8.0'
+    compile 'com.google.firebase:firebase-perf:11.8.0'
     testCompile 'junit:junit:4.12'
 }
 

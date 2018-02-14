@@ -13,6 +13,7 @@ import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
@@ -34,16 +35,18 @@ public class ScheduleUtils {
     }
 
     public static String getCountdownTime(long hourStartTime, long currentTime, boolean futureEvent){
-        Calendar cal1 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        Calendar cal1 = Calendar.getInstance();
         cal1.setTimeInMillis(hourStartTime);
-        cal1.set(Calendar.HOUR_OF_DAY, 0);
+        cal1.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cal1.set(Calendar.HOUR_OF_DAY, 12);
         cal1.set(Calendar.MINUTE, 0);
         cal1.set(Calendar.SECOND, 0);
         cal1.set(Calendar.MILLISECOND, 0);
 
-        Calendar cal2 = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
+        Calendar cal2 = Calendar.getInstance();
         cal2.setTimeInMillis(System.currentTimeMillis());
-        cal2.set(Calendar.HOUR_OF_DAY, 0);
+        cal2.setTimeZone(TimeZone.getTimeZone("UTC"));
+        cal2.set(Calendar.HOUR_OF_DAY, 12);
         cal2.set(Calendar.MINUTE, 0);
         cal2.set(Calendar.SECOND, 0);
         cal2.set(Calendar.MILLISECOND, 0);
@@ -138,6 +141,48 @@ public class ScheduleUtils {
         } catch (Exception e) {
             Log.i("aghwd", "aghwd", e);
             Storage.appendCrash(e);
+        }
+    }
+
+    public static void saveNewAppointment(Context c, Appointment appointment, int interval){
+        // get current month and set maxMonth; January = 0
+        Calendar cal = Calendar.getInstance();
+        cal.setTimeInMillis(appointment.startTimestamp);
+        int currentMonth = cal.get(Calendar.MONTH);
+
+        int maxMonth;
+        if (currentMonth >= 1 && currentMonth <= 8)
+            maxMonth = 9;
+        else
+            maxMonth = 1;
+
+        Appointment nextAppointment = new Appointment(appointment);
+
+        while (true){
+            saveNewAppointment(c, nextAppointment);
+
+            // add interval and check that appointment's date is not more than maxMonth
+            Calendar cal1 = Calendar.getInstance();
+            cal1.setTimeInMillis(nextAppointment.startTimestamp);
+            cal1.add(Calendar.DAY_OF_MONTH, interval);
+
+            Calendar cal2 = Calendar.getInstance();
+            cal2.setTimeInMillis(nextAppointment.stopTimestamp);
+            cal2.add(Calendar.DAY_OF_MONTH, interval);
+
+            long timezoneOffset1 = TimeZone.getDefault().getOffset(nextAppointment.startTimestamp);
+            long timezoneOffset2 = TimeZone.getDefault().getOffset(cal1.getTimeInMillis());
+            long timezoneOffsetDiff = timezoneOffset2 - timezoneOffset1;
+
+            if (cal1.get(Calendar.MONTH) == maxMonth)
+                break;
+            else {
+                nextAppointment = new Appointment(cal1.getTimeInMillis()-timezoneOffsetDiff,
+                        cal2.getTimeInMillis()-timezoneOffsetDiff,
+                        nextAppointment.name, nextAppointment.description, nextAppointment.location,
+                        nextAppointment.lecture, nextAppointment.aghEvent, nextAppointment.tag,
+                        nextAppointment.group, nextAppointment.showDateBar);
+            }
         }
     }
 

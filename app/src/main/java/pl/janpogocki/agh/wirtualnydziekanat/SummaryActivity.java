@@ -1,13 +1,16 @@
 package pl.janpogocki.agh.wirtualnydziekanat;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -15,12 +18,14 @@ import android.widget.TextView;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchUniversityStatus;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SummaryActivity extends Fragment {
 
     FirebaseAnalytics mFirebaseAnalytics;
     Context activityContext;
+    View root;
 
     @Override
     public void onResume() {
@@ -38,7 +43,7 @@ public class SummaryActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mFirebaseAnalytics = FirebaseAnalytics.getInstance(activityContext);
 
-        final View root = inflater.inflate(R.layout.activity_summary, container, false);
+        root = inflater.inflate(R.layout.activity_summary, container, false);
 
         ImageView imageViewPhotoUser;
         TextView textViewNameAndSurname, textViewAlbumNumber, textViewPeselNumber;
@@ -111,7 +116,66 @@ public class SummaryActivity extends Fragment {
             }
         });
 
+        AsyncTaskRunner runner = new AsyncTaskRunner();
+        runner.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, root);
+
         return root;
     }
 
+    private class AsyncTaskRunner extends AsyncTask<View, View, View> {
+        Boolean isError = false;
+
+        @Override
+        protected View doInBackground(View... params) {
+            try {
+                if (Storage.universityStatus == null || Storage.universityStatus.size() == 0){
+                    new FetchUniversityStatus(false);
+                }
+
+                return root;
+            } catch (Exception e) {
+                Log.i("aghwd", "aghwd", e);
+                Storage.appendCrash(e);
+                isError = true;
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(View result){
+            LinearLayout layoutProgressBar = root.findViewById(R.id.layoutProgressBar);
+            LinearLayout layoutAdditionalData = root.findViewById(R.id.layoutAdditionalData);
+            TextView textViewWydzial = root.findViewById(R.id.textViewWydzial);
+            TextView textViewKierunek = root.findViewById(R.id.textViewKierunek);
+            TextView textViewSpecjalnosc = root.findViewById(R.id.textViewSpecjalnosc);
+            TextView textViewFormaStudiow = root.findViewById(R.id.textViewFormaStudiow);
+            TextView textViewPoziomStudiow = root.findViewById(R.id.textViewPoziomStudiow);
+            TextView textViewProfilKsztalcenia = root.findViewById(R.id.textViewProfilKsztalcenia);
+            TextView textViewStatusKierunku = root.findViewById(R.id.textViewStatusKierunku);
+            TextView textViewDaneOKierunku = root.findViewById(R.id.textViewDaneOKierunku);
+            TextView textViewDataRozpoczeciaStudiow = root.findViewById(R.id.textViewDataRozpoczeciaStudiow);
+            TextView textViewDataRozpoczeciaStudiowAGH = root.findViewById(R.id.textViewDataRozpoczeciaStudiowAGH);
+
+            if (Storage.universityStatus == null || Storage.universityStatus.size() == 0 || isError){
+                layoutProgressBar.setVisibility(View.GONE);
+                layoutAdditionalData.setVisibility(View.GONE);
+            }
+            else {
+                // Have it, show it
+                textViewWydzial.setText(Storage.universityStatus.get(1));
+                textViewKierunek.setText(Storage.universityStatus.get(2));
+                textViewSpecjalnosc.setText(Storage.universityStatus.get(3));
+                textViewFormaStudiow.setText(Storage.universityStatus.get(4));
+                textViewPoziomStudiow.setText(Storage.universityStatus.get(5));
+                textViewProfilKsztalcenia.setText(Storage.universityStatus.get(6));
+                textViewStatusKierunku.setText(Storage.universityStatus.get(7));
+                textViewDaneOKierunku.setText(Storage.universityStatus.get(8));
+                textViewDataRozpoczeciaStudiow.setText(Storage.universityStatus.get(9));
+                textViewDataRozpoczeciaStudiowAGH.setText(Storage.universityStatus.get(10));
+
+                layoutProgressBar.setVisibility(View.GONE);
+                layoutAdditionalData.setVisibility(View.VISIBLE);
+            }
+        }
+    }
 }
