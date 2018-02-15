@@ -8,13 +8,13 @@ android {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 66
-        versionName '1.5.9'
+        versionCode 67
+        versionName '1.5.10'
     }
     buildTypes {
         release {
-            minifyEnabled false
-            /*shrinkResources true*/
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

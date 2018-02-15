@@ -116,32 +116,45 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
+                    android:layout_marginLeft="35dp"
                     android:id="@+id/subLayoutCyclicalEvent"
                     android:visibility="gone"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/BlackTextSmall"
+                            android:text="Powtarzaj co "/>
+
+                        <EditText
+                            android:layout_width="40dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/editTextCyclicalDays"
+                            android:gravity="center"
+                            android:text="7"
+                            android:inputType="number|textCapSentences" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="@style/BlackTextSmall"
+                            android:text=" dni,"/>
+
+                    </LinearLayout>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="@style/BlackTextSmall"
-                        android:text="Powtarzaj do końca semestru co "/>
-
-                    <EditText
-                        android:layout_width="40dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/editTextCyclicalDays"
-                        android:gravity="center"
-                        android:text="7"
-                        android:inputType="number|textCapSentences" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="@style/BlackTextSmall"
-                        android:text=" dni"/>
+                        android:text="aż do końca semestru."/>
 
                 </LinearLayout>
 

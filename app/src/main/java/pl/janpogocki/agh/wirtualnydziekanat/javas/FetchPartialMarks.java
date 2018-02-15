@@ -29,8 +29,8 @@ import java.util.TimeZone;
 
 public class FetchPartialMarks {
     public int status;
-    private List<LabelAndList<LabelAndList<List<String>>>> database;
-    private List<PartialMark> listOfJsonPartialMarks;
+    private List<LabelAndList<LabelAndList<List<String>>>> database = new ArrayList<>();
+    private List<PartialMark> listOfJsonPartialMarks = new ArrayList<>();
 
     public FetchPartialMarks(Context c, List<String> HTML2interprete, int currentSemester) throws Exception {
         if (HTML2interprete == null || HTML2interprete.isEmpty() || HTML2interprete.get(0).equals("0"))

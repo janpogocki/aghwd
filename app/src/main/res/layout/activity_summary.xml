@@ -205,9 +205,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="Informatyka"
                             android:id="@+id/textViewKierunek" />
@@ -233,9 +233,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="-"
                             android:id="@+id/textViewSpecjalnosc" />
@@ -261,9 +261,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="stacjonarne"
                             android:id="@+id/textViewFormaStudiow" />
@@ -289,9 +289,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="pierwszego stopnia"
                             android:id="@+id/textViewPoziomStudiow" />
@@ -317,9 +317,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="ogólnoakademicki"
                             android:id="@+id/textViewProfilKsztalcenia" />
@@ -345,9 +345,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="pierwszy"
                             android:id="@+id/textViewStatusKierunku" />
@@ -373,9 +373,9 @@
 
                         <TextView
                             android:layout_width="0dp"
-                            android:layout_height="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:gravity="start|bottom"
+                            android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
                             android:text="Niepłatny"
                             android:id="@+id/textViewDaneOKierunku" />
