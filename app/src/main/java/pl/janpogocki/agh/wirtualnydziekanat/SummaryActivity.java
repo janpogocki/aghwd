@@ -162,16 +162,21 @@ public class SummaryActivity extends Fragment {
             }
             else {
                 // Have it, show it
-                textViewWydzial.setText(Storage.universityStatus.get(1));
-                textViewKierunek.setText(Storage.universityStatus.get(2));
-                textViewSpecjalnosc.setText(Storage.universityStatus.get(3));
-                textViewFormaStudiow.setText(Storage.universityStatus.get(4));
-                textViewPoziomStudiow.setText(Storage.universityStatus.get(5));
-                textViewProfilKsztalcenia.setText(Storage.universityStatus.get(6));
-                textViewStatusKierunku.setText(Storage.universityStatus.get(7));
-                textViewDaneOKierunku.setText(Storage.universityStatus.get(8));
-                textViewDataRozpoczeciaStudiow.setText(Storage.universityStatus.get(9));
-                textViewDataRozpoczeciaStudiowAGH.setText(Storage.universityStatus.get(10));
+                try {
+                    textViewWydzial.setText(Storage.universityStatus.get(1));
+                    textViewKierunek.setText(Storage.universityStatus.get(2));
+                    textViewSpecjalnosc.setText(Storage.universityStatus.get(3));
+                    textViewFormaStudiow.setText(Storage.universityStatus.get(4));
+                    textViewPoziomStudiow.setText(Storage.universityStatus.get(5));
+                    textViewProfilKsztalcenia.setText(Storage.universityStatus.get(6));
+                    textViewStatusKierunku.setText(Storage.universityStatus.get(7));
+                    textViewDaneOKierunku.setText(Storage.universityStatus.get(8));
+                    textViewDataRozpoczeciaStudiow.setText(Storage.universityStatus.get(9));
+                    textViewDataRozpoczeciaStudiowAGH.setText(Storage.universityStatus.get(10));
+                } catch (IndexOutOfBoundsException e){
+                    Log.i("aghwd", "aghwd", e);
+                    Storage.appendCrash(e);
+                }
 
                 layoutProgressBar.setVisibility(View.GONE);
                 layoutAdditionalData.setVisibility(View.VISIBLE);

@@ -32,7 +32,7 @@ public class FetchGroups {
             List<String> list2 = new ArrayList<>();
 
             for (Element current3 : current2){
-                list2.add(current3.ownText());
+                list2.add(current3.text());
             }
 
             list.add(list2);

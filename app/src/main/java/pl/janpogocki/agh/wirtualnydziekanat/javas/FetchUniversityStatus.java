@@ -15,7 +15,6 @@ import java.util.List;
 
 public class FetchUniversityStatus {
     public int status;
-    FetchSyllabus fs;
 
     public FetchUniversityStatus(Boolean _fetchSyllabus) throws Exception {
         FetchWebsite fw;
@@ -29,7 +28,7 @@ public class FetchUniversityStatus {
 
         List<String> list = new ArrayList<>();
         for (Element current : tableRows){
-            list.add(current.ownText());
+            list.add(current.text());
         }
 
         // If there is no data to show
@@ -41,6 +40,6 @@ public class FetchUniversityStatus {
         }
 
         if (_fetchSyllabus)
-            fs = new FetchSyllabus();
+            new FetchSyllabus();
     }
 }

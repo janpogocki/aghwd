@@ -33,7 +33,7 @@ public class FetchDiploma {
         Boolean added = false;
         List<String> list2 = new ArrayList<>();
         for (Element current : tableRows1) {
-            list2.add(current.ownText());
+            list2.add(current.text());
             added = true;
         }
 
@@ -44,7 +44,7 @@ public class FetchDiploma {
         added = false;
         list2 = new ArrayList<>();
         for (Element current : tableRows2) {
-            list2.add(current.ownText());
+            list2.add(current.text());
             added = true;
         }
 

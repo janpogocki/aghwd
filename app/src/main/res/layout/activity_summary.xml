@@ -181,7 +181,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="Elektrotechniki, Automatyki, Informatyki i Inżynierii Biomedycznej"
                             android:id="@+id/textViewWydzial" />
 
                     </LinearLayout>
@@ -209,7 +208,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="Informatyka"
                             android:id="@+id/textViewKierunek" />
 
                     </LinearLayout>
@@ -237,7 +235,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="-"
                             android:id="@+id/textViewSpecjalnosc" />
 
                     </LinearLayout>
@@ -265,7 +262,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="stacjonarne"
                             android:id="@+id/textViewFormaStudiow" />
 
                     </LinearLayout>
@@ -293,7 +289,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="pierwszego stopnia"
                             android:id="@+id/textViewPoziomStudiow" />
 
                     </LinearLayout>
@@ -321,7 +316,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="ogólnoakademicki"
                             android:id="@+id/textViewProfilKsztalcenia" />
 
                     </LinearLayout>
@@ -349,7 +343,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="pierwszy"
                             android:id="@+id/textViewStatusKierunku" />
 
                     </LinearLayout>
@@ -377,7 +370,6 @@
                             android:layout_weight="1"
                             android:gravity="start"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="Niepłatny"
                             android:id="@+id/textViewDaneOKierunku" />
 
                     </LinearLayout>
@@ -405,7 +397,6 @@
                             android:layout_weight="1"
                             android:gravity="start|bottom"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="01.01.1970"
                             android:id="@+id/textViewDataRozpoczeciaStudiow" />
 
                     </LinearLayout>
@@ -433,7 +424,6 @@
                             android:layout_weight="1"
                             android:gravity="start|bottom"
                             android:textAppearance="@style/BlackTextMedium"
-                            android:text="01.01.1970"
                             android:id="@+id/textViewDataRozpoczeciaStudiowAGH" />
 
                     </LinearLayout>
