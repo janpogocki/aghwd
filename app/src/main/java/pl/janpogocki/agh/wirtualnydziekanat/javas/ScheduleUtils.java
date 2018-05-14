@@ -31,7 +31,7 @@ public class ScheduleUtils {
         if (Storage.summarySemesters.get(maxVal).get(3).equals("Z"))
             return "Semestr+zimowy" + Storage.summarySemesters.get(maxVal).get(0).split("/")[0] + "AGH";
         else
-            return "Semestr+letni" + Storage.summarySemesters.get(maxVal).get(0).split("/")[0] + "AGH";
+            return "Semestr+letni" + Storage.summarySemesters.get(maxVal).get(0).split("/")[1] + "AGH";
     }
 
     public static String getCountdownTime(long hourStartTime, long currentTime, boolean futureEvent){

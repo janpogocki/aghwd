@@ -1,1 +1,1 @@
-[{"outputType":{"type":"APK"},"apkInfo":{"type":"MAIN","splits":[],"versionCode":68},"path":"app-release.apk","properties":{"packageId":"pl.janpogocki.agh.wirtualnydziekanat","split":"","minSdkVersion":"15"}}]
+[{"outputType":{"type":"APK"},"apkInfo":{"type":"MAIN","splits":[],"versionCode":69,"versionName":"1.5.12","enabled":true,"outputFile":"app-release.apk","fullName":"release","baseName":"release"},"path":"app-release.apk","properties":{}}]
