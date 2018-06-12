@@ -42,7 +42,7 @@
 
     </PreferenceCategory>
 
-    <!--<PreferenceCategory
+    <PreferenceCategory
         android:title="@string/push_notifications"
         android:key="pref_key_notifications">
 
@@ -52,5 +52,11 @@
             android:defaultValue="true"
             android:summary="@string/new_marks_summary" />
 
-    </PreferenceCategory>-->
+        <SwitchPreference
+            android:key="news_notifications"
+            android:title="@string/agh_urgent_info"
+            android:defaultValue="true"
+            android:summary="@string/agh_urgent_info_summary" />
+
+    </PreferenceCategory>
 </PreferenceScreen>

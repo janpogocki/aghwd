@@ -394,10 +394,15 @@ public class MainActivity extends AppCompatActivity
             if (rememberPassword.isRemembered()) {
                 StringBuilder stringBuilder = new StringBuilder();
 
-                /*if (sharedPreferences.getBoolean("marks_notifications", true)) {
+                if (sharedPreferences.getBoolean("marks_notifications", true)) {
                     FirebaseMessaging.getInstance().subscribeToTopic(Storage.albumNumber);
                     stringBuilder.append("marks ");
-                }*/
+                }
+
+                if (sharedPreferences.getBoolean("news_notifications", true)) {
+                    FirebaseMessaging.getInstance().subscribeToTopic("news");
+                    stringBuilder.append("news ");
+                }
 
                 if (stringBuilder.length() == 0)
                     stringBuilder.append("N/A");
@@ -406,7 +411,7 @@ public class MainActivity extends AppCompatActivity
             }
 
             // what's new acivity
-            /*try {
+            try {
                 int lastWhatsNew = sharedPreferences.getInt("last_whats_new", 0);
                 int currentAppVersionCode = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA).versionCode;
 
@@ -419,7 +424,7 @@ public class MainActivity extends AppCompatActivity
             } catch (PackageManager.NameNotFoundException e) {
                 Log.i("aghwd", "aghwd", e);
                 Storage.appendCrash(e);
-            }*/
+            }
         }
     }
 

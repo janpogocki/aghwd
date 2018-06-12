@@ -14,10 +14,12 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.io.File;
 
 import pl.janpogocki.agh.wirtualnydziekanat.javas.FetchUniversityStatus;
+import pl.janpogocki.agh.wirtualnydziekanat.javas.RememberPassword;
 import pl.janpogocki.agh.wirtualnydziekanat.javas.Storage;
 
 public class SettingsActivity extends PreferenceFragment
@@ -37,14 +39,14 @@ public class SettingsActivity extends PreferenceFragment
 
         view = ((MainActivity) activityContext).findViewById(R.id.frameLayoutMainV7);
 
-        /*RememberPassword rememberPassword = new RememberPassword(activityContext);
+        RememberPassword rememberPassword = new RememberPassword(activityContext);
         if (!rememberPassword.isRemembered()){
             getPreferenceManager().getSharedPreferences().edit().putBoolean("marks_notifications", false).apply();
             getPreferenceScreen().findPreference("marks_notifications").setEnabled(false);
             getPreferenceScreen().findPreference("marks_notifications").setDefaultValue(false);
             getPreferenceScreen().findPreference("marks_notifications").setSummary(getPreferenceScreen()
                     .findPreference("marks_notifications").getSummary() + "\n\n" + getString(R.string.only_with_remember_password));
-        }*/
+        }
 
         Preference preference_mycal = findPreference("remove_all_mycal_events");
         preference_mycal.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -108,13 +110,13 @@ public class SettingsActivity extends PreferenceFragment
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        /*if (s.equals("news_notifications")){
+        if (s.equals("news_notifications")){
             if (sharedPreferences.getBoolean("news_notifications", true))
                 FirebaseMessaging.getInstance().subscribeToTopic("news");
             else
                 FirebaseMessaging.getInstance().unsubscribeFromTopic("news");
         }
-        else*/ if (s.equals("night_mode")){
+        else if (s.equals("night_mode")){
             ((MainActivity) activityContext).restartApp();
         }
     }
