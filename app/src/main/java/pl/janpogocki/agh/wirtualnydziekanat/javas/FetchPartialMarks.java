@@ -82,7 +82,8 @@ public class FetchPartialMarks {
                     db2 = new LabelAndList<>(lessonName);
 
                     // Check if there are marks
-                    if (marksTR.get(0).select(".rgNoRecords").first() == null){
+                    // todo: more than 10 marks in subject creates subpage
+                    if (marksTR.size() > 0 && marksTR.get(0).select(".rgNoRecords").first() == null){
                         for (Element oneTrElement : marksTR){
                             List<String> db3 = new ArrayList<>();
                             db3.add(oneTrElement.getElementsByTag("td").get(1).ownText()); // nazwa

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.HashMap;
 import java.util.List;
@@ -101,6 +102,7 @@ public class ExpandableListAdapter extends AnimatedExpandableListView.AnimatedEx
         String headerECTS = (String) getGroup(groupPosition, 1);
         String headerFinalMark = (String) getGroup(groupPosition, 2);
         String headerExamStatus = (String) getGroup(groupPosition, 3);
+        String headerNewMark = (String) getGroup(groupPosition, 4);
 
         if (convertView == null) {
             LayoutInflater infalInflater = (LayoutInflater) this._context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -118,6 +120,10 @@ public class ExpandableListAdapter extends AnimatedExpandableListView.AnimatedEx
             textViewSubTitle.setText(headerECTS + " ECTS");
 
         textViewFinalMark.setText(headerFinalMark);
+
+        ImageView imageViewNewMark = convertView.findViewById(R.id.imageViewNewMark);
+        if (headerNewMark.equals("yes"))
+            imageViewNewMark.setVisibility(View.VISIBLE);
 
         return convertView;
     }

@@ -1,13 +1,24 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
+import android.content.Context;
+
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Jan on 21.07.2016.
@@ -16,14 +27,22 @@ import java.util.List;
 
 public class FetchMarks {
     private List<LabelAndList<LabelAndList<String>>> database = new ArrayList<>();
+    private HashMap<String, String> databaseNewMarks = new HashMap<>();
+    private HashMap<String, String> databaseOldMarks = new HashMap<>();
     public int amountECTS, status;
     public float amountAvgSemester, amountAvgYear;
 
-    public FetchMarks(String HTML2interprete){
+    public FetchMarks(Context c, String HTML2interprete, int currentSemester) throws Exception {
         Document htmlParsed = Jsoup.parse(HTML2interprete);
 
         // Check if page with marks is not "brak danych do wyswietlenia"
         if (htmlParsed.getAllElements().select(".gridDane").size() > 0) {
+            if (Storage.universityStatus == null || Storage.universityStatus.size() == 0){
+                new FetchUniversityStatus(false);
+            }
+
+            prepareCacheDataFromJSON(c, currentSemester);
+
             Elements htmlParsedGridDane = htmlParsed.getAllElements().select(".gridDane");
 
             // Go over every entry
@@ -56,13 +75,21 @@ public class FetchMarks {
                 }
 
                 // Add new subject, and save more data (marks, ECTSes) about this kind of lessons
+                StringBuilder jsonMarks;
                 if (subjectExists != -1) {
+                    jsonMarks = new StringBuilder(databaseNewMarks.get(htmlParsedSubjectName));
                     database.get(subjectExists).add(marks);
                 } else {
+                    jsonMarks = new StringBuilder();
                     LabelAndList<LabelAndList<String>> subjectAndLesson = new LabelAndList<>(htmlParsedSubjectName);
                     subjectAndLesson.add(marks);
                     database.add(subjectAndLesson);
                 }
+
+                // add to json database
+                for (int i = 4; i <= 6; i++)
+                    jsonMarks.append(marks.getList().get(i));
+                databaseNewMarks.put(htmlParsedSubjectName, jsonMarks.toString());
             }
 
             // If there no data in list...
@@ -90,11 +117,55 @@ public class FetchMarks {
                 else
                     amountECTS = 0;
 
+                saveNewMarksCacheToJSON(c, currentSemester);
+
                 status = 0;
             }
         } else {
             status = -1;
         }
+    }
+
+    private void prepareCacheDataFromJSON(Context c, int currentSemester) throws Exception {
+        String filenameMarks = Storage.getUniversityStatusHash() + "_m_" + currentSemester + ".json";
+        File filePM = new File(c.getFilesDir() + "/" + filenameMarks);
+
+        if (filePM.exists()){
+            StringBuilder jsonFromMarks = new StringBuilder();
+            FileInputStream inputStream = c.openFileInput(filenameMarks);
+            BufferedReader r = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+            while ((line = r.readLine()) != null) {
+                jsonFromMarks.append(line);
+            }
+            r.close();
+            inputStream.close();
+
+            JSONObject jsonObjectMarks = new JSONObject(jsonFromMarks.toString());
+            Iterator<?> jsonKeys = jsonObjectMarks.keys();
+
+            // iterate and add subjects from JSON file
+            while (jsonKeys.hasNext()){
+                String key = (String) jsonKeys.next();
+                databaseOldMarks.put(key, jsonObjectMarks.getString(key));
+            }
+        }
+    }
+
+    private void saveNewMarksCacheToJSON(Context c, int currentSemester) throws Exception {
+        String filename = Storage.getUniversityStatusHash() + "_m_" + currentSemester + ".json";
+        File file = new File(c.getFilesDir() + "/" + filename);
+
+        JSONObject jsonObject = new JSONObject();
+
+        for (Map.Entry<String, String> entry : databaseNewMarks.entrySet()){
+            jsonObject.put(entry.getKey(), entry.getValue());
+        }
+
+        // save to file
+        PrintWriter out = new PrintWriter(file);
+        out.print(jsonObject.toString());
+        out.close();
     }
 
     public List<List<String>> getHeaders(){
@@ -131,6 +202,14 @@ public class FetchMarks {
                 }
             }
             db2.add(examStatus);
+
+            String newMarkStatus;
+            if (databaseOldMarks.containsKey(current.getLabel())
+                    && !databaseOldMarks.get(current.getLabel()).equals(databaseNewMarks.get(current.getLabel())))
+                newMarkStatus = "yes";
+            else
+                newMarkStatus = "no";
+            db2.add(newMarkStatus);
 
             db.add(db2);
         }

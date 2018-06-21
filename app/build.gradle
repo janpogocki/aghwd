@@ -8,8 +8,8 @@ android {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 15
         targetSdkVersion 26
-        versionCode 70
-        versionName '1.5.13'
+        versionCode 72
+        versionName '1.5.15'
     }
     buildTypes {
         release {
@@ -34,7 +34,7 @@ dependencies {
     implementation 'org.jsoup:jsoup:1.10.3'
     implementation 'com.luckycatlabs:SunriseSunsetCalculator:1.2'
     implementation 'com.google.android.gms:play-services-base:15.0.1'
-    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.google.firebase:firebase-core:16.0.1'
     implementation 'com.google.firebase:firebase-messaging:17.0.0'
     implementation 'com.google.firebase:firebase-perf:16.0.0'
     testImplementation 'junit:junit:4.12'

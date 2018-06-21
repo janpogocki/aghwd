@@ -305,7 +305,7 @@ public class MarksExplorer extends Fragment {
         protected View doInBackground(View... params) {
             try {
                 goThroughSemester();
-                fm = new FetchMarks(Storage.currentSemesterHTML.get(Storage.currentSemester));
+                fm = new FetchMarks(activityContext, Storage.currentSemesterHTML.get(Storage.currentSemester), Storage.currentSemester);
 
                 publishProgress();
 
