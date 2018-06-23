@@ -124,6 +124,8 @@ public class ExpandableListAdapter extends AnimatedExpandableListView.AnimatedEx
         ImageView imageViewNewMark = convertView.findViewById(R.id.imageViewNewMark);
         if (headerNewMark.equals("yes"))
             imageViewNewMark.setVisibility(View.VISIBLE);
+        else
+            imageViewNewMark.setVisibility(View.GONE);
 
         return convertView;
     }
