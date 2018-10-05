@@ -322,7 +322,7 @@ public class FetchSchedule {
 
                     long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
                     long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
-                    String name = record.get("Title").replace("\n", "");
+                    String name = record.get("Tytuł").replace("\n", "");
                     String description = "Grupa " + record.get("Grupa") + ", " + record.get("Typ").replace("\n", "") + "\n" + record.get("Prowadzący / Odpowiedzialny");
                     String location = record.get("Miejsce").replace("\n", "");
 
