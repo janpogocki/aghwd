@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -37,12 +38,12 @@ public class SunriseAndSunsetCalculator {
 
         Long currentTime = (System.currentTimeMillis() - TimeZone.getDefault().getOffset(System.currentTimeMillis())) / 1000;
         Date currentTime2Date = new Date(((currentTime*1000) + TimeZone.getDefault().getOffset(currentTime*1000)));
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm", Locale.US);
         String currentTimeStr = format.format(currentTime2Date);
 
         Date sunriseT = null, sunsetT = null, timeT = null;
         try {
-            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+            SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm", Locale.US);
             sunriseT = timeFormat.parse(arrayOfHours[0]);
             sunsetT = timeFormat.parse(arrayOfHours[1]);
             timeT = timeFormat.parse(currentTimeStr);

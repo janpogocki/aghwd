@@ -18,6 +18,7 @@ import java.util.List;
  * Temporary storage for some infos
  */
 
+@SuppressWarnings("unchecked")
 public class Storage {
     public static String albumNumber = "";
     public static String nameAndSurname = "";

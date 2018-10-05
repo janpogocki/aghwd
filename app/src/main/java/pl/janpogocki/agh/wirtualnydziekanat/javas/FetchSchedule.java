@@ -1,6 +1,5 @@
 package pl.janpogocki.agh.wirtualnydziekanat.javas;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import org.apache.commons.csv.CSVFormat;
@@ -300,11 +299,12 @@ public class FetchSchedule {
             planAvailable = true;
 
         if (planAvailable) {
-            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&name=" + fww2.replace("+", "%2B").replace("%2BS", "+S").replaceAll(" ", "%20") + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
+            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=curriculum&locale=pl&name=" + fww2.replace("+", "%2B").replace("%2BS", "+S").replaceAll(" ", "%20") + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
             fww = fw.getWebsiteGETSecure(false, false, "");
 
             // parse CSV with timetable
-            String[] csvHeader = {"Name", "Section", "Type", "Title", "Date", "Published Start", "Published End", "Location", "Capacity", "Instructor / Sponsor", "Email", "Requested Services", "Approved"};
+            // String[] csvHeader = {"Name", "Section", "Type", "Title", "Date", "Published Start", "Published End", "Location", "Capacity", "Instructor / Sponsor", "Email", "Requested Services", "Approved"};
+            String[] csvHeader = {"Nazwa", "Grupa", "Typ", "Tytuł", "Data", "Ogłoszony początek", "Ogłoszony koniec", "Miejsce", "Pojemność", "Prowadzący / Odpowiedzialny", "E-mail", "Żądane usługi", "Zatwierdzony"};
             CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(csvHeader);
             Reader reader = new StringReader(fww);
             CSVParser csvParser = new CSVParser(reader, csvFormat);
@@ -313,21 +313,21 @@ public class FetchSchedule {
             List<CSVRecord> csvRecords = csvParser.getRecords();
             csvRecords.remove(0);
             for (CSVRecord record : csvRecords) {
-                if (record.get("Published Start").replace("noon", "12:00").contains(":")
-                        && record.get("Published End").replace("noon", "12:00").contains(":")) {
-                    String dateAndTimeOfStartOfLesson = record.get("Date") + " " + record.get("Published Start").replace("noon", "12:00");
-                    String dateAndTimeOfStopOfLesson = record.get("Date") + " " + record.get("Published End").replace("noon", "12:00");
-                    DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+                if (record.get("Ogłoszony początek").contains(":")
+                        && record.get("Ogłoszony koniec").contains(":")) {
+                    String dateAndTimeOfStartOfLesson = record.get("Data") + " " + record.get("Ogłoszony początek");
+                    String dateAndTimeOfStopOfLesson = record.get("Data") + " " + record.get("Ogłoszony koniec");
+                    DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
                     df.setLenient(true);
 
                     long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
                     long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
                     String name = record.get("Title").replace("\n", "");
-                    String description = "Grupa " + record.get("Section") + ", " + record.get("Type").replace("\n", "") + "\n" + record.get("Instructor / Sponsor");
-                    String location = record.get("Location").replace("\n", "");
+                    String description = "Grupa " + record.get("Grupa") + ", " + record.get("Typ").replace("\n", "") + "\n" + record.get("Prowadzący / Odpowiedzialny");
+                    String location = record.get("Miejsce").replace("\n", "");
 
                     boolean lecture;
-                    if (record.get("Type").toLowerCase().contains("wykład"))
+                    if (record.get("Typ").toLowerCase().contains("wykład"))
                         lecture = true;
                     else
                         lecture = false;
@@ -336,11 +336,11 @@ public class FetchSchedule {
                     if (lecture)
                         group = 0;
                     else {
-                        if (record.get("Section").matches("[0-9]+"))
-                            group = Double.parseDouble(record.get("Section"));
-                        else if (record.get("Section").matches("[0-9]+[a-z]")) {
-                            group = Double.parseDouble(record.get("Section").replaceAll("[a-z]", ""))
-                                    + (((((int) record.get("Section").replaceAll("[0-9]+", "").charAt(0)) - 96)) / (double) 10);
+                        if (record.get("Grupa").matches("[0-9]+"))
+                            group = Double.parseDouble(record.get("Grupa"));
+                        else if (record.get("Grupa").matches("[0-9]+[a-z]")) {
+                            group = Double.parseDouble(record.get("Grupa").replaceAll("[a-z]", ""))
+                                    + (((((int) record.get("Grupa").replaceAll("[0-9]+", "").charAt(0)) - 96)) / (double) 10);
                         } else
                             group = 9999;
                     }

@@ -16,6 +16,9 @@
 #   public *;
 #}
 
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
+
 -keep class org.jsoup.** {*;}
 -keep interface org.jsoup.** { *; }
 -keep public class org.jsoup.** { *; }
