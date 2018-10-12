@@ -321,14 +321,14 @@ public class FetchTeacherSchedule {
                 .split("\" class")[0];
 
         try {
-            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=person&ext=" + teacherEmail + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
+            fw = new FetchWebsite("https://plan.agh.edu.pl/UniTime/export?output=meetings.csv&type=person&locale=pl&ext=" + teacherEmail + "&sort=1&term=" + ScheduleUtils.getSemesterUniTimeName());
             fww = fw.getWebsiteGETSecure(false, false, "");
         } catch (Exception e){
             return false;
         }
 
         // parse CSV with timetable
-        String [] csvHeader = {"Name","Section","Type","Title","Date","Published Start","Published End","Location","Capacity","Instructor / Sponsor","Email","Requested Services","Approved"};
+        String[] csvHeader = {"Nazwa", "Grupa", "Typ", "Tytuł", "Data", "Ogłoszony początek", "Ogłoszony koniec", "Miejsce", "Pojemność", "Prowadzący / Odpowiedzialny", "E-mail", "Żądane usługi", "Zatwierdzony"};
         CSVFormat csvFormat = CSVFormat.DEFAULT.withHeader(csvHeader);
         Reader reader = new StringReader(fww);
         CSVParser csvParser = new CSVParser(reader, csvFormat);
@@ -337,16 +337,16 @@ public class FetchTeacherSchedule {
         List<CSVRecord> csvRecords = csvParser.getRecords();
         csvRecords.remove(0);
         for (CSVRecord record : csvRecords){
-            String dateAndTimeOfStartOfLesson = record.get("Date") + " " + record.get("Published Start");
-            String dateAndTimeOfStopOfLesson = record.get("Date") + " " + record.get("Published End");
-            DateFormat df = new SimpleDateFormat("dd.MM.yyyy HH:mm", Locale.US);
+            String dateAndTimeOfStartOfLesson = record.get("Data") + " " + record.get("Ogłoszony początek");
+            String dateAndTimeOfStopOfLesson = record.get("Data") + " " + record.get("Ogłoszony koniec");
+            DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
             df.setLenient(true);
 
             long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
             long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
-            String name = record.get("Title").replace("\n", "");
-            String description = "Grupa " + record.get("Section") + ", " + record.get("Type").replace("\n", "") + "\n" + record.get("Instructor / Sponsor");
-            String location = record.get("Location").replace("\n", "");
+            String name = record.get("Tytuł").replace("\n", "");
+            String description = "Grupa " + record.get("Grupa") + ", " + record.get("Typ").replace("\n", "") + "\n" + record.get("Prowadzący / Odpowiedzialny");
+            String location = record.get("Miejsce").replace("\n", "");
 
             Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, false, true, -1, 0, false);
 
