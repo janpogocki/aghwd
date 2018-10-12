@@ -337,20 +337,23 @@ public class FetchTeacherSchedule {
         List<CSVRecord> csvRecords = csvParser.getRecords();
         csvRecords.remove(0);
         for (CSVRecord record : csvRecords){
-            String dateAndTimeOfStartOfLesson = record.get("Data") + " " + record.get("Ogłoszony początek");
-            String dateAndTimeOfStopOfLesson = record.get("Data") + " " + record.get("Ogłoszony koniec");
-            DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
-            df.setLenient(true);
+            if (record.get("Ogłoszony początek").contains(":")
+                    && record.get("Ogłoszony koniec").contains(":")) {
+                String dateAndTimeOfStartOfLesson = record.get("Data") + " " + record.get("Ogłoszony początek");
+                String dateAndTimeOfStopOfLesson = record.get("Data") + " " + record.get("Ogłoszony koniec");
+                DateFormat df = new SimpleDateFormat("dd-MM-yyyy HH:mm", Locale.US);
+                df.setLenient(true);
 
-            long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
-            long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
-            String name = record.get("Tytuł").replace("\n", "");
-            String description = "Grupa " + record.get("Grupa") + ", " + record.get("Typ").replace("\n", "") + "\n" + record.get("Prowadzący / Odpowiedzialny");
-            String location = record.get("Miejsce").replace("\n", "");
+                long startTimestamp = df.parse(dateAndTimeOfStartOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStartOfLesson).getTime());
+                long stopTimestamp = df.parse(dateAndTimeOfStopOfLesson).getTime() - TimeZone.getDefault().getOffset(df.parse(dateAndTimeOfStopOfLesson).getTime());
+                String name = record.get("Tytuł").replace("\n", "");
+                String description = "Grupa " + record.get("Grupa") + ", " + record.get("Typ").replace("\n", "") + "\n" + record.get("Prowadzący / Odpowiedzialny");
+                String location = record.get("Miejsce").replace("\n", "");
 
-            Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, false, true, -1, 0, false);
+                Appointment appointment = new Appointment(startTimestamp, stopTimestamp, name, description, location, false, true, -1, 0, false);
 
-            list.add(appointment);
+                list.add(appointment);
+            }
         }
 
         // If there is no data to show
