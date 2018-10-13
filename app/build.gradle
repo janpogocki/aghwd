@@ -3,13 +3,13 @@ apply plugin: 'com.google.firebase.firebase-perf'
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '28.0.2'
+    buildToolsVersion '28.0.3'
     defaultConfig {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 77
-        versionName '1.5.20'
+        versionCode 78
+        versionName '1.5.21'
     }
     buildTypes {
         release {
