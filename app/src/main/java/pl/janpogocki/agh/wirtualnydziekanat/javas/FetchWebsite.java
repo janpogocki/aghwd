@@ -59,7 +59,8 @@ public class FetchWebsite {
                     || host.equalsIgnoreCase("api.janpogocki.pl")
                     || host.equalsIgnoreCase("skos.agh.edu.pl")
                     || host.equalsIgnoreCase("plan.agh.edu.pl")
-                    || host.equalsIgnoreCase("syllabuskrk.agh.edu.pl");
+                    || host.equalsIgnoreCase("syllabuskrk.agh.edu.pl")
+                    || host.equalsIgnoreCase("planzajec.eaiib.agh.edu.pl");
         }
     }
 

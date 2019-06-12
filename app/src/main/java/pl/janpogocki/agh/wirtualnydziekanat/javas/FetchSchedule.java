@@ -148,7 +148,7 @@ public class FetchSchedule {
     }
 
     private void FetchEaiibSchedule() throws Exception {
-        String URLdomainEaiibSchedule = "http://planzajec.eaiib.agh.edu.pl";
+        String URLdomainEaiibSchedule = "https://planzajec.eaiib.agh.edu.pl";
 
         FetchWebsite fw;
         String fww;
@@ -156,7 +156,7 @@ public class FetchSchedule {
         String statusEaiib;
 
         fw = new FetchWebsite(URLdomainEaiibSchedule + "/");
-        fww = fw.getWebsiteHTTP(false, false, "");
+        fww = fw.getWebsite(false, false, "");
         fwParsed = Jsoup.parse(fww);
 
         String kierunek = Storage.universityStatus.get(2);
@@ -192,7 +192,7 @@ public class FetchSchedule {
             String endYear = String.valueOf(cal.get(Calendar.YEAR) + 1);
 
             fw = new FetchWebsite(URLdomainEaiibSchedule + "/view/timetable/" + statusEaiib + "/events?start=" + startYear + "-01-01&end=" + endYear + "-12-31");
-            fww = fw.getWebsiteHTTP(false, false, "");
+            fww = fw.getWebsite(false, false, "");
 
             JSONArray jsonArray = new JSONArray(fww);
             List<Appointment> list = new ArrayList<>();
