@@ -262,7 +262,7 @@ public class FetchSchedule {
     }
 
     private void FetchUniTimeSchedule() throws Exception {
-        String dictionaryURL = "http://sprawdz.plan.agh.edu.pl/aghwd_unitime.php";
+        String dictionaryURL = "https://api.janpogocki.pl/aghwd/aghwd_unitime.php";
 
         FetchWebsite fw, fw2;
         String fww, fww2, specjalnosc, stopien, rodzaj;
@@ -288,7 +288,7 @@ public class FetchSchedule {
                 "&stopien=" + stopien +
                 "&semestr=" + Storage.getSemesterNumberById(Storage.summarySemesters.size() - 1) +
                 "&rodzaj=" + rodzaj).replaceAll(" ", "%20"));
-        fww2 = fw2.getWebsiteHTTP(false, false, "");
+        fww2 = fw2.getWebsite(false, false, "");
 
         boolean planAvailable;
         if (fww2.contains("null")) {

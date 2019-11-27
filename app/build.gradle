@@ -8,8 +8,8 @@ android {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 79
-        versionName '1.5.22'
+        versionCode 80
+        versionName '1.5.23'
     }
     buildTypes {
         release {

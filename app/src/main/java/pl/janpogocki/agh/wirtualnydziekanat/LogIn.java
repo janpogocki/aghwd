@@ -354,6 +354,9 @@ public class LogIn extends AppCompatActivity {
                     try {
                         Snackbar.make(findViewById(R.id.relativeLayout0), R.string.log_in_fail_wrong_data, Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
+
+                        if (rp.isRemembered())
+                            rp.remove();
                     } catch (Exception e){
                         Log.i("aghwd", "aghwd", e);
                         Storage.appendCrash(e);
