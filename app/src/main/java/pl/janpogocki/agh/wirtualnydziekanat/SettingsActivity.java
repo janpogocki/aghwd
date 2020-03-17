@@ -4,6 +4,8 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
@@ -39,6 +41,15 @@ public class SettingsActivity extends PreferenceFragment
 
         view = ((MainActivity) activityContext).findViewById(R.id.frameLayoutMainV7);
 
+        String versionName = "";
+        try {
+            PackageInfo pInfo = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), PackageManager.GET_META_DATA);
+            versionName = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
+        }
+
         RememberPassword rememberPassword = new RememberPassword(activityContext);
         if (!rememberPassword.isRemembered()){
             getPreferenceManager().getSharedPreferences().edit().putBoolean("marks_notifications", false).apply();
@@ -46,6 +57,20 @@ public class SettingsActivity extends PreferenceFragment
             getPreferenceScreen().findPreference("marks_notifications").setDefaultValue(false);
             getPreferenceScreen().findPreference("marks_notifications").setSummary(getPreferenceScreen()
                     .findPreference("marks_notifications").getSummary() + "\n\n" + getString(R.string.only_with_remember_password));
+        } else if (versionName.contains("huawei")) {
+            getPreferenceManager().getSharedPreferences().edit().putBoolean("marks_notifications", false).apply();
+            getPreferenceScreen().findPreference("marks_notifications").setEnabled(false);
+            getPreferenceScreen().findPreference("marks_notifications").setDefaultValue(false);
+            getPreferenceScreen().findPreference("marks_notifications").setSummary(getPreferenceScreen()
+                    .findPreference("marks_notifications").getSummary() + "\n\n" + getString(R.string.only_with_play_services));
+
+            getPreferenceManager().getSharedPreferences().edit().putBoolean("news_notifications", false).apply();
+            getPreferenceScreen().findPreference("news_notifications").setEnabled(false);
+            getPreferenceScreen().findPreference("news_notifications").setDefaultValue(false);
+            getPreferenceScreen().findPreference("news_notifications").setSummary(getPreferenceScreen()
+                    .findPreference("news_notifications").getSummary() + "\n\n" + getString(R.string.only_with_play_services));
+
+
         }
 
         Preference preference_mycal = findPreference("remove_all_mycal_events");

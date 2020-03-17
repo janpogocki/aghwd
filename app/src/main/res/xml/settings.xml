@@ -28,7 +28,7 @@
 
     <PreferenceCategory
         android:title="@string/privacy"
-        android:key="pref_key_notifications">
+        android:key="pref_key_privacy">
 
         <Preference
             android:key="remove_all_mycal_events"

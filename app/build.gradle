@@ -8,14 +8,21 @@ android {
         applicationId "pl.janpogocki.agh.wirtualnydziekanat"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 80
-        versionName '1.5.23'
+        versionCode 81
+        versionName '1.5.23.1'
+        signingConfig signingConfigs.debug
     }
     buildTypes {
         release {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        huawei {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            versionNameSuffix '-huawei'
         }
     }
     productFlavors {

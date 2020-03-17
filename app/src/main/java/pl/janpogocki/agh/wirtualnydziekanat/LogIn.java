@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -190,9 +192,18 @@ public class LogIn extends AppCompatActivity {
     }
 
     private void loadActivity(){
+        String versionName = "";
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.GET_META_DATA);
+            versionName = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.i("aghwd", "aghwd", e);
+            Storage.appendCrash(e);
+        }
+
         GoogleApiAvailability googleApiAvailability = GoogleApiAvailability.getInstance();
-        int status = googleApiAvailability.isGooglePlayServicesAvailable(this);
-        if (status != ConnectionResult.SUCCESS) {
+        int googlePlayServicesAvailable = googleApiAvailability.isGooglePlayServicesAvailable(this);
+        if (!versionName.contains("huawei") && googlePlayServicesAvailable != ConnectionResult.SUCCESS) {
             googleApiAvailability.makeGooglePlayServicesAvailable(LogIn.this)
                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
